@@ -2,19 +2,32 @@ package project.model.maps;
 
 import project.model.Vector2d;
 import project.model.worldElements.Animal;
+import project.model.worldElements.Grass;
 import project.model.worldElements.WorldElement;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public abstract class AbstractWorldMap implements WorldMap {
 
+    protected final int height;
+    protected final int width;
+
+    protected final Boundary mapBoundary;
+
     protected final Map<Vector2d, Animal> animalsOnMap = new HashMap<>();
-    private final MapVisualizer visualizer;
+    protected final Map<Vector2d, Grass> grassOnMap = new HashMap<>();
+
     private final List<MapChangeListener> observers = new ArrayList<>();
     private final UUID uuid = UUID.randomUUID();
+    private final MapVisualizer visualizer;
 
-    public AbstractWorldMap() {
+    public AbstractWorldMap(int height, int width) {
+        this.height = height;
+        this.width = width;
+
         this.visualizer = new MapVisualizer(this);
+        mapBoundary = new Boundary(new Vector2d(0,0), new Vector2d(width - 1, height - 1));
     }
 
     public UUID getId() {
@@ -29,39 +42,10 @@ public abstract class AbstractWorldMap implements WorldMap {
         observers.remove(observer);
     }
 
-    private void mapChangeEvent(String message) {
+    protected void mapChangeEvent(String message) {
         for(MapChangeListener observer : observers) {
             observer.mapChanged(this, message);
         }
-    }
-
-    @Override
-    public void place(Animal animal) throws IncorrectPositionException {
-        Vector2d position = animal.getPosition();
-
-        if (canMoveTo(position)) {
-            animalsOnMap.put(position, animal);
-            mapChangeEvent("Animal placed at " + animal.getPosition());
-        }
-        else
-            throw new IncorrectPositionException(position);
-    }
-
-    @Override
-    public void move(Animal animal, MoveDirection direction) {
-        if (animal == null || !animalsOnMap.containsValue(animal))
-            return;
-
-        Vector2d oldPosition = animal.getPosition();
-        animal.move(direction, this);
-
-        if(!oldPosition.equals(animal.getPosition())) {
-            animalsOnMap.remove(oldPosition);
-            animalsOnMap.put(animal.getPosition(), animal);
-            mapChangeEvent("Animal moved from %s to %s ".formatted(oldPosition, animal.getPosition()));
-            return;
-        }
-        mapChangeEvent("Animal turn to %s ".formatted(direction.toString()));
     }
 
     @Override
@@ -71,29 +55,36 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public Optional<WorldElement> objectAt(Vector2d position) {
-        return Optional.ofNullable(animalsOnMap.get(position));
-    }
-
-    public boolean canMoveTo(Vector2d position) {
-        return !animalsOnMap.containsKey(position);
+        if(animalsOnMap.containsKey(position)) {
+            return Optional.of(animalsOnMap.get(position));
+        }
+        return Optional.ofNullable(grassOnMap.get(position));
     }
 
     @Override
     public Collection<WorldElement> getElements() {
-        return new ArrayList<>(animalsOnMap.values());
+        return new ArrayList<>(Stream.concat(animalsOnMap.values().stream(), grassOnMap.values().stream()).toList());
     }
-
-    public abstract Boundary getCurrentBounds();
 
     @Override
     public Collection<Animal> getOrderedAnimals() {
         Comparator<Animal> animalComparator = Comparator.comparing(animal -> "%s %s".formatted(animal.getPosition().getX(), animal.getPosition().getY()));
-        return animalsOnMap.values().stream().sorted(animalComparator).toList();
+        return animalsOnMap.values().stream()
+                .sorted(animalComparator)
+                .toList();
+    }
+
+    public Boundary getMapBounds() {
+        return mapBoundary;
+    }
+
+    @Override
+    public void removeAnimal(Animal animal) {
+        animalsOnMap.remove(animal.getPosition(), animal);
     }
 
     @Override
     public String toString() {
-        Boundary currentBounds = getCurrentBounds();
-        return visualizer.draw(currentBounds.lowerLeft(), currentBounds.upperRight());
+        return visualizer.draw(mapBoundary.lowerLeft(), mapBoundary.upperRight());
     }
 }
