@@ -15,11 +15,7 @@ public interface WorldMap {
 
     void move(Animal animal);
 
-    boolean isOccupied(Vector2d position);
-
-    boolean isPositionCorrect(Vector2d position);
-
-    Optional<WorldElement> objectAt(Vector2d position);
+    Optional<List<Animal>> animalsAt(Vector2d position);
 
     Collection<WorldElement> getElements();
 

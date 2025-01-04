@@ -15,7 +15,7 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     protected final Boundary mapBoundary;
 
-    protected final Map<Vector2d, Animal> animalsOnMap = new HashMap<>();
+    protected final Map<Vector2d, LinkedList<Animal>> animalsOnMap = new HashMap<>();
     protected final Map<Vector2d, Grass> grassOnMap = new HashMap<>();
 
     private final List<MapChangeListener> observers = new ArrayList<>();
@@ -49,27 +49,28 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public boolean isOccupied(Vector2d position) {
-        return objectAt(position).isPresent();
-    }
-
-    @Override
-    public Optional<WorldElement> objectAt(Vector2d position) {
-        if(animalsOnMap.containsKey(position)) {
-            return Optional.of(animalsOnMap.get(position));
-        }
-        return Optional.ofNullable(grassOnMap.get(position));
+    public Optional<List<Animal>> animalsAt(Vector2d position) {
+        return Optional.ofNullable(animalsOnMap.get(position));
     }
 
     @Override
     public Collection<WorldElement> getElements() {
-        return new ArrayList<>(Stream.concat(animalsOnMap.values().stream(), grassOnMap.values().stream()).toList());
+        return new ArrayList<>(
+                Stream.concat(
+                        animalsOnMap.values().stream().flatMap(Collection::stream),
+                        grassOnMap.values().stream()
+                ).toList()
+        );
     }
 
     @Override
     public Collection<Animal> getOrderedAnimals() {
-        Comparator<Animal> animalComparator = Comparator.comparing(animal -> "%s %s".formatted(animal.getPosition().getX(), animal.getPosition().getY()));
+        Comparator<Animal> animalComparator = Comparator.comparing(animal ->
+                "%s %s".formatted(animal.getPosition().getX(), animal.getPosition().getY())
+        );
+
         return animalsOnMap.values().stream()
+                .flatMap(Collection::stream)
                 .sorted(animalComparator)
                 .toList();
     }
@@ -80,7 +81,13 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void removeAnimal(Animal animal) {
-        animalsOnMap.remove(animal.getPosition(), animal);
+        Vector2d position = animal.getPosition();
+        LinkedList<Animal> list = animalsOnMap.get(position);
+        list.remove(animal);
+
+        if(list.isEmpty()) {
+            animalsOnMap.remove(position);
+        }
     }
 
     @Override
