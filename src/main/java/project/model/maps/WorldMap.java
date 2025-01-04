@@ -23,9 +23,9 @@ public interface WorldMap {
 
     Collection<Animal> getOrderedAnimals();
 
-    List<Vector2d> getGrassPreferredPositions();
+    List<Vector2d> getFreeGrassPreferredPositions();
 
-    List<Vector2d> getGrassNotPreferredPositions();
+    List<Vector2d> getFreeGrassNotPreferredPositions();
 
     void removeAnimal(Animal animal);
 
