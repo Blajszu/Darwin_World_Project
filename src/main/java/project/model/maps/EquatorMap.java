@@ -4,6 +4,7 @@ import project.model.Vector2d;
 import project.model.worldElements.Grass;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 public class EquatorMap extends AbstractWorldMap {
 
@@ -41,7 +42,12 @@ public class EquatorMap extends AbstractWorldMap {
 
     @Override
     public void removeGrass(Vector2d position) {
+        if(!grassOnMap.containsKey(position)){
+            throw new NoSuchElementException("Cannot remove grass: no grass found at this location.");
+        }
+
         grassOnMap.remove(position);
+
         if(isPositionPreferredByGrass(position)) {
             freeGrassPreferredPositions.add(position);
         }
@@ -50,6 +56,7 @@ public class EquatorMap extends AbstractWorldMap {
         }
     }
 
+    @Override
     protected void placeGrass(Grass grass) {
         Vector2d position = grass.getPosition();
 
