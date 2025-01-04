@@ -82,6 +82,16 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
 
         if(element instanceof Animal) {
+            if(!animalsOnMap.containsKey(position)) {
+                animalsOnMap.put(position, new LinkedList<>());
+            }
+
+            LinkedList<Animal> list = animalsOnMap.get(position);
+
+            if(list.contains(element)) {
+                throw new IllegalArgumentException("The animal is already present on the map.");
+            }
+
             animalsOnMap.get(position).add((Animal) element);
         }
         else {
@@ -96,6 +106,9 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         if(isPositionCorrect(nextPosition)) {
             removeAnimal(animal);
+            if(!animalsOnMap.containsKey(nextPosition)) {
+                animalsOnMap.put(nextPosition, new LinkedList<>());
+            }
             animalsOnMap.get(nextPosition).add(animal);
             animal.move();
             mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
@@ -110,6 +123,9 @@ public abstract class AbstractWorldMap implements WorldMap {
         if(mapBoundary.lowerLeft().getX() > nextPosition.getX() || mapBoundary.upperRight().getX() < nextPosition.getX()) {
             nextPosition = new Vector2d((nextPosition.getX() + width) % width, nextPosition.getY());
             removeAnimal(animal);
+            if(!animalsOnMap.containsKey(nextPosition)) {
+                animalsOnMap.put(nextPosition, new LinkedList<>());
+            }
             animalsOnMap.get(nextPosition).add(animal);
             animal.move(nextPosition);
             mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
@@ -132,7 +148,17 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public void removeAnimal(Animal animal) {
         Vector2d position = animal.getPosition();
+
+        if(!animalsOnMap.containsKey(position)) {
+            throw new NoSuchElementException("Cannot remove animal: this animal not found at this location.");
+        }
+
         LinkedList<Animal> list = animalsOnMap.get(position);
+
+        if(!list.contains(animal)) {
+            throw new NoSuchElementException("Cannot remove animal: this animal not found at this location.");
+        }
+
         list.remove(animal);
 
         if(list.isEmpty()) {
