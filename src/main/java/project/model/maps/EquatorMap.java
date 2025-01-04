@@ -50,7 +50,7 @@ public class EquatorMap extends AbstractWorldMap {
         }
 
         if(element instanceof Animal) {
-            animalsOnMap.put(position, (Animal) element);
+            animalsOnMap.get(position).add((Animal) element);
         }
         else {
             if(grassOnMap.containsKey(position)) {
@@ -73,8 +73,8 @@ public class EquatorMap extends AbstractWorldMap {
         Vector2d nextPosition = animal.nextPosition();
 
         if(isPositionCorrect(nextPosition)) {
-            animalsOnMap.remove(currentPosition, animal);
-            animalsOnMap.put(nextPosition, animal);
+            removeAnimal(animal);
+            animalsOnMap.get(nextPosition).add(animal);
             animal.move();
             mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
             return;
@@ -82,14 +82,15 @@ public class EquatorMap extends AbstractWorldMap {
 
         if(mapBoundary.lowerLeft().getY() > nextPosition.getY() || mapBoundary.upperRight().getY() < nextPosition.getY()) {
             animal.rotate(4);
+            nextPosition = new Vector2d(nextPosition.getX(), animal.getPosition().getY());
         }
 
         if(mapBoundary.lowerLeft().getX() > nextPosition.getX() || mapBoundary.upperRight().getX() < nextPosition.getX()) {
-            Vector2d newNextPosition = new Vector2d((nextPosition.getX() + width) % width, nextPosition.getY());
-            animalsOnMap.remove(currentPosition, animal);
-            animalsOnMap.put(newNextPosition, animal);
-            animal.move(newNextPosition);
-            mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, newNextPosition));
+            nextPosition = new Vector2d((nextPosition.getX() + width) % width, nextPosition.getY());
+            removeAnimal(animal);
+            animalsOnMap.get(nextPosition).add(animal);
+            animal.move(nextPosition);
+            mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
         }
     }
 
