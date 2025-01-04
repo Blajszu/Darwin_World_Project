@@ -15,6 +15,9 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     protected final Boundary mapBoundary;
 
+    protected final List<Vector2d> freeGrassPreferredPositions = new ArrayList<>();
+    protected final List<Vector2d> freeGrassNotPreferredPositions = new ArrayList<>();
+
     protected final Map<Vector2d, LinkedList<Animal>> animalsOnMap = new HashMap<>();
     protected final Map<Vector2d, Grass> grassOnMap = new HashMap<>();
 
@@ -32,25 +35,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     public UUID getId() {
         return uuid;
-    }
-
-    public void addObserver(MapChangeListener observer) {
-        observers.add(observer);
-    }
-
-    public void removeObserver(MapChangeListener observer) {
-        observers.remove(observer);
-    }
-
-    protected void mapChangeEvent(String message) {
-        for(MapChangeListener observer : observers) {
-            observer.mapChanged(this, message);
-        }
-    }
-
-    @Override
-    public Optional<List<Animal>> animalsAt(Vector2d position) {
-        return Optional.ofNullable(animalsOnMap.get(position));
     }
 
     @Override
@@ -80,6 +64,72 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public List<Vector2d> getGrassPreferredPositions() {
+        return freeGrassPreferredPositions;
+    }
+
+    @Override
+    public List<Vector2d> getGrassNotPreferredPositions() {
+        return freeGrassNotPreferredPositions;
+    }
+
+    @Override
+    public void place(WorldElement element) throws IncorrectPositionException {
+        Vector2d position = element.getPosition();
+
+        if(!isPositionCorrect(position)) {
+            throw new IncorrectPositionException(position);
+        }
+
+        if(element instanceof Animal) {
+            animalsOnMap.get(position).add((Animal) element);
+        }
+        else {
+            placeGrass((Grass) element);
+        }
+    }
+
+    @Override
+    public void move(Animal animal) {
+        Vector2d currentPosition = animal.getPosition();
+        Vector2d nextPosition = animal.nextPosition();
+
+        if(isPositionCorrect(nextPosition)) {
+            removeAnimal(animal);
+            animalsOnMap.get(nextPosition).add(animal);
+            animal.move();
+            mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
+            return;
+        }
+
+        if(mapBoundary.lowerLeft().getY() > nextPosition.getY() || mapBoundary.upperRight().getY() < nextPosition.getY()) {
+            animal.rotate(4);
+            nextPosition = new Vector2d(nextPosition.getX(), animal.getPosition().getY());
+        }
+
+        if(mapBoundary.lowerLeft().getX() > nextPosition.getX() || mapBoundary.upperRight().getX() < nextPosition.getX()) {
+            nextPosition = new Vector2d((nextPosition.getX() + width) % width, nextPosition.getY());
+            removeAnimal(animal);
+            animalsOnMap.get(nextPosition).add(animal);
+            animal.move(nextPosition);
+            mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
+        }
+    }
+
+    public void addObserver(MapChangeListener observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(MapChangeListener observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public Optional<List<Animal>> animalsAt(Vector2d position) {
+        return Optional.ofNullable(animalsOnMap.get(position));
+    }
+
+    @Override
     public void removeAnimal(Animal animal) {
         Vector2d position = animal.getPosition();
         LinkedList<Animal> list = animalsOnMap.get(position);
@@ -89,6 +139,19 @@ public abstract class AbstractWorldMap implements WorldMap {
             animalsOnMap.remove(position);
         }
     }
+
+    protected void mapChangeEvent(String message) {
+        for(MapChangeListener observer : observers) {
+            observer.mapChanged(this, message);
+        }
+    }
+
+    protected boolean isPositionCorrect(Vector2d position) {
+        return (position.follows(mapBoundary.lowerLeft()) &&
+                position.precedes(mapBoundary.upperRight()));
+    }
+
+    abstract protected void placeGrass(Grass grass);
 
     @Override
     public String toString() {
