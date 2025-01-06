@@ -59,6 +59,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 .toList();
     }
 
+    @Override
     public Boundary getMapBounds() {
         return mapBoundary;
     }
