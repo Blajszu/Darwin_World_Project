@@ -29,8 +29,8 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.height = height;
         this.width = width;
 
-        this.visualizer = new MapVisualizer(this);
         mapBoundary = new Boundary(new Vector2d(0,0), new Vector2d(width - 1, height - 1));
+        this.visualizer = new MapVisualizer(this);
     }
 
     public UUID getId() {
@@ -182,6 +182,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public String toString() {
-        return visualizer.draw(mapBoundary.lowerLeft(), mapBoundary.upperRight());
+        return visualizer.draw();
     }
 }
