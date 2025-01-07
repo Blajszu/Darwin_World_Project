@@ -7,8 +7,8 @@ public enum MapDirection {
     NORTHEAST,
     EAST,
     SOUTHEAST,
-    SOUTHWEST,
     SOUTH,
+    SOUTHWEST,
     WEST,
     NORTHWEST;
 

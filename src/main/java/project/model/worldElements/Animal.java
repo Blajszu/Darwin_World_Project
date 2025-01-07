@@ -52,7 +52,7 @@ public class Animal {
     }
 
     public ArrayList<Integer> getAnimalGenes() {
-        return animalGenes;
+        return new ArrayList<>(animalGenes);
     }
 
     public Vector2d getNextPosition(){
@@ -73,6 +73,20 @@ public class Animal {
             case SOUTHEAST -> "southeast.png";
             case SOUTHWEST -> "southwest.png";
             case NORTHWEST -> "northwest.png";
+        };
+    }
+
+    @Override
+    public String toString() {
+        return switch (currentOrientation) {
+            case NORTH -> "↑";
+            case NORTHEAST -> "↗";
+            case EAST -> "→";
+            case SOUTHEAST -> "↘";
+            case SOUTH -> "↓";
+            case SOUTHWEST -> "↙";
+            case WEST -> "←";
+            case NORTHWEST -> "↖";
         };
     }
     public boolean isAnimalAlive(){
