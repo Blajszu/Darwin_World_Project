@@ -66,12 +66,12 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public List<Vector2d> getFreeGrassPreferredPositions() {
-        return freeGrassPreferredPositions;
+        return new ArrayList<>(freeGrassPreferredPositions);
     }
 
     @Override
     public List<Vector2d> getFreeGrassNotPreferredPositions() {
-        return freeGrassNotPreferredPositions;
+        return new ArrayList<>(freeGrassNotPreferredPositions);
     }
 
     @Override
