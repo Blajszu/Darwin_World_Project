@@ -3,39 +3,38 @@ package project.model.maps;
 import project.model.Vector2d;
 import project.model.worldElements.WorldElement;
 
-import java.util.Optional;
-
-/**
- * The map visualizer converts the {@link WorldMap} map into a string
- * representation.
- *
- * @author apohllo, idzik
- */
 public class MapVisualizer {
     private static final String EMPTY_CELL = " ";
     private static final String FRAME_SEGMENT = "-";
     private static final String CELL_SEGMENT = "|";
     private final WorldMap map;
 
-    /**
-     * Initializes the MapVisualizer with an instance of map to visualize.
-     *
-     * @param map
-     */
+    private final Vector2d lowerLeft;
+    private final Vector2d upperRight;
+
+    String[][] grid;
+
     public MapVisualizer(WorldMap map) {
         this.map = map;
+
+        Boundary bounds = map.getMapBounds();
+        lowerLeft = bounds.lowerLeft();
+        upperRight = bounds.upperRight();
+
+        int width = upperRight.getX() - lowerLeft.getX() + 1;
+        int height = upperRight.getY() - lowerLeft.getY() + 1;
+
+        grid = new String[height][width];
+
+        for (int y = lowerLeft.getY(); y <= upperRight.getY(); y++) {
+            for (int x = lowerLeft.getX(); x <= upperRight.getX(); x++) {
+                grid[y][x] = EMPTY_CELL;
+            }
+        }
     }
 
-    /**
-     * Convert selected region of the map into a string. It is assumed that the
-     * indices of the map will have no more than two characters (including the
-     * sign).
-     *
-     * @param lowerLeft  The lower left corner of the region that is drawn.
-     * @param upperRight The upper right corner of the region that is drawn.
-     * @return String representation of the selected region of the map.
-     */
-    public String draw(Vector2d lowerLeft, Vector2d upperRight) {
+    public String draw() {
+        updateMap();
         StringBuilder builder = new StringBuilder();
         for (int i = upperRight.getY() + 1; i >= lowerLeft.getY() - 1; i--) {
             if (i == upperRight.getY() + 1) {
@@ -48,7 +47,7 @@ public class MapVisualizer {
                 } else {
                     builder.append(CELL_SEGMENT);
                     if (j <= upperRight.getX()) {
-                        builder.append(drawObject(new Vector2d(j, i)));
+                        builder.append(grid[i][j]);
                     }
                 }
             }
@@ -75,13 +74,19 @@ public class MapVisualizer {
         return builder.toString();
     }
 
-    private String drawObject(Vector2d currentPosition) {
-        if (this.map.isOccupied(currentPosition)) {
-            Optional<WorldElement> object = this.map.objectAt(currentPosition);
-            if (object.isPresent()) {
-                return object.get().toString();
+    private void updateMap() {
+        for (int y = lowerLeft.getY(); y <= upperRight.getY(); y++) {
+            for (int x = lowerLeft.getX(); x <= upperRight.getX(); x++) {
+                grid[y][x] = EMPTY_CELL;
             }
         }
-        return EMPTY_CELL;
+
+        for (WorldElement element : map.getElements()) {
+            Vector2d position = element.getPosition();
+
+            if(grid[position.getY()][position.getX()].equals(EMPTY_CELL)) {
+                grid[position.getY()][position.getX()] = element.toString();
+            }
+        }
     }
 }

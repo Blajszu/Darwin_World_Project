@@ -30,4 +30,6 @@ public interface WorldMap {
     void removeAnimal(Animal animal);
 
     void removeGrass(Vector2d position);
+
+    Boundary getMapBounds();
 }
