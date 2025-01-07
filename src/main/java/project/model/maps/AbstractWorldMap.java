@@ -43,7 +43,7 @@ public abstract class AbstractWorldMap implements WorldMap {
                 Stream.concat(
                         animalsOnMap.values().stream().flatMap(Collection::stream),
                         grassOnMap.values().stream()
-                ).toList()
+                ).map(element -> (WorldElement) element).toList()
         );
     }
 
@@ -103,7 +103,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public void move(Animal animal) {
         Vector2d currentPosition = animal.getPosition();
-        Vector2d nextPosition = animal.nextPosition();
+        Vector2d nextPosition = animal.getNextPosition();
 
         if(isPositionCorrect(nextPosition)) {
             removeAnimal(animal);
