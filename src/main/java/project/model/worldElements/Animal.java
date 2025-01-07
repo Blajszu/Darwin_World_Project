@@ -29,6 +29,7 @@ public class Animal {
             animalGenes.add(random.nextInt(0,8));
         }
     }
+
     private Animal(Vector2d position, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
         currentPosition = position;
         currentEnergy = initialEnergy;
@@ -55,7 +56,7 @@ public class Animal {
         return new ArrayList<>(animalGenes);
     }
 
-    public Vector2d getNextPosition(){
+    public Vector2d getNextPosition() {
         return currentPosition.add(MapDirection.values()[currentActiveGene].toUnitVector());
     }
 
@@ -89,6 +90,7 @@ public class Animal {
             case NORTHWEST -> "↖";
         };
     }
+
     public boolean isAnimalAlive(){
         return currentEnergy > 0;
     }
