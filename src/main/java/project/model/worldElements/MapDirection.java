@@ -4,35 +4,37 @@ import project.model.Vector2d;
 
 public enum MapDirection {
     NORTH,
+    NORTHEAST,
     EAST,
+    SOUTHEAST,
+    SOUTHWEST,
     SOUTH,
-    WEST;
+    WEST,
+    NORTHWEST;
 
     private static final Vector2d[] directions = {
             new Vector2d(0, 1),
+            new Vector2d(1,1),
             new Vector2d(1, 0),
+            new Vector2d(1,-1),
             new Vector2d(0, -1),
-            new Vector2d(-1, 0)
+            new Vector2d(-1,-1),
+            new Vector2d(-1, 0),
+            new Vector2d(-1,1)
     };
 
-    private static final String[] names = {"Polnoc", "Wschod", "Poludnie", "Zachod"};
+    private static final String[] names = {"Polnoc","PolnocnyWschod", "Wschod", "PoludniowyWschod", "Poludnie", "PoludniowyZachod", "Zachod","PolnocnyZachod"};
 
     @Override
     public String toString() {
         return names[this.ordinal()];
     }
 
-    public MapDirection next() {
-        return MapDirection.values()[((this.ordinal()+1)%4)];
-    }
-
-    public MapDirection previous() {
-        int index = this.ordinal()-1;
-        if (index < 0) index = 3;
-        return MapDirection.values()[index];
-    }
-
     public Vector2d toUnitVector () {
         return directions[this.ordinal()];
+    }
+
+    public MapDirection rotate(int numberOfRotations) {
+        return MapDirection.values()[((this.ordinal()+numberOfRotations)%8)];
     }
 }
