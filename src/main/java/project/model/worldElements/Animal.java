@@ -57,7 +57,7 @@ public class Animal implements WorldElement{
     }
 
     public Vector2d getNextPosition() {
-        return currentPosition.add(MapDirection.values()[currentActiveGene].toUnitVector());
+        return currentPosition.add(MapDirection.values()[animalGenes.get(currentActiveGene)].toUnitVector());
     }
 
     public String getResourceName() {
@@ -83,10 +83,10 @@ public class Animal implements WorldElement{
             case NORTH -> "↑";
             case NORTHEAST -> "↗";
             case EAST -> "→";
-            case SOUTHEAST -> "↘";
+            case SOUTHEAST -> "SE";
             case SOUTH -> "↓";
             case SOUTHWEST -> "↙";
-            case WEST -> "←";
+            case WEST -> "W";
             case NORTHWEST -> "↖";
         };
     }
@@ -104,6 +104,7 @@ public class Animal implements WorldElement{
             throw new AnimalDeadException("Animal can't rotate, because it is dead");
         }
         currentOrientation = currentOrientation.rotate(rotateAngle);
+        currentActiveGene = (currentActiveGene + 1) % animalGenes.size();
     }
 
     public void move(Vector2d position) {
@@ -114,7 +115,6 @@ public class Animal implements WorldElement{
         this.rotate(currentActiveGene);
         currentPosition = position;
         currentEnergy--;
-        currentActiveGene = (currentActiveGene + 1) % animalGenes.size();
     }
 
     public void move() {
