@@ -5,7 +5,7 @@ import project.model.Vector2d;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Animal {
+public class Animal implements WorldElement{
     private MapDirection currentOrientation;
     private Vector2d currentPosition;
     private int currentEnergy;
