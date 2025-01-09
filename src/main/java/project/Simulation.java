@@ -5,6 +5,8 @@ import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
 
+import java.util.Collection;
+
 public class Simulation implements Runnable {
 
     private final WorldMap worldMap;
@@ -75,6 +77,14 @@ public class Simulation implements Runnable {
 
     private void spawnGrass(int numberOfGrassToSpawn) {
 
+    }
+
+    private void moveAnimals() {
+        Collection<Animal> animals = worldMap.getOrderedAnimals();
+
+        for(Animal animal : animals) {
+            worldMap.move(animal);
+        }
     }
 
     @Override
