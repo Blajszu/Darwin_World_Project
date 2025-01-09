@@ -7,7 +7,6 @@ import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
 
-
 import java.util.List;
 import java.util.Collection;
 
@@ -119,6 +118,14 @@ public class Simulation implements Runnable {
             } catch (IncorrectPositionException e) {
                 System.err.println(e.getMessage());
             }
+        }
+    }
+
+    private void moveAnimals() {
+        Collection<Animal> animals = worldMap.getOrderedAnimals();
+
+        for(Animal animal : animals) {
+            worldMap.move(animal);
         }
     }
 
