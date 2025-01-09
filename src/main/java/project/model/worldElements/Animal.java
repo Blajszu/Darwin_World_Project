@@ -10,7 +10,7 @@ public class Animal implements WorldElement{
     private Vector2d currentPosition;
     private int currentEnergy;
     private final ArrayList<Integer> animalGenes = new ArrayList<>();
-    private int currentActiveGene = 0;
+    private int currentActiveGene;
     private final MutationStrategy mutationStrategy;
     private final int energyOfWellFedAnimal;
     private final int energyUsedToReproduce;
@@ -24,19 +24,33 @@ public class Animal implements WorldElement{
                 throw new IllegalArgumentException("Invalid gene value: " + gene);
             }
         }
+
         animalGenes.addAll(genes);
-        currentActiveGene = random.nextInt(0, genes.size());
+        currentActiveGene = random.nextInt(0, animalGenes.size());
     }
 
     public Animal(Vector2d position, int numberOfGenes, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
         this(position, initialEnergy, energyOfWellFedAnimal, energyUsedToReproduce, mutationStrategy);
 
+        if (numberOfGenes <= 0) {
+            throw new IllegalArgumentException("Number of genes must be greater than zero");
+        }
+
         for(int i = 0; i < numberOfGenes; i++) {
             animalGenes.add(random.nextInt(0,8));
         }
+
+        currentActiveGene = random.nextInt(0, animalGenes.size());
     }
 
     private Animal(Vector2d position, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
+
+        if (initialEnergy <= 0 || energyOfWellFedAnimal <= 0 || energyUsedToReproduce <= 0) {
+            throw new IllegalArgumentException("InitialEnergy, energyOfWellFedAnimal, energyUsedToReproduce must all be greater than zero");
+        }
+
+        Random random = new Random();
+
         currentPosition = position;
         currentEnergy = initialEnergy;
         this.energyOfWellFedAnimal = energyOfWellFedAnimal;
@@ -67,7 +81,7 @@ public class Animal implements WorldElement{
     }
 
     public MapDirection getNextOrientation() {
-        return MapDirection.values()[(currentOrientation.ordinal() + animalGenes.get(currentActiveGene))%8];
+        return MapDirection.values()[(currentOrientation.ordinal() + animalGenes.get(currentActiveGene)) % 8];
     }
 
     public String getResourceName() {
@@ -90,18 +104,18 @@ public class Animal implements WorldElement{
     @Override
     public String toString() {
         return switch (currentOrientation) {
-            case NORTH -> "↑";
-            case NORTHEAST -> "↗";
-            case EAST -> "→";
+            case NORTH -> "N";
+            case NORTHEAST -> "NE";
+            case EAST -> "E";
             case SOUTHEAST -> "SE";
-            case SOUTH -> "↓";
-            case SOUTHWEST -> "↙";
+            case SOUTH -> "S";
+            case SOUTHWEST -> "SW";
             case WEST -> "W";
-            case NORTHWEST -> "↖";
+            case NORTHWEST -> "NW";
         };
     }
 
-    public boolean isAnimalAlive(){
+    public boolean isAnimalAlive() {
         return currentEnergy > 0;
     }
 
@@ -151,9 +165,9 @@ public class Animal implements WorldElement{
 
         boolean strongerParentSide = random.nextBoolean();
 
-        if (strongerParentSide){
+        if (strongerParentSide) {
             genesFromBothParents.addAll(strongerGenes.subList(0, numberOfGenesFromStrongerAnimal));
-            genesFromBothParents.addAll(weakerGenes.subList(numberOfGenesFromStrongerAnimal,this.animalGenes.size()));
+            genesFromBothParents.addAll(weakerGenes.subList(numberOfGenesFromStrongerAnimal, this.animalGenes.size()));
         }
         else {
             genesFromBothParents.addAll(weakerGenes.subList(0, numberOfGenesFromWeakerAnimal));
