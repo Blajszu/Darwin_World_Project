@@ -24,7 +24,9 @@ public class Animal implements WorldElement{
                 throw new IllegalArgumentException("Invalid gene value: " + gene);
             }
         }
+
         animalGenes.addAll(genes);
+        currentActiveGene = random.nextInt(0, animalGenes.size());
     }
 
     public Animal(Vector2d position, int numberOfGenes, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
@@ -37,6 +39,8 @@ public class Animal implements WorldElement{
         for(int i = 0; i < numberOfGenes; i++) {
             animalGenes.add(random.nextInt(0,8));
         }
+
+        currentActiveGene = random.nextInt(0, animalGenes.size());
     }
 
     private Animal(Vector2d position, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
@@ -46,7 +50,6 @@ public class Animal implements WorldElement{
         }
 
         Random random = new Random();
-        currentActiveGene = random.nextInt(0, animalGenes.size());
 
         currentPosition = position;
         currentEnergy = initialEnergy;
