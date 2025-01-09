@@ -26,6 +26,10 @@ public abstract class AbstractWorldMap implements WorldMap {
     private final MapVisualizer visualizer;
 
     public AbstractWorldMap(int height, int width) {
+        if(height <= 0 || width <= 0) {
+            throw new IllegalArgumentException("Height and width must be greater than 0");
+        }
+
         this.height = height;
         this.width = width;
 
