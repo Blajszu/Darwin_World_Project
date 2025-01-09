@@ -2,11 +2,17 @@ package project;
 
 import project.model.Vector2d;
 import project.model.maps.EquatorMap;
+import project.model.maps.IncorrectPositionException;
 import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
 
+
+import java.util.List;
 import java.util.Collection;
+
+import java.util.Random;
+
 
 public class Simulation implements Runnable {
 
@@ -14,6 +20,8 @@ public class Simulation implements Runnable {
     private final int energyFromGrass;
     private final int numberOfGrassGrowingEveryDay;
     private final boolean collectStatistics;
+
+    private final Random rand = new Random();
 
     public Simulation(
             int mapHeight,
@@ -76,7 +84,42 @@ public class Simulation implements Runnable {
     }
 
     private void spawnGrass(int numberOfGrassToSpawn) {
+        int numberOfGrassToSpawnOnPreferredPositions = (int) Math.round(numberOfGrassToSpawn * 0.8);
+        int numberOfGrassToSpawnOnNotPreferredPositions = numberOfGrassToSpawn - numberOfGrassToSpawnOnPreferredPositions;
 
+        while(numberOfGrassToSpawnOnPreferredPositions-- > 0) {
+            List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
+
+            if(preferredPositions.isEmpty()) {
+                break;
+            }
+
+            Vector2d positionToSpawnGrass = preferredPositions.get(rand.nextInt(preferredPositions.size()));
+
+            try {
+                worldMap.place(new Grass(positionToSpawnGrass));
+            } catch (IncorrectPositionException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+
+        numberOfGrassToSpawnOnNotPreferredPositions += numberOfGrassToSpawnOnPreferredPositions + 1;
+
+        while(numberOfGrassToSpawnOnNotPreferredPositions-- > 0) {
+            List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
+
+            if(notPreferredPositions.isEmpty()) {
+                break;
+            }
+
+            Vector2d positionToSpawnGrass = notPreferredPositions.get(rand.nextInt(notPreferredPositions.size()));
+
+            try {
+                worldMap.place(new Grass(positionToSpawnGrass));
+            } catch (IncorrectPositionException e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 
     @Override
