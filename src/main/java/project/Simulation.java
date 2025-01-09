@@ -37,8 +37,8 @@ public class Simulation implements Runnable {
                 numberOfGrassGrowingEveryDay <= 0 ||
                 startNumberOfAnimals < 0 ||
                 initialAnimalsEnergy <= 0 ||
-                energyNeedToReproduce < 0 ||
-                energyUsedToReproduce < 0 ||
+                energyNeedToReproduce <= 0 ||
+                energyUsedToReproduce <= 0 ||
                 minimalNumberOfMutation < 0 ||
                 maximumNumberOfMutation < 0 ||
                 numberOfGenes <= 0) {
