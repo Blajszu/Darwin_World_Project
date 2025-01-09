@@ -7,8 +7,12 @@ import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
 
+
 import java.util.List;
+import java.util.Collection;
+
 import java.util.Random;
+
 
 public class Simulation implements Runnable {
 
@@ -77,7 +81,6 @@ public class Simulation implements Runnable {
             int energyUsedToReproduce,
             MutationStrategy mutationStrategy,
             int numberOfGenes) {
-
     }
 
     private void spawnGrass(int numberOfGrassToSpawn) {
@@ -122,5 +125,14 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
 
+    }
+
+    public void removeDeadAnimals() {
+        Collection<Animal> allAnimalsOnMap = worldMap.getOrderedAnimals();
+        for (Animal animal : allAnimalsOnMap) {
+            if(!animal.isAnimalAlive()){
+                worldMap.removeAnimal(animal);
+            }
+        }
     }
 }
