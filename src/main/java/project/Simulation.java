@@ -1,9 +1,12 @@
 package project;
 
+import project.model.Vector2d;
 import project.model.maps.EquatorMap;
 import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
+
+import java.util.Collection;
 
 public class Simulation implements Runnable {
 
@@ -70,7 +73,6 @@ public class Simulation implements Runnable {
             int energyUsedToReproduce,
             MutationStrategy mutationStrategy,
             int numberOfGenes) {
-
     }
 
     private void spawnGrass(int numberOfGrassToSpawn) {
@@ -80,5 +82,14 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
 
+    }
+
+    public void removeDeadAnimals() {
+        Collection<Animal> allAnimalsOnMap = worldMap.getOrderedAnimals();
+        for (Animal animal : allAnimalsOnMap) {
+            if(!animal.isAnimalAlive()){
+                worldMap.removeAnimal(animal);
+            }
+        }
     }
 }
