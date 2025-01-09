@@ -89,9 +89,12 @@ class AnimalTest {
     void testDeadAnimalCannotRotate() {
         // Given
         MutationStrategy mutationStrategy = new RandomMutationStrategyVariant(2, 4);
-        Animal animal = new Animal(new Vector2d(2, 2), 8, 0, 80, 10, mutationStrategy);
+        Animal animal = new Animal(new Vector2d(2, 2), 8, 1, 80, 10, mutationStrategy);
 
-        // When & Then
+        // When
+        animal.move();
+
+        // Then
         assertThrows(AnimalDeadException.class, () -> animal.rotate(3));
     }
 
