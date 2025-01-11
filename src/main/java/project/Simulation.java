@@ -7,12 +7,11 @@ import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Collection;
 
 import java.util.Random;
-
 
 public class Simulation implements Runnable {
 
@@ -84,10 +83,11 @@ public class Simulation implements Runnable {
     }
 
     private void spawnGrass(int numberOfGrassToSpawn) {
+        int grassLeft = numberOfGrassToSpawn;
         int numberOfGrassToSpawnOnPreferredPositions = (int) Math.round(numberOfGrassToSpawn * 0.8);
         int numberOfGrassToSpawnOnNotPreferredPositions = numberOfGrassToSpawn - numberOfGrassToSpawnOnPreferredPositions;
 
-        while(numberOfGrassToSpawnOnPreferredPositions-- > 0) {
+        while(numberOfGrassToSpawnOnPreferredPositions > 0) {
             List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
 
             if(preferredPositions.isEmpty()) {
@@ -98,14 +98,14 @@ public class Simulation implements Runnable {
 
             try {
                 worldMap.place(new Grass(positionToSpawnGrass));
+                numberOfGrassToSpawnOnPreferredPositions--;
+                grassLeft--;
             } catch (IncorrectPositionException e) {
                 System.err.println(e.getMessage());
             }
         }
 
-        numberOfGrassToSpawnOnNotPreferredPositions += numberOfGrassToSpawnOnPreferredPositions + 1;
-
-        while(numberOfGrassToSpawnOnNotPreferredPositions-- > 0) {
+        while(numberOfGrassToSpawnOnNotPreferredPositions > 0) {
             List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
 
             if(notPreferredPositions.isEmpty()) {
@@ -116,6 +116,30 @@ public class Simulation implements Runnable {
 
             try {
                 worldMap.place(new Grass(positionToSpawnGrass));
+                numberOfGrassToSpawnOnNotPreferredPositions--;
+                grassLeft--;
+            } catch (IncorrectPositionException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+
+        while(grassLeft > 0) {
+            List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
+            List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
+
+            if(preferredPositions.isEmpty() && notPreferredPositions.isEmpty()) {
+                break;
+            }
+
+            List<Vector2d> availablePositions = new ArrayList<>();
+            availablePositions.addAll(preferredPositions);
+            availablePositions.addAll(notPreferredPositions);
+
+            Vector2d positionToSpawnGrass = availablePositions.get(rand.nextInt(availablePositions.size()));
+
+            try {
+                worldMap.place(new Grass(positionToSpawnGrass));
+                grassLeft--;
             } catch (IncorrectPositionException e) {
                 System.err.println(e.getMessage());
             }
