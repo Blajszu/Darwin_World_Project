@@ -146,6 +146,14 @@ public class Simulation implements Runnable {
         }
     }
 
+    private void moveAnimals() {
+        Collection<Animal> animals = worldMap.getOrderedAnimals();
+
+        for(Animal animal : animals) {
+            worldMap.move(animal);
+        }
+    }
+
     @Override
     public void run() {
 
