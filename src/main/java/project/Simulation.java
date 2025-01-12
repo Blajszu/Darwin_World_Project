@@ -201,5 +201,19 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
 
+        try {
+            while (true) {
+                removeDeadAnimals();
+                moveAnimals();
+                consumePlantsAndReproduce();
+                spawnGrass(numberOfGrassGrowingEveryDay);
+                System.out.println(worldMap);
+                Thread.sleep(500);
+            }
+        } catch (IncorrectPositionException e) {
+            System.err.printf("Error while running Simulation: %s%n", e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
