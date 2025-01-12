@@ -11,6 +11,7 @@ public class Simulation implements Runnable {
 
     private final WorldMap worldMap;
     private final int energyFromGrass;
+    private final int energyNeedToReproduce;
     private final int numberOfGrassGrowingEveryDay;
     private final boolean collectStatistics;
 
@@ -55,6 +56,7 @@ public class Simulation implements Runnable {
         };
 
         this.energyFromGrass = energyFromGrass;
+        this.energyNeedToReproduce = energyNeedToReproduce;
         this.numberOfGrassGrowingEveryDay = numberOfGrassGrowingEveryDay;
         this.collectStatistics = collectStatistics;
 
@@ -162,22 +164,21 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void consumePlants() {
-        for(Vector2d position : worldMap.getAllGrassPositions()) {
+    private void consumePlantsAndReproduce() throws IncorrectPositionException {
+        for(Vector2d position : worldMap.getAllAnimalsPositions()) {
+
             Optional<List<Animal>> animalsAtPosition = worldMap.animalsAt(position);
-
-            if(animalsAtPosition.isEmpty()) {
-                continue;
-            }
-
             List<Animal> resolvedConflictsAnimals = resolveConflicts(animalsAtPosition.get());
-            
-            if(resolvedConflictsAnimals.isEmpty()) {
-                continue;
-            }
 
             resolvedConflictsAnimals.getFirst().eat(energyFromGrass);
             worldMap.removeGrass(position);
+
+            Animal parent1 = resolvedConflictsAnimals.get(0);
+            Animal parent2 = resolvedConflictsAnimals.get(1);
+
+            if(parent1.getCurrentEnergy() >= energyNeedToReproduce && parent2.getCurrentEnergy() >= energyNeedToReproduce) {
+                worldMap.place(parent1.reproduce(parent2));
+            }
         }
     }
 
