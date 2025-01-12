@@ -9,7 +9,6 @@ import project.model.worldElements.*;
 
 import java.util.*;
 
-
 public class Simulation implements Runnable {
 
     private final WorldMap worldMap;
@@ -102,9 +101,7 @@ public class Simulation implements Runnable {
             }
         }
 
-        numberOfGrassToSpawnOnNotPreferredPositions += numberOfGrassToSpawnOnPreferredPositions + 1;
-
-        while(numberOfGrassToSpawnOnNotPreferredPositions-- > 0) {
+        while(numberOfGrassToSpawnOnNotPreferredPositions > 0) {
             List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
 
             if(notPreferredPositions.isEmpty()) {
