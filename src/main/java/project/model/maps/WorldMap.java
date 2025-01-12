@@ -25,8 +25,6 @@ public interface WorldMap {
 
     Collection<Vector2d> getAllAnimalsPositions();
 
-    Collection<Vector2d> getAllGrassPositions();
-
     List<Vector2d> getFreeGrassPreferredPositions();
 
     List<Vector2d> getFreeGrassNotPreferredPositions();
