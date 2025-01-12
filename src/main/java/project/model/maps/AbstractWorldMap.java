@@ -64,6 +64,11 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public Collection<Vector2d> getAllGrassPositions() {
+        return grassOnMap.keySet();
+    }
+
+    @Override
     public Boundary getMapBounds() {
         return mapBoundary;
     }
