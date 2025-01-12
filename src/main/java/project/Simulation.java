@@ -134,7 +134,7 @@ public class Simulation implements Runnable {
 
     }
 
-    public void removeDeadAnimals() {
+    private void removeDeadAnimals() {
         Collection<Animal> allAnimalsOnMap = worldMap.getOrderedAnimals();
         for (Animal animal : allAnimalsOnMap) {
             if(!animal.isAnimalAlive()){
