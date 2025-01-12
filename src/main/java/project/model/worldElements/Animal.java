@@ -114,7 +114,7 @@ public class Animal implements WorldElement{
 
     @Override
     public String toString() {
-        return switch (currentOrientation) {
+        return switch (getNextOrientation()) {
             case NORTH -> "N";
             case NORTHEAST -> "NE";
             case EAST -> "E";
