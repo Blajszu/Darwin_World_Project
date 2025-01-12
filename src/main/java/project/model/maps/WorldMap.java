@@ -23,7 +23,7 @@ public interface WorldMap {
 
     Collection<Animal> getOrderedAnimals();
 
-    Collection<Vector2d> getAllGrassPositions();
+    Collection<Vector2d> getAllAnimalsPositions();
 
     List<Vector2d> getFreeGrassPreferredPositions();
 
