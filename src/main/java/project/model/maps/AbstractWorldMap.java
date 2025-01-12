@@ -69,6 +69,11 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public Collection<Vector2d> getAllAnimalsPositions() {
+        return animalsOnMap.keySet();
+    }
+
+    @Override
     public Boundary getMapBounds() {
         return mapBoundary;
     }
