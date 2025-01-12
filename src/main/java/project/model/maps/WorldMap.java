@@ -17,6 +17,8 @@ public interface WorldMap {
 
     Optional<List<Animal>> animalsAt(Vector2d position);
 
+    boolean isGrassAt(Vector2d position);
+
     Collection<WorldElement> getElements();
 
     UUID getId();

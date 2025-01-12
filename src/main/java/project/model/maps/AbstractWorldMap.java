@@ -84,6 +84,11 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public boolean isGrassAt(Vector2d position) {
+        return grassOnMap.containsKey(position);
+    }
+
+    @Override
     public void place(WorldElement element) throws IncorrectPositionException {
         Vector2d position = element.getPosition();
 
