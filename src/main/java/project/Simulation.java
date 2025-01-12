@@ -162,6 +162,25 @@ public class Simulation implements Runnable {
         }
     }
 
+    private void consumePlants() {
+        for(Vector2d position : worldMap.getAllGrassPositions()) {
+            Optional<List<Animal>> animalsAtPosition = worldMap.animalsAt(position);
+
+            if(animalsAtPosition.isEmpty()) {
+                continue;
+            }
+
+            List<Animal> resolvedConflictsAnimals = resolveConflicts(animalsAtPosition.get());
+            
+            if(resolvedConflictsAnimals.isEmpty()) {
+                continue;
+            }
+
+            resolvedConflictsAnimals.getFirst().eat(energyFromGrass);
+            worldMap.removeGrass(position);
+        }
+    }
+
     private List<Animal> resolveConflicts(List<Animal> animals) {
         return animals.stream()
             .sorted(Comparator
