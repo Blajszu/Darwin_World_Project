@@ -3,6 +3,7 @@ package project.model.worldElements;
 import project.model.Vector2d;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class Animal implements WorldElement{
@@ -14,6 +15,8 @@ public class Animal implements WorldElement{
     private final MutationStrategy mutationStrategy;
     private final int energyOfWellFedAnimal;
     private final int energyUsedToReproduce;
+    private final LinkedList<Animal> animalsKids = new LinkedList<>();
+    private int lengthOfLife = 0;
     Random random = new Random();
 
     public Animal(Vector2d position, ArrayList<Integer> genes, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
@@ -84,6 +87,14 @@ public class Animal implements WorldElement{
         return MapDirection.values()[(currentOrientation.ordinal() + animalGenes.get(currentActiveGene)) % 8];
     }
 
+    public int getLengthOfLife() {
+        return lengthOfLife;
+    }
+
+    public LinkedList<Animal> getAnimalsKids() {
+        return new LinkedList<>(animalsKids);
+    }
+
     public String getResourceName() {
         return "Z %s".formatted(currentPosition.toString());
     }
@@ -127,8 +138,10 @@ public class Animal implements WorldElement{
         if (!this.isAnimalAlive()) {
             throw new AnimalDeadException("Animal can't rotate, because it is dead");
         }
+
         currentOrientation = currentOrientation.rotate(rotateAngle);
         currentActiveGene = (currentActiveGene + 1) % animalGenes.size();
+        lengthOfLife++;
     }
 
     public void move(Vector2d position) {
@@ -178,6 +191,9 @@ public class Animal implements WorldElement{
         this.currentEnergy = currentEnergy - energyUsedToReproduce;
         secondParent.currentEnergy -= energyUsedToReproduce;
 
-        return new Animal(this.currentPosition, genesFromBothParents, energyUsedToReproduce*2, energyOfWellFedAnimal, energyUsedToReproduce, mutationStrategy);
+        Animal babyAnimal = new Animal(this.currentPosition, genesFromBothParents, energyUsedToReproduce*2, energyOfWellFedAnimal, energyUsedToReproduce, mutationStrategy);
+        animalsKids.add(babyAnimal);
+
+        return babyAnimal;
     }
 }

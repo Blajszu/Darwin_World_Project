@@ -7,11 +7,7 @@ import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 import project.model.worldElements.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Collection;
-
-import java.util.Random;
+import java.util.*;
 
 public class Simulation implements Runnable {
 
@@ -154,11 +150,6 @@ public class Simulation implements Runnable {
         }
     }
 
-    @Override
-    public void run() {
-
-    }
-
     private void removeDeadAnimals() {
         Collection<Animal> allAnimalsOnMap = worldMap.getOrderedAnimals();
         for (Animal animal : allAnimalsOnMap) {
@@ -166,5 +157,20 @@ public class Simulation implements Runnable {
                 worldMap.removeAnimal(animal);
             }
         }
+    }
+
+    private List<Animal> resolveConflicts(List<Animal> animals) {
+        return animals.stream()
+            .sorted(Comparator
+                    .comparingInt(Animal::getCurrentEnergy).reversed()
+                    .thenComparingInt(Animal::getLengthOfLife).reversed()
+                    .thenComparingInt(animal -> animal.getAnimalsKids().size()).reversed()
+            )
+            .toList();
+    }
+
+    @Override
+    public void run() {
+
     }
 }
