@@ -1,10 +1,7 @@
 package project;
 
 import project.model.Vector2d;
-import project.model.maps.EquatorMap;
-import project.model.maps.IncorrectPositionException;
-import project.model.maps.MovingJungleMap;
-import project.model.maps.WorldMap;
+import project.model.maps.*;
 import project.model.worldElements.*;
 
 import java.util.*;
@@ -65,8 +62,12 @@ public class Simulation implements Runnable {
             case INCREMENT_DECREMENT -> new IncrementDecrementMutationStrategyVariant(minimalNumberOfMutation, maximumNumberOfMutation);
         };
 
-        spawnFirstAnimals(startNumberOfAnimals, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy, numberOfGenes);
-        spawnGrass(startNumberOfGrass);
+        try {
+            spawnFirstAnimals(startNumberOfAnimals, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy, numberOfGenes);
+            spawnGrass(startNumberOfGrass);
+        } catch (IncorrectPositionException e) {
+            System.err.printf("Error while creating Simulation: %s%n", e.getMessage());
+        }
     }
 
     private void spawnFirstAnimals(
@@ -75,10 +76,21 @@ public class Simulation implements Runnable {
             int energyNeedToReproduce,
             int energyUsedToReproduce,
             MutationStrategy mutationStrategy,
-            int numberOfGenes) {
+            int numberOfGenes) throws IncorrectPositionException {
+
+        Boundary mapBounds = worldMap.getMapBounds();
+        int mapWith = mapBounds.upperRight().getY() + 1;
+        int mapHeight = mapBounds.upperRight().getX() + 1;
+
+        for(int i = 0; i < numberOfAnimalsToSpawn; i++) {
+            Vector2d positionToSpawnAnimal = new Vector2d(rand.nextInt(mapWith), rand.nextInt(mapHeight));
+            Animal animal = new Animal(positionToSpawnAnimal, numberOfGenes, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy);
+
+            worldMap.place(animal);
+        }
     }
 
-    private void spawnGrass(int numberOfGrassToSpawn) {
+    private void spawnGrass(int numberOfGrassToSpawn) throws IncorrectPositionException {
         int grassLeft = numberOfGrassToSpawn;
         int numberOfGrassToSpawnOnPreferredPositions = (int) Math.round(numberOfGrassToSpawn * 0.8);
         int numberOfGrassToSpawnOnNotPreferredPositions = numberOfGrassToSpawn - numberOfGrassToSpawnOnPreferredPositions;
@@ -92,13 +104,9 @@ public class Simulation implements Runnable {
 
             Vector2d positionToSpawnGrass = preferredPositions.get(rand.nextInt(preferredPositions.size()));
 
-            try {
-                worldMap.place(new Grass(positionToSpawnGrass));
-                numberOfGrassToSpawnOnPreferredPositions--;
-                grassLeft--;
-            } catch (IncorrectPositionException e) {
-                System.err.println(e.getMessage());
-            }
+            worldMap.place(new Grass(positionToSpawnGrass));
+            numberOfGrassToSpawnOnPreferredPositions--;
+            grassLeft--;
         }
 
         while(numberOfGrassToSpawnOnNotPreferredPositions > 0) {
@@ -110,13 +118,9 @@ public class Simulation implements Runnable {
 
             Vector2d positionToSpawnGrass = notPreferredPositions.get(rand.nextInt(notPreferredPositions.size()));
 
-            try {
-                worldMap.place(new Grass(positionToSpawnGrass));
-                numberOfGrassToSpawnOnNotPreferredPositions--;
-                grassLeft--;
-            } catch (IncorrectPositionException e) {
-                System.err.println(e.getMessage());
-            }
+            worldMap.place(new Grass(positionToSpawnGrass));
+            numberOfGrassToSpawnOnNotPreferredPositions--;
+            grassLeft--;
         }
 
         while(grassLeft > 0) {
@@ -133,12 +137,8 @@ public class Simulation implements Runnable {
 
             Vector2d positionToSpawnGrass = availablePositions.get(rand.nextInt(availablePositions.size()));
 
-            try {
-                worldMap.place(new Grass(positionToSpawnGrass));
-                grassLeft--;
-            } catch (IncorrectPositionException e) {
-                System.err.println(e.getMessage());
-            }
+            worldMap.place(new Grass(positionToSpawnGrass));
+            grassLeft--;
         }
     }
 
