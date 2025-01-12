@@ -167,8 +167,14 @@ public class Simulation implements Runnable {
             Optional<List<Animal>> animalsAtPosition = worldMap.animalsAt(position);
             List<Animal> resolvedConflictsAnimals = resolveConflicts(animalsAtPosition.get());
 
-            resolvedConflictsAnimals.getFirst().eat(energyFromGrass);
-            worldMap.removeGrass(position);
+            if (worldMap.isGrassAt(position)) {
+                worldMap.removeGrass(position);
+                resolvedConflictsAnimals.getFirst().eat(energyFromGrass);
+            }
+
+            if(resolvedConflictsAnimals.size() < 2) {
+                continue;
+            }
 
             Animal parent1 = resolvedConflictsAnimals.get(0);
             Animal parent2 = resolvedConflictsAnimals.get(1);
@@ -192,5 +198,19 @@ public class Simulation implements Runnable {
     @Override
     public void run() {
 
+        try {
+            while (true) {
+                removeDeadAnimals();
+                moveAnimals();
+                consumePlantsAndReproduce();
+                spawnGrass(numberOfGrassGrowingEveryDay);
+                System.out.println(worldMap);
+                Thread.sleep(500);
+            }
+        } catch (IncorrectPositionException e) {
+            System.err.printf("Error while running Simulation: %s%n", e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
