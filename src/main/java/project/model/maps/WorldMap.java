@@ -36,4 +36,10 @@ public interface WorldMap {
     void removeGrass(Vector2d position);
 
     Boundary getMapBounds();
+
+    void addObserver(MapChangeListener mapChangeListener);
+
+    void removeObserver(MapChangeListener mapChangeListener);
+
+    void mapChangeEvent(String message);
 }

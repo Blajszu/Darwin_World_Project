@@ -11,7 +11,6 @@ import project.model.maps.Boundary;
 import project.model.maps.MapChangeListener;
 import project.model.maps.WorldMap;
 import project.model.worldElements.WorldElementBox;
-import project.model.maps.GrassField;
 import project.model.Vector2d;
 import project.model.worldElements.Grass;
 
@@ -68,10 +67,7 @@ public class SimulationRunPresenter implements MapChangeListener {
         List<WorldElementBox> worldElementBoxes;
         animalBoxes.forEach(WorldElementBox::update);
 
-        if(worldMap instanceof GrassField)
-            worldElementBoxes = Stream.concat(grassBoxes.stream(), animalBoxes.stream()).toList();
-        else
-            worldElementBoxes = animalBoxes;
+        worldElementBoxes = Stream.concat(grassBoxes.stream(), animalBoxes.stream()).toList();
 
         worldElementBoxes.forEach(worldElementBox -> {
             Vector2d position = worldElementBox.getElement().getPosition();
@@ -86,17 +82,15 @@ public class SimulationRunPresenter implements MapChangeListener {
     }
 
     private void drawMap() {
-        if(grassBoxes == null && worldMap instanceof GrassField)
-            grassBoxes = worldMap.getElements().stream()
+        grassBoxes = worldMap.getElements().stream()
                 .filter(worldElement -> worldElement instanceof Grass)
                 .map(WorldElementBox::new)
                 .toList();
 
-        if(animalBoxes == null)
-            animalBoxes = worldMap.getOrderedAnimals().stream().map(WorldElementBox::new).toList();
+        animalBoxes = worldMap.getOrderedAnimals().stream().map(WorldElementBox::new).toList();
 
         clearGrid();
-        currentBounds = worldMap.getCurrentBounds();
+        currentBounds = worldMap.getMapBounds();
         int mapHeight = currentBounds.upperRight().getY() - currentBounds.lowerLeft().getY();
         int mapWidth = currentBounds.upperRight().getX() - currentBounds.lowerLeft().getX();
 
