@@ -193,11 +193,17 @@ public class Simulation implements Runnable {
         try {
             while (true) {
                 removeDeadAnimals();
+                worldMap.mapChangeEvent("usunieto zwierzaki");
+                Thread.sleep(200);
                 moveAnimals();
+                worldMap.mapChangeEvent("ruch zwierzaki");
+                Thread.sleep(200);
                 consumePlantsAndReproduce();
+                worldMap.mapChangeEvent("jedzonko");
+                Thread.sleep(200);
                 spawnGrass(numberOfGrassGrowingEveryDay);
-                System.out.println(worldMap);
-                Thread.sleep(500);
+                worldMap.mapChangeEvent("dodano trawe");
+                Thread.sleep(200);
             }
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while running Simulation: %s%n", e.getMessage());

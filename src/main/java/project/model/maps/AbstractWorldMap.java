@@ -120,7 +120,6 @@ public abstract class AbstractWorldMap implements WorldMap {
             removeAnimal(animal);
             animalsOnMap.computeIfAbsent(nextPosition, k -> new LinkedList<>()).add(animal);
             animal.move();
-            mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
             return;
         }
 
@@ -134,7 +133,6 @@ public abstract class AbstractWorldMap implements WorldMap {
             removeAnimal(animal);
             animalsOnMap.computeIfAbsent(nextPosition, k -> new LinkedList<>()).add(animal);
             animal.move(nextPosition);
-            mapChangeEvent("Animal moved from %s to %s ".formatted(currentPosition, nextPosition));
         }
     }
 
@@ -166,7 +164,7 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    protected void mapChangeEvent(String message) {
+    public void mapChangeEvent(String message) {
         for(MapChangeListener observer : observers) {
             observer.mapChanged(this, message);
         }
