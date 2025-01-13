@@ -6,10 +6,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
-public class WorldElementBox {
+import java.util.HashMap;
+import java.util.Map;
 
+public class WorldElementBox {
     private final VBox container = new VBox();
     private final WorldElement element;
+    private static final Map<String, Image> imageCache = new HashMap<>();
 
     public WorldElementBox(WorldElement element) {
         this.element = element;
@@ -30,7 +33,7 @@ public class WorldElementBox {
     }
 
     private void fillContent() {
-        Image image = new Image(element.getResourceFileName());
+        Image image = getOrCreateImage(element.getResourceFileName());
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(20);
         imageView.setFitWidth(20);
@@ -40,4 +43,9 @@ public class WorldElementBox {
         container.getChildren().addAll(imageView, label);
         container.setAlignment(Pos.CENTER);
     }
+
+    private Image getOrCreateImage(String resourceFileName) {
+        return imageCache.computeIfAbsent(resourceFileName, Image::new);
+    }
 }
+
