@@ -6,16 +6,83 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.CheckBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0" stylesheets="style.css"
             fx:controller="project.presenter.SimulationStartPresenter">
     <center>
         <VBox alignment="CENTER">
-            <Label fx:id="infoLabel" textAlignment="CENTER"/>
+            <HBox alignment="CENTER" spacing="20">
+                <VBox alignment="CENTER_RIGHT">
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Height:</Label>
+                        <TextField fx:id="height" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Width:</Label>
+                        <TextField fx:id="width" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Growth grass variant:</Label>
+                        <ComboBox fx:id="growthGrassVariant" prefWidth="150"/>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Start number of grass:</Label>
+                        <TextField fx:id="startNumberOfGrass" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Energy from grass</Label>
+                        <TextField fx:id="energyFromGrass" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Number of grass growing everyday:</Label>
+                        <TextField fx:id="numberOfGrassGrowingEveryDay" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Start number of animals:</Label>
+                        <TextField fx:id="startNumberOfAnimals" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Initial animal's energy:</Label>
+                        <TextField fx:id="initialAnimalsEnergy" />
+                    </HBox>
+                </VBox>
+                <VBox alignment="CENTER">
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Energy need to reproduce:</Label>
+                        <TextField fx:id="energyNeedToReproduce" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Energy used to reproduce:</Label>
+                        <TextField fx:id="energyUsedToReproduce" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Minimal number of mutation:</Label>
+                        <TextField fx:id="minimalNumberOfMutation" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Maximum number of energy:</Label>
+                        <TextField fx:id="maximumNumberOfMutation" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Mutation variant:</Label>
+                        <ComboBox fx:id="mutationVariant" prefWidth="150"/>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Number of genes:</Label>
+                        <TextField fx:id="numberOfGenes" />
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Label>Collect statistics:</Label>
+                        <CheckBox fx:id="collectStatistics"/>
+                    </HBox>
+                </VBox>
+            </HBox>
             <HBox alignment="CENTER">
-                <Button onAction="#onSimulationStartClicked" text="Start"/>
-                <TextField fx:id="moveList" />
+                <Button fx:id="startSimulation" text="START SIMULATION" onAction="#onSimulationStartClicked"/>
+                <Label fx:id="errors"/>
             </HBox>
         </VBox>
     </center>
