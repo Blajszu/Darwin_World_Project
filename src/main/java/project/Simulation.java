@@ -17,9 +17,7 @@ public class Simulation implements Runnable {
     private final Random rand = new Random();
 
     public Simulation(
-            int mapHeight,
-            int mapWith,
-            GrowthGrassVariant growthVariant,
+            WorldMap worldMap,
             int startNumberOfGrass,
             int energyFromGrass,
             int numberOfGrassGrowingEveryDay,
@@ -34,8 +32,6 @@ public class Simulation implements Runnable {
             boolean collectStatistics) {
 
         if(
-                mapHeight <= 0 ||
-                mapWith <= 0 ||
                 startNumberOfGrass < 0 ||
                 energyFromGrass <= 0 ||
                 numberOfGrassGrowingEveryDay <= 0 ||
@@ -49,11 +45,7 @@ public class Simulation implements Runnable {
             throw new IllegalArgumentException("Invalid Simulation parameters");
         }
 
-        worldMap = switch (growthVariant) {
-            case EQUATOR_MAP -> new EquatorMap(mapHeight, mapWith);
-            case MOVING_JUNGLE_MAP -> new MovingJungleMap(mapHeight, mapWith);
-        };
-
+        this.worldMap = worldMap;
         this.energyFromGrass = energyFromGrass;
         this.energyNeedToReproduce = energyNeedToReproduce;
         this.numberOfGrassGrowingEveryDay = numberOfGrassGrowingEveryDay;
