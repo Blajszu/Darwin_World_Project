@@ -1,6 +1,8 @@
-package project.model.maps;
+package project.listener;
 
-public class ConsoleMapDisplay implements MapChangeListener{
+import project.model.maps.WorldMap;
+
+public class SimulationMapDisplay implements SimulationChangeListener {
 
     private int eventsCounter = 1;
 

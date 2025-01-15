@@ -8,7 +8,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import project.model.maps.Boundary;
-import project.model.maps.MapChangeListener;
+import project.listener.SimulationChangeListener;
 import project.model.maps.WorldMap;
 import project.model.worldElements.WorldElementBox;
 import project.model.Vector2d;
@@ -17,7 +17,7 @@ import project.model.worldElements.Grass;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class SimulationRunPresenter implements MapChangeListener {
+public class SimulationRunPresenter implements SimulationChangeListener {
 
     private final int CELL_WIDTH = 55;
     private final int CELL_HEIGHT = 55;

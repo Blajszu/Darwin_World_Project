@@ -1,5 +1,6 @@
 package project.model.maps;
 
+import project.listener.SimulationChangeListener;
 import project.model.Vector2d;
 import project.model.worldElements.Animal;
 import project.model.worldElements.Grass;
@@ -21,7 +22,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2d, LinkedList<Animal>> animalsOnMap = new HashMap<>();
     protected final Map<Vector2d, Grass> grassOnMap = new HashMap<>();
 
-    private final List<MapChangeListener> observers = new ArrayList<>();
+    private final List<SimulationChangeListener> observers = new ArrayList<>();
     private final UUID uuid = UUID.randomUUID();
     private final MapVisualizer visualizer;
 
@@ -136,11 +137,11 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    public void addObserver(MapChangeListener observer) {
+    public void addObserver(SimulationChangeListener observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(MapChangeListener observer) {
+    public void removeObserver(SimulationChangeListener observer) {
         observers.remove(observer);
     }
 
@@ -165,7 +166,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     public void mapChangeEvent(String message) {
-        for(MapChangeListener observer : observers) {
+        for(SimulationChangeListener observer : observers) {
             observer.mapChanged(this, message);
         }
     }

@@ -1,5 +1,6 @@
 package project.model.maps;
 
+import project.listener.SimulationChangeListener;
 import project.model.Vector2d;
 import project.model.worldElements.Animal;
 import project.model.worldElements.WorldElement;
@@ -37,9 +38,9 @@ public interface WorldMap {
 
     Boundary getMapBounds();
 
-    void addObserver(MapChangeListener mapChangeListener);
+    void addObserver(SimulationChangeListener simulationChangeListener);
 
-    void removeObserver(MapChangeListener mapChangeListener);
+    void removeObserver(SimulationChangeListener simulationChangeListener);
 
     void mapChangeEvent(String message);
 }
