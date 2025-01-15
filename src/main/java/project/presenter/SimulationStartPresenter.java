@@ -12,6 +12,7 @@ import project.GrowthGrassVariant;
 import project.MutationVariant;
 import project.Simulation;
 import project.SimulationEngine;
+import project.listener.SimulationMapDisplay;
 import project.model.maps.EquatorMap;
 import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
@@ -55,6 +56,8 @@ public class SimulationStartPresenter {
     public Button startSimulation;
     @FXML
     public Label errors;
+
+    private final SimulationMapDisplay simulationMapDisplay = new SimulationMapDisplay();
 
     @FXML
     public void initialize() {
@@ -143,6 +146,7 @@ public class SimulationStartPresenter {
             );
 
             simulation.addObserver(simulationRunPresenter);
+            simulation.addObserver(simulationMapDisplay);
 
             SimulationEngine engine = new SimulationEngine(List.of(simulation));
             engine.runAsync();

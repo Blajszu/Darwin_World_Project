@@ -5,5 +5,5 @@ import project.model.maps.WorldMap;
 @FunctionalInterface
 public interface SimulationChangeListener {
 
-    void mapChanged(WorldMap worldMap, String message);
+    void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, int day);
 }

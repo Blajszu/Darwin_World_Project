@@ -8,6 +8,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import project.listener.SimulationChangeListener;
+import project.listener.SimulationEventType;
 import project.model.maps.Boundary;
 import project.model.maps.WorldMap;
 import project.model.worldElements.WorldElementBox;
@@ -99,11 +100,10 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     }
 
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
-        setWorldMap(worldMap);
+    public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, int day) {
         Platform.runLater(() -> {
             drawMap();
-            moveLabel.setText(message);
+            moveLabel.setText("%s%n Day: %s".formatted(eventType, day));
         });
     }
 }

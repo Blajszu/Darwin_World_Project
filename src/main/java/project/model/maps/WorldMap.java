@@ -1,6 +1,5 @@
 package project.model.maps;
 
-import project.listener.SimulationChangeListener;
 import project.model.Vector2d;
 import project.model.worldElements.Animal;
 import project.model.worldElements.WorldElement;
