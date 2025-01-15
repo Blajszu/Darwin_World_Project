@@ -12,7 +12,6 @@ import project.GrowthGrassVariant;
 import project.MutationVariant;
 import project.Simulation;
 import project.SimulationEngine;
-import project.listener.SimulationMapDisplay;
 import project.model.maps.EquatorMap;
 import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
@@ -126,8 +125,6 @@ public class SimulationStartPresenter {
             };
 
             simulationRunPresenter.setWorldMap(worldMap);
-            worldMap.addObserver(simulationRunPresenter);
-            worldMap.addObserver(new SimulationMapDisplay());
 
             Simulation simulation = new Simulation(
                     worldMap,
@@ -144,6 +141,9 @@ public class SimulationStartPresenter {
                     numberOfGenesOfAnimal,
                     collectStatistics.isSelected()
             );
+
+            simulation.addObserver(simulationRunPresenter);
+
             SimulationEngine engine = new SimulationEngine(List.of(simulation));
             engine.runAsync();
         }

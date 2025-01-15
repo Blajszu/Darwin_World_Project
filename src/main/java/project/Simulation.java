@@ -1,5 +1,6 @@
 package project;
 
+import project.listener.SimulationChangeListener;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
@@ -7,6 +8,8 @@ import project.model.worldElements.*;
 import java.util.*;
 
 public class Simulation implements Runnable {
+
+    private final ArrayList<SimulationChangeListener> listeners = new ArrayList<>();
 
     private final WorldMap worldMap;
     private final int energyFromGrass;
@@ -187,22 +190,36 @@ public class Simulation implements Runnable {
             .toList();
     }
 
+    public void addObserver(SimulationChangeListener observer) {
+        listeners.add(observer);
+    }
+
+    public void removeObserver(SimulationChangeListener observer) {
+        listeners.remove(observer);
+    }
+
+    private void SimulationChangeEvent(String message) {
+        for(SimulationChangeListener observer : listeners) {
+            observer.mapChanged(this.worldMap, message);
+        }
+    }
+
     @Override
     public void run() {
 
         try {
             while (true) {
                 removeDeadAnimals();
-                worldMap.mapChangeEvent("usunieto zwierzaki");
+                SimulationChangeEvent("usunieto zwierzaki");
                 Thread.sleep(200);
                 moveAnimals();
-                worldMap.mapChangeEvent("ruch zwierzaki");
+                SimulationChangeEvent("ruch zwierzaki");
                 Thread.sleep(200);
                 consumePlantsAndReproduce();
-                worldMap.mapChangeEvent("jedzonko");
+                SimulationChangeEvent("jedzonko");
                 Thread.sleep(200);
                 spawnGrass(numberOfGrassGrowingEveryDay);
-                worldMap.mapChangeEvent("dodano trawe");
+                SimulationChangeEvent("dodano trawe");
                 Thread.sleep(200);
             }
         } catch (IncorrectPositionException e) {
