@@ -1,7 +1,5 @@
 package project.model.maps;
 
-import org.w3c.dom.ls.LSOutput;
-
 public class ConsoleMapDisplay implements MapChangeListener{
 
     private int eventsCounter = 1;

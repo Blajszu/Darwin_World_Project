@@ -12,7 +12,6 @@ import project.GrowthGrassVariant;
 import project.MutationVariant;
 import project.Simulation;
 import project.SimulationEngine;
-import project.model.Vector2d;
 import project.model.maps.ConsoleMapDisplay;
 import project.model.maps.EquatorMap;
 import project.model.maps.MovingJungleMap;
@@ -20,10 +19,6 @@ import project.model.maps.WorldMap;
 
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationStartPresenter {
