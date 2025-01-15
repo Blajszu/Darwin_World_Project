@@ -137,14 +137,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         }
     }
 
-    public void addObserver(SimulationChangeListener observer) {
-        observers.add(observer);
-    }
-
-    public void removeObserver(SimulationChangeListener observer) {
-        observers.remove(observer);
-    }
-
     @Override
     public Optional<List<Animal>> animalsAt(Vector2d position) {
         return Optional.ofNullable(animalsOnMap.get(position));
@@ -162,12 +154,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         if (list.isEmpty()) {
             animalsOnMap.remove(position);
-        }
-    }
-
-    public void mapChangeEvent(String message) {
-        for(SimulationChangeListener observer : observers) {
-            observer.mapChanged(this, message);
         }
     }
 
