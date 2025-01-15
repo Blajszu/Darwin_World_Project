@@ -1,6 +1,7 @@
 package project;
 
 import project.listener.SimulationChangeListener;
+import project.listener.SimulationEventType;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
@@ -16,6 +17,8 @@ public class Simulation implements Runnable {
     private final int energyNeedToReproduce;
     private final int numberOfGrassGrowingEveryDay;
     private final boolean collectStatistics;
+
+    private int currentDay = 0;
 
     private final Random rand = new Random();
 
@@ -198,9 +201,10 @@ public class Simulation implements Runnable {
         listeners.remove(observer);
     }
 
-    private void SimulationChangeEvent(String message) {
+    private void SimulationChangeEvent(SimulationEventType eventType) {
+
         for(SimulationChangeListener observer : listeners) {
-            observer.mapChanged(this.worldMap, message);
+            observer.handleChangeEvent(worldMap, eventType, currentDay);
         }
     }
 
@@ -210,17 +214,20 @@ public class Simulation implements Runnable {
         try {
             while (true) {
                 removeDeadAnimals();
-                SimulationChangeEvent("usunieto zwierzaki");
+                SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
                 Thread.sleep(200);
                 moveAnimals();
-                SimulationChangeEvent("ruch zwierzaki");
+                SimulationChangeEvent(SimulationEventType.ANIMALS_MOVED);
                 Thread.sleep(200);
                 consumePlantsAndReproduce();
-                SimulationChangeEvent("jedzonko");
+                SimulationChangeEvent(SimulationEventType.FOOD_CONSUMED);
                 Thread.sleep(200);
                 spawnGrass(numberOfGrassGrowingEveryDay);
-                SimulationChangeEvent("dodano trawe");
+                SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
                 Thread.sleep(200);
+
+                SimulationChangeEvent(SimulationEventType.DAY_ENDED);
+                currentDay++;
             }
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while running Simulation: %s%n", e.getMessage());
