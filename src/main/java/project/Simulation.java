@@ -18,7 +18,6 @@ public class Simulation implements Runnable {
     private final int energyFromGrass;
     private final int energyNeedToReproduce;
     private final int numberOfGrassGrowingEveryDay;
-    private final boolean collectStatistics;
 
     private int currentDay = 0;
 
@@ -38,8 +37,7 @@ public class Simulation implements Runnable {
             int minimalNumberOfMutation,
             int maximumNumberOfMutation,
             MutationVariant mutationVariant,
-            int numberOfGenes,
-            boolean collectStatistics) {
+            int numberOfGenes) {
 
         if(
                 startNumberOfGrass < 0 ||
@@ -59,7 +57,6 @@ public class Simulation implements Runnable {
         this.energyFromGrass = energyFromGrass;
         this.energyNeedToReproduce = energyNeedToReproduce;
         this.numberOfGrassGrowingEveryDay = numberOfGrassGrowingEveryDay;
-        this.collectStatistics = collectStatistics;
 
         MutationStrategy mutationStrategy = switch (mutationVariant) {
             case RANDOM -> new RandomMutationStrategyVariant(minimalNumberOfMutation, maximumNumberOfMutation);
