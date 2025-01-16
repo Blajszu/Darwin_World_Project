@@ -14,6 +14,7 @@ import project.model.maps.WorldMap;
 import project.model.worldElements.WorldElementBox;
 import project.model.Vector2d;
 import project.model.worldElements.Grass;
+import project.statistics.StatisticsRecord;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -100,10 +101,10 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     }
 
     @Override
-    public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, int day) {
+    public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, StatisticsRecord statisticsRecord) {
         Platform.runLater(() -> {
             drawMap();
-            moveLabel.setText("%s%n Day: %s".formatted(eventType, day));
+            moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
         });
     }
 }

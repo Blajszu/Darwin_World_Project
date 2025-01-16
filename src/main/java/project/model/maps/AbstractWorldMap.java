@@ -85,6 +85,26 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public int getNumberOfAnimals() {
+        return animalsOnMap.size();
+    }
+
+    @Override
+    public int getNumberOfGrass() {
+        return grassOnMap.size();
+    }
+
+    @Override
+    public int getMapHeight() {
+        return height;
+    }
+
+    @Override
+    public int getMapWidth() {
+        return width;
+    }
+
+    @Override
     public boolean isGrassAt(Vector2d position) {
         return grassOnMap.containsKey(position);
     }

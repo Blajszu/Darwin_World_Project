@@ -36,4 +36,12 @@ public interface WorldMap {
     void removeGrass(Vector2d position);
 
     Boundary getMapBounds();
+
+    int getNumberOfAnimals();
+
+    int getNumberOfGrass();
+
+    int getMapHeight();
+
+    int getMapWidth();
 }

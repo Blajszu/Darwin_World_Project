@@ -5,18 +5,21 @@ import project.model.Vector2d;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Animal implements WorldElement{
     private MapDirection currentOrientation;
     private Vector2d currentPosition;
     private int currentEnergy;
     private final ArrayList<Integer> animalGenes = new ArrayList<>();
+    private String animalGenesString;
     private int currentActiveGene;
     private final MutationStrategy mutationStrategy;
     private final int energyOfWellFedAnimal;
     private final int energyUsedToReproduce;
     private final LinkedList<Animal> animalsKids = new LinkedList<>();
     private int lengthOfLife = 0;
+
     Random random = new Random();
 
     public Animal(Vector2d position, ArrayList<Integer> genes, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
@@ -30,6 +33,10 @@ public class Animal implements WorldElement{
 
         animalGenes.addAll(genes);
         currentActiveGene = random.nextInt(0, animalGenes.size());
+
+        animalGenesString = animalGenes.stream()
+            .map(Object::toString)
+            .collect(Collectors.joining(""));
     }
 
     public Animal(Vector2d position, int numberOfGenes, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
@@ -44,6 +51,10 @@ public class Animal implements WorldElement{
         }
 
         currentActiveGene = random.nextInt(0, animalGenes.size());
+
+        animalGenesString = animalGenes.stream()
+            .map(Object::toString)
+            .collect(Collectors.joining(""));
     }
 
     private Animal(Vector2d position, int initialEnergy,  int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
@@ -78,6 +89,8 @@ public class Animal implements WorldElement{
     public ArrayList<Integer> getAnimalGenes() {
         return new ArrayList<>(animalGenes);
     }
+
+    public String getAnimalGenesString() { return animalGenesString; }
 
     public Vector2d getNextPosition() {
         return currentPosition.add(MapDirection.values()[getNextOrientation().ordinal()].toUnitVector());
