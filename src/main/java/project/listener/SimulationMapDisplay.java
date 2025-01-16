@@ -1,16 +1,16 @@
-package project.model.maps;
+package project.listener;
 
-import org.w3c.dom.ls.LSOutput;
+import project.model.maps.WorldMap;
 
-public class ConsoleMapDisplay implements MapChangeListener{
+public class SimulationMapDisplay implements SimulationChangeListener {
 
     private int eventsCounter = 1;
 
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
+    public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, int day) {
         synchronized (System.out) {
             System.out.println("Map ID: " + worldMap.getId());
-            System.out.println(message);
+            System.out.println(eventType);
             System.out.println(worldMap);
             System.out.println("Events counter: " + eventsCounter);
             System.out.println("================\n");

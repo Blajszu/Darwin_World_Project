@@ -7,8 +7,9 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import project.listener.SimulationChangeListener;
+import project.listener.SimulationEventType;
 import project.model.maps.Boundary;
-import project.model.maps.MapChangeListener;
 import project.model.maps.WorldMap;
 import project.model.worldElements.WorldElementBox;
 import project.model.Vector2d;
@@ -17,7 +18,7 @@ import project.model.worldElements.Grass;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class SimulationRunPresenter implements MapChangeListener {
+public class SimulationRunPresenter implements SimulationChangeListener {
 
     private final int CELL_WIDTH = 55;
     private final int CELL_HEIGHT = 55;
@@ -99,11 +100,10 @@ public class SimulationRunPresenter implements MapChangeListener {
     }
 
     @Override
-    public void mapChanged(WorldMap worldMap, String message) {
-        setWorldMap(worldMap);
+    public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, int day) {
         Platform.runLater(() -> {
             drawMap();
-            moveLabel.setText(message);
+            moveLabel.setText("%s%n Day: %s".formatted(eventType, day));
         });
     }
 }

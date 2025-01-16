@@ -1,5 +1,7 @@
 package project;
 
+import project.listener.SimulationChangeListener;
+import project.listener.SimulationEventType;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
@@ -8,11 +10,15 @@ import java.util.*;
 
 public class Simulation implements Runnable {
 
+    private final ArrayList<SimulationChangeListener> listeners = new ArrayList<>();
+
     private final WorldMap worldMap;
     private final int energyFromGrass;
     private final int energyNeedToReproduce;
     private final int numberOfGrassGrowingEveryDay;
     private final boolean collectStatistics;
+
+    private int currentDay = 0;
 
     private final Random rand = new Random();
 
@@ -187,23 +193,41 @@ public class Simulation implements Runnable {
             .toList();
     }
 
+    public void addObserver(SimulationChangeListener observer) {
+        listeners.add(observer);
+    }
+
+    public void removeObserver(SimulationChangeListener observer) {
+        listeners.remove(observer);
+    }
+
+    private void SimulationChangeEvent(SimulationEventType eventType) {
+
+        for(SimulationChangeListener observer : listeners) {
+            observer.handleChangeEvent(worldMap, eventType, currentDay);
+        }
+    }
+
     @Override
     public void run() {
 
         try {
             while (true) {
                 removeDeadAnimals();
-                worldMap.mapChangeEvent("usunieto zwierzaki");
+                SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
                 Thread.sleep(200);
                 moveAnimals();
-                worldMap.mapChangeEvent("ruch zwierzaki");
+                SimulationChangeEvent(SimulationEventType.ANIMALS_MOVED);
                 Thread.sleep(200);
                 consumePlantsAndReproduce();
-                worldMap.mapChangeEvent("jedzonko");
+                SimulationChangeEvent(SimulationEventType.FOOD_CONSUMED);
                 Thread.sleep(200);
                 spawnGrass(numberOfGrassGrowingEveryDay);
-                worldMap.mapChangeEvent("dodano trawe");
+                SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
                 Thread.sleep(200);
+
+                SimulationChangeEvent(SimulationEventType.DAY_ENDED);
+                currentDay++;
             }
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while running Simulation: %s%n", e.getMessage());

@@ -12,18 +12,13 @@ import project.GrowthGrassVariant;
 import project.MutationVariant;
 import project.Simulation;
 import project.SimulationEngine;
-import project.model.Vector2d;
-import project.model.maps.ConsoleMapDisplay;
+import project.listener.SimulationMapDisplay;
 import project.model.maps.EquatorMap;
 import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SimulationStartPresenter {
@@ -61,6 +56,8 @@ public class SimulationStartPresenter {
     public Button startSimulation;
     @FXML
     public Label errors;
+
+    private final SimulationMapDisplay simulationMapDisplay = new SimulationMapDisplay();
 
     @FXML
     public void initialize() {
@@ -131,8 +128,6 @@ public class SimulationStartPresenter {
             };
 
             simulationRunPresenter.setWorldMap(worldMap);
-            worldMap.addObserver(simulationRunPresenter);
-            worldMap.addObserver(new ConsoleMapDisplay());
 
             Simulation simulation = new Simulation(
                     worldMap,
@@ -149,6 +144,10 @@ public class SimulationStartPresenter {
                     numberOfGenesOfAnimal,
                     collectStatistics.isSelected()
             );
+
+            simulation.addObserver(simulationRunPresenter);
+            simulation.addObserver(simulationMapDisplay);
+
             SimulationEngine engine = new SimulationEngine(List.of(simulation));
             engine.runAsync();
         }
