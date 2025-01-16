@@ -13,6 +13,7 @@ import project.MutationVariant;
 import project.Simulation;
 import project.SimulationEngine;
 import project.listener.SimulationMapDisplay;
+import project.listener.SimulationSaveStatistics;
 import project.model.maps.EquatorMap;
 import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
@@ -141,15 +142,23 @@ public class SimulationStartPresenter {
                     givenMinimalNumberOfMutation,
                     givenMaximumNumberOfMutation,
                     mutationVariant.getValue(),
-                    numberOfGenesOfAnimal,
-                    collectStatistics.isSelected()
+                    numberOfGenesOfAnimal
             );
 
             simulation.addObserver(simulationRunPresenter);
             simulation.addObserver(simulationMapDisplay);
 
-            SimulationEngine engine = new SimulationEngine(List.of(simulation));
-            engine.runAsync();
+            if(collectStatistics.isSelected()) {
+                try (SimulationSaveStatistics stats = new SimulationSaveStatistics(worldMap)) {
+                    simulation.addObserver(stats);
+                    SimulationEngine engine = new SimulationEngine(List.of(simulation));
+                    engine.runAsync();
+                }
+            }
+            else {
+                SimulationEngine engine = new SimulationEngine(List.of(simulation));
+                engine.runAsync();
+            }
         }
         catch (IllegalArgumentException | IOException e) {
             errors.setText(e.getMessage());
