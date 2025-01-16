@@ -14,8 +14,6 @@ import project.Simulation;
 import project.SimulationEngine;
 import project.listener.SimulationMapDisplay;
 import project.listener.SimulationSaveStatistics;
-import project.model.maps.EquatorMap;
-import project.model.maps.MovingJungleMap;
 import project.model.maps.WorldMap;
 
 
@@ -57,6 +55,12 @@ public class SimulationStartPresenter {
     public Button startSimulation;
     @FXML
     public Label errors;
+    @FXML
+    public ComboBox<String> chooseParameters;
+    @FXML
+    public Button saveParameters;
+    @FXML
+    public TextField fileName;
 
     private final SimulationMapDisplay simulationMapDisplay = new SimulationMapDisplay();
 
@@ -90,24 +94,23 @@ public class SimulationStartPresenter {
 
         mutationVariant.getItems().addAll(MutationVariant.values());
         growthGrassVariant.getItems().addAll(GrowthGrassVariant.values());
+
+        chooseParameters.getItems().addAll(SimulationPresets.getCorrectFilesNames());
+
+        fileName.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.isEmpty()) {
+                saveParameters.setDisable(false);
+            }
+            else {
+                saveParameters.setDisable(true);
+            }
+        });
     }
 
     public void onSimulationStartClicked() {
-            int mapHeight = Integer.parseInt(height.getText());
-            int mapWidth = Integer.parseInt(width.getText());
-            int startNumberOfGrassOnMap = Integer.parseInt(startNumberOfGrass.getText());
-            int givenEnergyFromGrass = Integer.parseInt(energyFromGrass.getText());
-            int givenNumberOfGrassGrowingEveryDay = Integer.parseInt(numberOfGrassGrowingEveryDay.getText());
-            int startNumberOfAnimalsOnMap = Integer.parseInt(startNumberOfAnimals.getText());
-            int givenInitialAnimalsEnergy = Integer.parseInt(initialAnimalsEnergy.getText());
-            int givenEnergyNeedToReproduce = Integer.parseInt(energyNeedToReproduce.getText());
-            int givenEnergyUsedToReproduce = Integer.parseInt(energyUsedToReproduce.getText());
-            int givenMinimalNumberOfMutation = Integer.parseInt(minimalNumberOfMutation.getText());
-            int givenMaximumNumberOfMutation = Integer.parseInt(maximumNumberOfMutation.getText());
-            int numberOfGenesOfAnimal = Integer.parseInt(numberOfGenes.getText());
-
-
         try {
+            SimulationParameters simulationParameters = getParameters();
+
             Stage simulationStage = new Stage();
 
             FXMLLoader loader = new FXMLLoader();
@@ -123,30 +126,13 @@ public class SimulationStartPresenter {
 
             simulationStage.show();
 
-            WorldMap worldMap = switch(growthGrassVariant.getValue()) {
-                case EQUATOR_MAP -> new EquatorMap(mapHeight, mapWidth);
-                case MOVING_JUNGLE_MAP -> new MovingJungleMap(mapHeight, mapWidth);
-            };
+            Simulation simulation = new Simulation(simulationParameters);
 
-            simulationRunPresenter.setWorldMap(worldMap);
-
-            Simulation simulation = new Simulation(
-                    worldMap,
-                    startNumberOfGrassOnMap,
-                    givenEnergyFromGrass,
-                    givenNumberOfGrassGrowingEveryDay,
-                    startNumberOfAnimalsOnMap,
-                    givenInitialAnimalsEnergy,
-                    givenEnergyNeedToReproduce,
-                    givenEnergyUsedToReproduce,
-                    givenMinimalNumberOfMutation,
-                    givenMaximumNumberOfMutation,
-                    mutationVariant.getValue(),
-                    numberOfGenesOfAnimal
-            );
 
             simulation.addObserver(simulationRunPresenter);
             simulation.addObserver(simulationMapDisplay);
+            WorldMap worldMap = simulation.getWorldMap();
+            simulationRunPresenter.setWorldMap(worldMap);
 
             if(collectStatistics.isSelected()) {
                 try (SimulationSaveStatistics stats = new SimulationSaveStatistics(worldMap)) {
@@ -163,5 +149,59 @@ public class SimulationStartPresenter {
         catch (IllegalArgumentException | IOException e) {
             errors.setText(e.getMessage());
         }
+    }
+
+    public void onChooseParameters() {
+        SimulationParameters simulationParameters = SimulationPresets.loadParameters(chooseParameters.getValue());
+
+        height.setText(String.valueOf(simulationParameters.mapHeight()));
+        width.setText(String.valueOf(simulationParameters.mapWidth()));
+        growthGrassVariant.setValue(simulationParameters.growthGrassVariant());
+        startNumberOfGrass.setText(String.valueOf(simulationParameters.startNumberOfAnimals()));
+        energyFromGrass.setText(String.valueOf(simulationParameters.energyFromGrass()));
+        numberOfGrassGrowingEveryDay.setText(String.valueOf(simulationParameters.numberOfGrassGrowingEveryDay()));
+        startNumberOfAnimals.setText(String.valueOf(simulationParameters.startNumberOfAnimals()));
+        initialAnimalsEnergy.setText(String.valueOf(simulationParameters.initialAnimalsEnergy()));
+        energyNeedToReproduce.setText(String.valueOf(simulationParameters.energyNeedToReproduce()));
+        energyUsedToReproduce.setText(String.valueOf(simulationParameters.energyUsedToReproduce()));
+        minimalNumberOfMutation.setText(String.valueOf(simulationParameters.minimalNumberOfMutation()));
+        maximumNumberOfMutation.setText(String.valueOf(simulationParameters.maximumNumberOfMutation()));
+        mutationVariant.setValue(simulationParameters.mutationVariant());
+        numberOfGenes.setText(String.valueOf(simulationParameters.numberOfGenes()));
+        collectStatistics.setSelected(simulationParameters.collectStatistics());
+    }
+
+    public void saveInputParameters() {
+        try {
+            SimulationParameters simulationParameters = getParameters();
+            SimulationPresets.saveParameters(simulationParameters, fileName.getText() + ".csv");
+            errors.setText("Zapisano konfigurację!");
+            fileName.setText("");
+            chooseParameters.getItems().clear();
+            chooseParameters.getItems().addAll(SimulationPresets.getCorrectFilesNames());
+        } catch(IllegalArgumentException | IOException e) {
+            errors.setText(e.getMessage());
+        }
+
+    }
+
+    private SimulationParameters getParameters(){
+        return SimulationChecker.checkParameters(
+            height.getText(),
+            width.getText(),
+            growthGrassVariant.getValue(),
+            startNumberOfGrass.getText(),
+            energyFromGrass.getText(),
+            numberOfGrassGrowingEveryDay.getText(),
+            startNumberOfAnimals.getText(),
+            initialAnimalsEnergy.getText(),
+            energyNeedToReproduce.getText(),
+            energyUsedToReproduce.getText(),
+            minimalNumberOfMutation.getText(),
+            maximumNumberOfMutation.getText(),
+            mutationVariant.getValue(),
+            numberOfGenes.getText(),
+            collectStatistics.isSelected()
+        );
     }
 }
