@@ -34,6 +34,8 @@ public class SimulationStatistics {
         int allChildrenCount = 0;
         int allEnergyCount = 0;
 
+        genotypesCount.clear();
+
         for(WorldElement element : map.getElements()) {
             occupiedPositions.add(element.getPosition());
 
@@ -42,7 +44,7 @@ public class SimulationStatistics {
                 allEnergyCount += animal.getCurrentEnergy();
 
                 int genotypeCount = genotypesCount.computeIfAbsent(animal.getAnimalGenesString(), k -> 0);
-                genotypesCount.put(animal.getAnimalGenesString(), ++genotypeCount);
+                genotypesCount.replace(animal.getAnimalGenesString(), ++genotypeCount);
             }
         }
 

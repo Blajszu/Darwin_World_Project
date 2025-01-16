@@ -5,6 +5,8 @@ import project.listener.SimulationEventType;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
+import project.statistics.SimulationStatistics;
+import project.statistics.StatisticsRecord;
 
 import java.util.*;
 
@@ -21,6 +23,8 @@ public class Simulation implements Runnable {
     private int currentDay = 0;
 
     private final Random rand = new Random();
+
+    private final SimulationStatistics statistics = new SimulationStatistics();
 
     public Simulation(
             WorldMap worldMap,
@@ -68,6 +72,8 @@ public class Simulation implements Runnable {
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while creating Simulation: %s%n", e.getMessage());
         }
+
+        statistics.updateStatistics(worldMap, currentDay);
     }
 
     private void spawnFirstAnimals(
@@ -154,6 +160,7 @@ public class Simulation implements Runnable {
         Collection<Animal> allAnimalsOnMap = worldMap.getOrderedAnimals();
         for (Animal animal : allAnimalsOnMap) {
             if(!animal.isAnimalAlive()){
+                statistics.registerDeadAnimal(animal);
                 worldMap.removeAnimal(animal);
             }
         }
@@ -202,9 +209,10 @@ public class Simulation implements Runnable {
     }
 
     private void SimulationChangeEvent(SimulationEventType eventType) {
+        StatisticsRecord statisticsRecord = statistics.getStatisticsRecord();
 
         for(SimulationChangeListener observer : listeners) {
-            observer.handleChangeEvent(worldMap, eventType, currentDay);
+            observer.handleChangeEvent(worldMap, eventType, statisticsRecord);
         }
     }
 
@@ -226,6 +234,7 @@ public class Simulation implements Runnable {
                 SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
                 Thread.sleep(200);
 
+                statistics.updateStatistics(worldMap, currentDay);
                 SimulationChangeEvent(SimulationEventType.DAY_ENDED);
                 currentDay++;
             }
