@@ -1,7 +1,6 @@
 package project.model.worldElements;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -38,9 +37,7 @@ public class WorldElementBox {
         imageView.setFitHeight(20);
         imageView.setFitWidth(20);
 
-        Label label = new Label(element.getResourceName());
-        label.setStyle("-fx-font-size: 10px;");
-        container.getChildren().addAll(imageView, label);
+        container.getChildren().add(imageView);
         container.setAlignment(Pos.CENTER);
     }
 
