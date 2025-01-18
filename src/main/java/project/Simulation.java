@@ -5,19 +5,19 @@ import project.listener.SimulationEventType;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
+import project.presenter.SimulationParameters;
 import project.statistics.SimulationStatistics;
 import project.statistics.StatisticsRecord;
 
 import java.util.*;
+
 
 public class Simulation implements Runnable {
 
     private final ArrayList<SimulationChangeListener> listeners = new ArrayList<>();
 
     private final WorldMap worldMap;
-    private final int energyFromGrass;
-    private final int energyNeedToReproduce;
-    private final int numberOfGrassGrowingEveryDay;
+    SimulationParameters simulationParameters;
 
     private int currentDay = 0;
 
@@ -25,52 +25,34 @@ public class Simulation implements Runnable {
 
     private final SimulationStatistics statistics = new SimulationStatistics();
 
-    public Simulation(
-            WorldMap worldMap,
-            int startNumberOfGrass,
-            int energyFromGrass,
-            int numberOfGrassGrowingEveryDay,
-            int startNumberOfAnimals,
-            int initialAnimalsEnergy,
-            int energyNeedToReproduce,
-            int energyUsedToReproduce,
-            int minimalNumberOfMutation,
-            int maximumNumberOfMutation,
-            MutationVariant mutationVariant,
-            int numberOfGenes) {
 
-        if(
-                startNumberOfGrass < 0 ||
-                energyFromGrass <= 0 ||
-                numberOfGrassGrowingEveryDay <= 0 ||
-                startNumberOfAnimals < 0 ||
-                initialAnimalsEnergy <= 0 ||
-                energyNeedToReproduce <= 0 ||
-                energyUsedToReproduce <= 0 ||
-                minimalNumberOfMutation < 0 ||
-                maximumNumberOfMutation < 0 ||
-                numberOfGenes <= 0) {
-            throw new IllegalArgumentException("Invalid Simulation parameters");
-        }
+    public Simulation(SimulationParameters simulationParameters) {
+        this.simulationParameters = simulationParameters;
 
-        this.worldMap = worldMap;
-        this.energyFromGrass = energyFromGrass;
-        this.energyNeedToReproduce = energyNeedToReproduce;
-        this.numberOfGrassGrowingEveryDay = numberOfGrassGrowingEveryDay;
 
-        MutationStrategy mutationStrategy = switch (mutationVariant) {
-            case RANDOM -> new RandomMutationStrategyVariant(minimalNumberOfMutation, maximumNumberOfMutation);
-            case INCREMENT_DECREMENT -> new IncrementDecrementMutationStrategyVariant(minimalNumberOfMutation, maximumNumberOfMutation);
+        this.worldMap = switch(simulationParameters.growthGrassVariant()) {
+            case EQUATOR_MAP -> new EquatorMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
+            case MOVING_JUNGLE_MAP -> new MovingJungleMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
+        };
+
+
+        MutationStrategy mutationStrategy = switch (simulationParameters.mutationVariant()) {
+            case RANDOM -> new RandomMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
+            case INCREMENT_DECREMENT -> new IncrementDecrementMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
         };
 
         try {
-            spawnFirstAnimals(startNumberOfAnimals, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy, numberOfGenes);
-            spawnGrass(startNumberOfGrass);
+            spawnFirstAnimals(simulationParameters.startNumberOfAnimals(), simulationParameters.initialAnimalsEnergy(), simulationParameters.energyNeedToReproduce(), simulationParameters.energyUsedToReproduce(), mutationStrategy, simulationParameters.numberOfGenes());
+            spawnGrass(simulationParameters.numberOfGrassOnMap());
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while creating Simulation: %s%n", e.getMessage());
         }
 
         statistics.updateStatistics(worldMap, currentDay);
+    }
+
+    public WorldMap getWorldMap() {
+        return worldMap;
     }
 
     private void spawnFirstAnimals(
@@ -171,7 +153,7 @@ public class Simulation implements Runnable {
 
             if (worldMap.isGrassAt(position)) {
                 worldMap.removeGrass(position);
-                resolvedConflictsAnimals.getFirst().eat(energyFromGrass);
+                resolvedConflictsAnimals.getFirst().eat(simulationParameters.energyFromGrass());
             }
 
             if(resolvedConflictsAnimals.size() < 2) {
@@ -181,7 +163,7 @@ public class Simulation implements Runnable {
             Animal parent1 = resolvedConflictsAnimals.get(0);
             Animal parent2 = resolvedConflictsAnimals.get(1);
 
-            if(parent1.getCurrentEnergy() >= energyNeedToReproduce && parent2.getCurrentEnergy() >= energyNeedToReproduce) {
+            if(parent1.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce() && parent2.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce()) {
                 worldMap.place(parent1.reproduce(parent2));
             }
         }
@@ -227,7 +209,7 @@ public class Simulation implements Runnable {
                 consumePlantsAndReproduce();
                 SimulationChangeEvent(SimulationEventType.FOOD_CONSUMED);
                 Thread.sleep(200);
-                spawnGrass(numberOfGrassGrowingEveryDay);
+                spawnGrass(simulationParameters.numberOfGrassGrowingEveryDay());
                 SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
                 Thread.sleep(200);
 

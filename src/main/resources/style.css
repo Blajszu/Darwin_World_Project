@@ -1,5 +1,9 @@
 Label {
     -fx-padding: 10px;
+}
+
+#startSimulationContainer {
+    -fx-spacing: 10px;
     -fx-font-size: 1em;
     -fx-text-overrun: clip;
     -fx-wrap-text: true;

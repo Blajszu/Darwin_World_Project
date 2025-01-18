@@ -26,7 +26,7 @@
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Growth grass variant:</Label>
-                        <ComboBox fx:id="growthGrassVariant" prefWidth="150"/>
+                        <ComboBox fx:id="growthGrassVariant" prefWidth="150" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Start number of grass:</Label>
@@ -78,12 +78,20 @@
                         <Label>Collect statistics:</Label>
                         <CheckBox fx:id="collectStatistics"/>
                     </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <TextField fx:id="fileName" promptText="Nazwa pliku" />
+                        <Label>.csv</Label>
+                    </HBox>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button fx:id="saveParameters" text="SAVE PARAMETERS" onAction="#saveInputParameters" disable="true"/>
+                    </HBox>
                 </VBox>
             </HBox>
-            <HBox alignment="CENTER">
-                <Button fx:id="startSimulation" text="START SIMULATION" onAction="#onSimulationStartClicked"/>
+            <VBox alignment="CENTER" fx:id="startSimulationContainer">
                 <Label fx:id="errors"/>
-            </HBox>
+                <ComboBox fx:id="chooseParameters" prefWidth="150" onAction="#onChooseParameters" />
+                <Button fx:id="startSimulation" text="START SIMULATION" onAction="#onSimulationStartClicked"/>
+            </VBox>
         </VBox>
     </center>
 </BorderPane>
