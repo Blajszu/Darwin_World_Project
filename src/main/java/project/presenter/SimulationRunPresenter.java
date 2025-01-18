@@ -7,9 +7,11 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import project.Simulation;
 import project.listener.SimulationChangeListener;
 import project.listener.SimulationEventType;
 import project.model.maps.Boundary;
@@ -28,6 +30,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private int cellWidth;
     private int cellHeight;
 
+    private Simulation simulation;
     private WorldMap worldMap;
     private Boundary currentBounds;
     private List<WorldElementBox> grassBoxes;
@@ -44,6 +47,8 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private LineChart<Number, Number> simulationChart;
     @FXML
     private NumberAxis xAxis;
+    @FXML
+    private Slider simulationDelay;
 
     @FXML
     private Label animalsCountLabel;
@@ -77,6 +82,10 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
         simulationChart.getData().add(animalsSeries);
         simulationChart.getData().add(grassesSeries);
+
+        simulationDelay.valueProperty().addListener((observable, oldValue, newValue) -> {
+            simulation.setCoolDown(newValue.intValue());
+        });
     }
 
     private void clearGrid() {
@@ -170,8 +179,9 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         }
     }
 
-    public void setWorldMap(WorldMap worldMap) {
-        this.worldMap = worldMap;
+    public void setSimulation(Simulation simulation) {
+        this.simulation = simulation;
+        this.worldMap = simulation.getWorldMap();
 
         cellHeight = 500/worldMap.getMapHeight();
         cellWidth = 500/worldMap.getMapWidth();
@@ -200,6 +210,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             drawMap();
             moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
             writeStatistics(eventType, statisticsRecord);
+            simulation.countDown();
         });
     }
 }

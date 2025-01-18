@@ -10,7 +10,7 @@ import project.statistics.SimulationStatistics;
 import project.statistics.StatisticsRecord;
 
 import java.util.*;
-
+import java.util.concurrent.CountDownLatch;
 
 public class Simulation implements Runnable {
 
@@ -21,20 +21,21 @@ public class Simulation implements Runnable {
 
     private int currentDay = 0;
 
+    private int coolDown = 200;
+
     private final Random rand = new Random();
 
     private final SimulationStatistics statistics = new SimulationStatistics();
 
+    private CountDownLatch countDownLatch;
 
     public Simulation(SimulationParameters simulationParameters) {
         this.simulationParameters = simulationParameters;
-
 
         this.worldMap = switch(simulationParameters.growthGrassVariant()) {
             case EQUATOR_MAP -> new EquatorMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
             case MOVING_JUNGLE_MAP -> new MovingJungleMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
         };
-
 
         MutationStrategy mutationStrategy = switch (simulationParameters.mutationVariant()) {
             case RANDOM -> new RandomMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
@@ -188,11 +189,20 @@ public class Simulation implements Runnable {
     }
 
     private void SimulationChangeEvent(SimulationEventType eventType) {
+        countDownLatch = new CountDownLatch(1);
         StatisticsRecord statisticsRecord = statistics.getStatisticsRecord();
 
         for(SimulationChangeListener observer : listeners) {
             observer.handleChangeEvent(worldMap, eventType, statisticsRecord);
         }
+    }
+
+    public void countDown() {
+        countDownLatch.countDown();
+    }
+
+    public void setCoolDown(int coolDown) {
+        this.coolDown = coolDown;
     }
 
     @Override
@@ -202,25 +212,30 @@ public class Simulation implements Runnable {
             while (true) {
                 removeDeadAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
-                Thread.sleep(200);
+                Thread.sleep(coolDown);
+                countDownLatch.await();
                 moveAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_MOVED);
-                Thread.sleep(200);
+                Thread.sleep(coolDown);
+                countDownLatch.await();
                 consumePlantsAndReproduce();
                 SimulationChangeEvent(SimulationEventType.FOOD_CONSUMED);
-                Thread.sleep(200);
+                Thread.sleep(coolDown);
+                countDownLatch.await();
                 spawnGrass(simulationParameters.numberOfGrassGrowingEveryDay());
                 SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
-                Thread.sleep(200);
+                Thread.sleep(coolDown);
+                countDownLatch.await();
 
                 statistics.updateStatistics(worldMap, currentDay);
                 SimulationChangeEvent(SimulationEventType.DAY_ENDED);
                 currentDay++;
+                countDownLatch.await();
             }
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while running Simulation: %s%n", e.getMessage());
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
         }
     }
 }

@@ -127,11 +127,10 @@ public class SimulationStartPresenter {
 
             Simulation simulation = new Simulation(simulationParameters);
 
-
             simulation.addObserver(simulationRunPresenter);
             simulation.addObserver(simulationMapDisplay);
             WorldMap worldMap = simulation.getWorldMap();
-            simulationRunPresenter.setWorldMap(worldMap);
+            simulationRunPresenter.setSimulation(simulation);
 
             if(collectStatistics.isSelected()) {
                 try (SimulationSaveStatistics stats = new SimulationSaveStatistics(worldMap)) {
