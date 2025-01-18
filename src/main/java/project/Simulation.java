@@ -28,6 +28,7 @@ public class Simulation implements Runnable {
     private final SimulationStatistics statistics = new SimulationStatistics();
 
     private CountDownLatch countDownLatch;
+    private boolean running = true;
 
     public Simulation(SimulationParameters simulationParameters) {
         this.simulationParameters = simulationParameters;
@@ -205,11 +206,16 @@ public class Simulation implements Runnable {
         this.coolDown = coolDown;
     }
 
+    public void stopSimulation() {
+        running = false;
+        countDownLatch.countDown();
+    }
+
     @Override
     public void run() {
 
         try {
-            while (true) {
+            while (running) {
                 removeDeadAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
                 Thread.sleep(coolDown);

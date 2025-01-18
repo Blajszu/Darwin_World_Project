@@ -1,16 +1,19 @@
 package project.presenter;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.stage.Stage;
 import project.Simulation;
 import project.listener.SimulationChangeListener;
 import project.listener.SimulationEventType;
@@ -39,6 +42,8 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private XYChart.Series<Number, Number> animalsSeries;
     private XYChart.Series<Number, Number> grassesSeries;
 
+    private boolean isSimulationStopped = false;
+
     @FXML
     private Label moveLabel;
     @FXML
@@ -49,6 +54,8 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private NumberAxis xAxis;
     @FXML
     private Slider simulationDelay;
+    @FXML
+    private Button stopRestartSimulationButton;
 
     @FXML
     private Label animalsCountLabel;
@@ -207,7 +214,28 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             drawMap();
             moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
             writeStatistics(eventType, statisticsRecord);
-            simulation.countDown();
+            if (!isSimulationStopped) {
+                simulation.countDown();
+            }
         });
+    }
+
+    public void stopRestartSimulation(ActionEvent event) {
+
+        if(!isSimulationStopped) {
+            stopRestartSimulationButton.setText("RESTART SIMULATION");
+        }
+        else {
+            stopRestartSimulationButton.setText("STOP SIMULATION");
+            simulation.countDown();
+        }
+
+        isSimulationStopped = !isSimulationStopped;
+    }
+
+    public void endSimulation(ActionEvent event) {
+        simulation.stopSimulation();
+        Stage stage = (Stage) mapGrid.getScene().getWindow();
+        stage.close();
     }
 }
