@@ -80,9 +80,6 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         xAxis.setAutoRanging(false);
         xAxis.setUpperBound(40);
 
-        simulationChart.getData().add(animalsSeries);
-        simulationChart.getData().add(grassesSeries);
-
         simulationDelay.valueProperty().addListener((observable, oldValue, newValue) -> {
             simulation.setCoolDown(newValue.intValue());
         });
