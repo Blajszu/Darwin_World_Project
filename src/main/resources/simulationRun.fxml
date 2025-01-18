@@ -7,6 +7,8 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Button?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0" stylesheets="style.css"
@@ -38,10 +40,17 @@
                         <NumberAxis fx:id="yAxis"/>
                     </yAxis>
                 </LineChart>
+                <HBox alignment="CENTER">
+                    <Button fx:id="stopRestartSimulationButton" text="STOP SIMULATION" onAction="#stopRestartSimulation"/>
+                    <Button fx:id="endSimulationButton" text="END SIMULATION" onAction="#endSimulation"/>
+                </HBox>
             </VBox>
             <VBox fx:id="map" alignment="CENTER">
                 <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" />
                 <Label fx:id="moveLabel" textAlignment="CENTER"/>
+                <Slider fx:id="simulationDelay" min="20" max="400" value="200"
+                        showTickMarks="true" showTickLabels="true"
+                        majorTickUnit="100"/>
             </VBox>
             <VBox fx:id="animalStats" alignment="CENTER">
                 <Label fx:id="animalLabel" textAlignment="CENTER" text="Statystyki zaznaczonego zwierzaka"/>
