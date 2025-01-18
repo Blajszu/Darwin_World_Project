@@ -4,4 +4,33 @@ Label {
 
 #startSimulationContainer {
     -fx-spacing: 10px;
+    -fx-font-size: 1em;
+    -fx-text-overrun: clip;
+    -fx-wrap-text: true;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-scale-shape: true;
+}
+
+#animalLabel {
+    -fx-padding: 0px;
+}
+
+#axisLabel {
+    -fx-padding: 0px;
+    -fx-font-size: 1em;
+    -fx-text-overrun: clip;
+    -fx-wrap-text: true;
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-scale-shape: true;
+    -fx-min-width: -1;
+    -fx-pref-width: -1;
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+}
+
+GridPane {
+    -fx-hgap: 1;
+    -fx-vgap: 1;
 }
