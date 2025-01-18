@@ -86,7 +86,7 @@ public class SimulationStartPresenter {
                 @Override
                 public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                     if (!newValue.matches("\\d*")) {
-                        input.setText(newValue.replaceAll("[^\\d]", ""));
+                        input.setText(newValue.replaceAll("\\D", ""));
                     }
                 }
             });
@@ -95,15 +95,14 @@ public class SimulationStartPresenter {
         mutationVariant.getItems().addAll(MutationVariant.values());
         growthGrassVariant.getItems().addAll(GrowthGrassVariant.values());
 
-        chooseParameters.getItems().addAll(SimulationPresets.getCorrectFilesNames());
+        try {
+            chooseParameters.getItems().addAll(SimulationPresets.getCorrectFilesNames());
+        } catch (IOException e) {
+            errors.setText(e.getMessage());
+        }
 
         fileName.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty()) {
-                saveParameters.setDisable(false);
-            }
-            else {
-                saveParameters.setDisable(true);
-            }
+            saveParameters.setDisable(newValue.isEmpty());
         });
     }
 

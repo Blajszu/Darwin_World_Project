@@ -19,15 +19,19 @@ public class SimulationPresets {
         List<String> lines = Files.readAllLines(file.toPath());
         String[] params = lines.getFirst().split(",");
         if (params.length != 15) {
-            System.err.println("Nieprawidłowa liczba parametrów w pliku " + file.getName() + ". Znaleziono: " + params.length);
+            return;
         }
 
         SimulationParameters parameters = SimulationChecker.checkParameters(params[0], params[1], GrowthGrassVariant.valueOf(params[2]), params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], MutationVariant.valueOf(params[12]), params[13], Boolean.parseBoolean(params[14]));
         fileNameWithFileContent.put(file.getName(), parameters);
     }
 
-    public static ArrayList<String> getCorrectFilesNames(){
+    public static ArrayList<String> getCorrectFilesNames() throws IOException {
+
         File folder = new File("src/main/java/project/presenter/presetParameters");
+        if(!folder.exists()) {
+            throw new IOException("Błąd odczytu z folderu");
+        }
         File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".csv"));
 
         if (listOfFiles == null) {
@@ -35,12 +39,7 @@ public class SimulationPresets {
         }
 
         for (File file : listOfFiles) {
-            try {
-                validateFileParameters(file);
-            }
-            catch(IllegalArgumentException | IOException e) {
-                continue;
-            }
+            validateFileParameters(file);
         }
 
         return new ArrayList<>(
@@ -57,7 +56,9 @@ public class SimulationPresets {
     public static void saveParameters(SimulationParameters simulationParameters, String fileName) throws IOException {
         File folder = new File("src/main/java/project/presenter/presetParameters");
         if (!folder.exists()) {
-            folder.mkdirs();
+            if(!folder.mkdirs()){
+                throw new IOException("Błąd tworzenia folderu");
+            };
         }
 
         File file = new File(folder, fileName);
