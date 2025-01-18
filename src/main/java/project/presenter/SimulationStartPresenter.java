@@ -128,7 +128,7 @@ public class SimulationStartPresenter {
             Simulation simulation = new Simulation(simulationParameters);
 
             simulation.addObserver(simulationRunPresenter);
-            simulation.addObserver(simulationMapDisplay);
+//            simulation.addObserver(simulationMapDisplay);
             WorldMap worldMap = simulation.getWorldMap();
             simulationRunPresenter.setSimulation(simulation);
 

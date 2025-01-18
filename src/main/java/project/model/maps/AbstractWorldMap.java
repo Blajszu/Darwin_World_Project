@@ -134,7 +134,6 @@ public abstract class AbstractWorldMap implements WorldMap {
 
     @Override
     public void move(Animal animal) {
-        Vector2d currentPosition = animal.getPosition();
         Vector2d nextPosition = animal.getNextPosition();
 
         if(isPositionCorrect(nextPosition)) {

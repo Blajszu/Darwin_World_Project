@@ -45,7 +45,7 @@
                     <Button fx:id="endSimulationButton" text="END SIMULATION" onAction="#endSimulation"/>
                 </HBox>
             </VBox>
-            <VBox fx:id="map" alignment="CENTER">
+            <VBox fx:id="map" alignment="CENTER" minWidth="300">
                 <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" />
                 <Label fx:id="moveLabel" textAlignment="CENTER"/>
                 <Slider fx:id="simulationDelay" min="20" max="400" value="200"

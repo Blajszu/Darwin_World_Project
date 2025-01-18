@@ -18,7 +18,6 @@ Label {
 
 #axisLabel {
     -fx-padding: 0px;
-    -fx-font-size: 1em;
     -fx-text-overrun: clip;
     -fx-wrap-text: true;
     -fx-scale-x: 1;
@@ -28,9 +27,12 @@ Label {
     -fx-pref-width: -1;
     -fx-max-width: infinity;
     -fx-alignment: center;
+    -fx-background-color: white;
 }
 
 GridPane {
     -fx-hgap: 1;
     -fx-vgap: 1;
+    -fx-background-color: #ceb873;
 }
+

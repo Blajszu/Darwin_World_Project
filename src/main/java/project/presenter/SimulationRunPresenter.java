@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -19,25 +20,25 @@ import project.listener.SimulationChangeListener;
 import project.listener.SimulationEventType;
 import project.model.maps.Boundary;
 import project.model.maps.WorldMap;
+import project.model.worldElements.Animal;
 import project.model.worldElements.WorldElementBox;
 import project.model.Vector2d;
 import project.model.worldElements.Grass;
 import project.statistics.StatisticsRecord;
 
 import java.text.DecimalFormat;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class SimulationRunPresenter implements SimulationChangeListener {
 
-    private int cellWidth;
-    private int cellHeight;
+    private int cellSize;
 
     private Simulation simulation;
     private WorldMap worldMap;
     private Boundary currentBounds;
-    private List<WorldElementBox> grassBoxes;
-    private List<WorldElementBox> animalBoxes;
+    private List<WorldElementBox> grassBoxes = new ArrayList<>();
+    private final List<WorldElementBox> animalBoxes = new ArrayList<>();
 
     private XYChart.Series<Number, Number> animalsSeries;
     private XYChart.Series<Number, Number> grassesSeries;
@@ -93,7 +94,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     }
 
     private void clearGrid() {
-        if(mapGrid.getChildren().isEmpty()) return;
+        if (mapGrid.getChildren().isEmpty()) return;
 
         mapGrid.getChildren().retainAll(mapGrid.getChildren().getFirst()); // hack to retain visible grid lines
         mapGrid.getColumnConstraints().clear();
@@ -103,32 +104,40 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private void addLabels(int mapHeight, int mapWidth) {
         Label label = new Label("x/y");
         label.setId("axisLabel");
+        label.setStyle("-fx-font-size: %dpx;".formatted(cellSize / 2));
+        label.setStyle("-fx-min-height: %dpx;".formatted(cellSize));
+
         GridPane.setHalignment(label, HPos.CENTER);
-        mapGrid.getColumnConstraints().add(new ColumnConstraints(cellWidth));
-        mapGrid.getRowConstraints().add(new RowConstraints(cellHeight));
+        mapGrid.getColumnConstraints().add(new ColumnConstraints(cellSize));
+        mapGrid.getRowConstraints().add(new RowConstraints(cellSize));
         mapGrid.add(label, 0, 0);
 
-        for(int i = 0; i <= mapHeight; i++) {
+        for (int i = 0; i <= mapHeight; i++) {
             Label labelY = new Label(String.valueOf(currentBounds.upperRight().getY() - i));
             labelY.setId("axisLabel");
+            labelY.setStyle("-fx-font-size: %dpx;".formatted(cellSize / 2));
+            labelY.setStyle("-fx-min-height: %dpx;".formatted(cellSize));
+
             GridPane.setHalignment(labelY, HPos.CENTER);
-            mapGrid.getRowConstraints().add(new RowConstraints(cellHeight));
-            mapGrid.add(labelY, 0, i+1);
+            mapGrid.getRowConstraints().add(new RowConstraints(cellSize));
+            mapGrid.add(labelY, 0, i + 1);
         }
 
-        for(int i = 0; i <= mapWidth; i++) {
-            Label labelX = new Label(String.valueOf( currentBounds.lowerLeft().getX() + i));
+        for (int i = 0; i <= mapWidth; i++) {
+            Label labelX = new Label(String.valueOf(currentBounds.lowerLeft().getX() + i));
             labelX.setId("axisLabel");
+            labelX.setStyle("-fx-font-size: %dpx;".formatted(cellSize / 2));
+            labelX.setStyle("-fx-min-height: %dpx;".formatted(cellSize));
+
             GridPane.setHalignment(labelX, HPos.CENTER);
-            mapGrid.getColumnConstraints().add(new ColumnConstraints(cellWidth));
-            mapGrid.add(labelX, i+1, 0);
+            mapGrid.getColumnConstraints().add(new ColumnConstraints(cellSize));
+            mapGrid.add(labelX, i + 1, 0);
         }
     }
 
     private void addWorldElements() {
 
         List<WorldElementBox> worldElementBoxes;
-        animalBoxes.forEach(WorldElementBox::update);
 
         worldElementBoxes = Stream.concat(grassBoxes.stream(), animalBoxes.stream()).toList();
 
@@ -142,7 +151,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
     private void writeStatistics(SimulationEventType eventType, StatisticsRecord statisticsRecord) {
 
-        if(eventType != SimulationEventType.DAY_ENDED) {
+        if (eventType != SimulationEventType.DAY_ENDED) {
             return;
         }
 
@@ -187,17 +196,31 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         this.simulation = simulation;
         this.worldMap = simulation.getWorldMap();
 
-        cellHeight = 500/worldMap.getMapHeight();
-        cellWidth = 500/worldMap.getMapWidth();
+        cellSize = Math.min(500 / (worldMap.getMapHeight() + 1), 500 / (worldMap.getMapWidth() + 1));
+        mapGrid.setMaxWidth(cellSize * worldMap.getMapWidth());
     }
 
     private void drawMap() {
+
+        ArrayList<Animal> conflictedAnimals = new ArrayList<>();
+        animalBoxes.clear();
+
+        for (Animal animal : worldMap.getOrderedAnimals()) {
+            if (conflictedAnimals.isEmpty() || (conflictedAnimals.getFirst().getPosition().equals(animal.getPosition()))) {
+                conflictedAnimals.add(animal);
+            } else {
+                List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
+                animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize));
+
+                conflictedAnimals.clear();
+                conflictedAnimals.add(animal);
+            }
+        }
+
         grassBoxes = worldMap.getElements().stream()
                 .filter(worldElement -> worldElement instanceof Grass)
-                .map(WorldElementBox::new)
+                .map(element -> new WorldElementBox(element, cellSize))
                 .toList();
-
-        animalBoxes = worldMap.getOrderedAnimals().stream().map(WorldElementBox::new).toList();
 
         clearGrid();
         currentBounds = worldMap.getMapBounds();
@@ -212,6 +235,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, StatisticsRecord statisticsRecord) {
         Platform.runLater(() -> {
             drawMap();
+
             moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
             writeStatistics(eventType, statisticsRecord);
             if (!isSimulationStopped) {
@@ -222,10 +246,9 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
     public void stopRestartSimulation(ActionEvent event) {
 
-        if(!isSimulationStopped) {
+        if (!isSimulationStopped) {
             stopRestartSimulationButton.setText("RESTART SIMULATION");
-        }
-        else {
+        } else {
             stopRestartSimulationButton.setText("STOP SIMULATION");
             simulation.countDown();
         }
