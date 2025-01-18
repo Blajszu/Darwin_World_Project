@@ -72,7 +72,6 @@ public class Simulation implements Runnable {
         for(int i = 0; i < numberOfAnimalsToSpawn; i++) {
             Vector2d positionToSpawnAnimal = new Vector2d(rand.nextInt(mapWidth), rand.nextInt(mapHeight));
             Animal animal = new Animal(positionToSpawnAnimal, numberOfGenes, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy);
-
             worldMap.place(animal);
         }
     }
@@ -126,6 +125,14 @@ public class Simulation implements Runnable {
 
             worldMap.place(new Grass(positionToSpawnGrass));
             grassLeft--;
+        }
+    }
+
+    private void rotateAnimals() {
+        Collection<Animal> animals = worldMap.getOrderedAnimals();
+
+        for(Animal animal : animals) {
+            animal.rotate();
         }
     }
 
@@ -218,6 +225,10 @@ public class Simulation implements Runnable {
             while (running) {
                 removeDeadAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
+                Thread.sleep(coolDown);
+                countDownLatch.await();
+                rotateAnimals();
+                SimulationChangeEvent(SimulationEventType.ANIMALS_ROTATED);
                 Thread.sleep(coolDown);
                 countDownLatch.await();
                 moveAnimals();

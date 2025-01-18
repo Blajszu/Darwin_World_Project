@@ -298,6 +298,6 @@ class AnimalTest {
         MapDirection orientation = animal1.getCurrentOrientation();
 
         // When & Then
-        assertEquals(animal1.getPosition().add(MapDirection.values()[orientation.rotate(1).ordinal()].toUnitVector()), animal1.getNextPosition());
+        assertEquals(animal1.getPosition().add(orientation.toUnitVector()), animal1.getNextPosition());
     }
 }

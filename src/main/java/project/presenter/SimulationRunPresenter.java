@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -215,6 +214,10 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                 conflictedAnimals.clear();
                 conflictedAnimals.add(animal);
             }
+        }
+        if(!conflictedAnimals.isEmpty()) {
+            List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
+            animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize));
         }
 
         grassBoxes = worldMap.getElements().stream()
