@@ -1,7 +1,6 @@
 package project.presenter;
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.scene.chart.LineChart;
@@ -13,6 +12,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import project.Simulation;
 import project.listener.SimulationChangeListener;
@@ -27,6 +28,8 @@ import project.statistics.StatisticsRecord;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SimulationRunPresenter implements SimulationChangeListener {
@@ -43,6 +46,10 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private XYChart.Series<Number, Number> grassesSeries;
 
     private boolean isSimulationStopped = false;
+    private List<String> topGenotypes;
+
+    private final ArrayList<Label> animalsTopGenotypesLabels = new ArrayList<>();
+    private final ArrayList<ImageView> grassPreferredPositionsImageView = new ArrayList<>();
 
     @FXML
     private Label moveLabel;
@@ -164,14 +171,34 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         averageLifeLengthLabel.setText("Średnia długość życia: %s".formatted(df.format(statisticsRecord.averageLifeLength())));
         averageChildrenCountLabel.setText("Średnia liczba dzieci: %s".formatted(df.format(statisticsRecord.averageChildrenCount())));
 
-        List<String> topGenotypes = statisticsRecord.genotypesCount().entrySet()
-                .stream()
-                .sorted((genotype, count) -> count.getValue().compareTo(genotype.getValue()))
-                .limit(5)
-                .map(e -> e.getKey() + " (" + e.getValue() + ")")
-                .toList();
+        if(Collections.max(statisticsRecord.genotypesCount().values()) == 1){
+            mostPopularGenotypesLabel.setText("Najpopularniejsze Genotypy\n" + "Brak najpopularniejszego genotypu");
+        }
+        else {
 
-        mostPopularGenotypesLabel.setText("Najpopularniejsze Genotypy\n" + String.join(", ", topGenotypes).replace(',', '\n'));
+            topGenotypes = statisticsRecord.genotypesCount().entrySet()
+                    .stream()
+                    .collect(Collectors.groupingBy(
+                            Map.Entry::getValue,
+                            TreeMap::new,
+                            Collectors.toList()
+                    ))
+                    .descendingMap()
+                    .entrySet().stream()
+                    .findFirst()
+                    .filter(entry -> entry.getKey() > 1)
+                    .map(entry -> entry.getValue().stream().limit(5))
+                    .orElse(Stream.empty())
+                    .map(Map.Entry::getKey)
+                    .toList();
+
+            List<String> topGenotypesToDisplay = topGenotypes.stream()
+                    .map(genotpe -> "%s (%d)".formatted(genotpe, statisticsRecord.genotypesCount().get(genotpe)))
+                    .toList();
+
+            mostPopularGenotypesLabel.setText("Najpopularniejsze Genotypy\n" + String.join(", ", topGenotypesToDisplay).replace(',', '\n'));
+        }
+
 
         animalsSeries.getData().add(new XYChart.Data<>(statisticsRecord.day(), statisticsRecord.animalsCount()));
         grassesSeries.getData().add(new XYChart.Data<>(statisticsRecord.day(), statisticsRecord.plantsCount()));
@@ -238,28 +265,77 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     public void handleChangeEvent(WorldMap worldMap, SimulationEventType eventType, StatisticsRecord statisticsRecord) {
         Platform.runLater(() -> {
             drawMap();
-
             moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
             writeStatistics(eventType, statisticsRecord);
             if (!isSimulationStopped) {
                 simulation.countDown();
+            } else {
+                colorPreferredGrassPositions();
+                colorMostPopularGenotype();
             }
         });
     }
 
-    public void stopRestartSimulation(ActionEvent event) {
+    private void colorMostPopularGenotype() {
+        if(topGenotypes == null)
+            return;
+
+        HashSet<Vector2d> topGenotypesAnimalsPositions = worldMap.getOrderedAnimals().stream()
+                .filter(animal -> topGenotypes.contains(animal.getAnimalGenesString()))
+                .map(Animal::getPosition)
+                .collect(Collectors.toCollection(HashSet::new));
+
+        for (Vector2d position : topGenotypesAnimalsPositions) {
+            Label label = new Label();
+            label.setStyle("-fx-background-color: #7742eb");
+            label.setMinHeight(cellSize);
+            label.setMinWidth(cellSize);
+            animalsTopGenotypesLabels.add(label);
+
+            mapGrid.add(label, position.getX()+1, worldMap.getMapHeight() - position.getY());
+            label.toBack();
+        }
+    }
+
+    private void colorPreferredGrassPositions() {
+
+        List<Vector2d> grassPositionsToColor = worldMap.getFreeGrassPreferredPositions();
+        Image image = new Image("x.png");
+
+
+        for (Vector2d position : grassPositionsToColor ) {
+            ImageView imageView = new ImageView(image);
+            imageView.setFitHeight(cellSize);
+            imageView.setFitWidth(cellSize);
+            grassPreferredPositionsImageView.add(imageView);
+
+            mapGrid.add(imageView, position.getX()+1, worldMap.getMapHeight() - position.getY());
+            imageView.toBack();
+        }
+    }
+
+    private void removeColoredElements() {
+        mapGrid.getChildren().removeAll(grassPreferredPositionsImageView);
+        mapGrid.getChildren().removeAll(animalsTopGenotypesLabels);
+        grassPreferredPositionsImageView.clear();
+        animalsTopGenotypesLabels.clear();
+    }
+
+    public void stopRestartSimulation() {
 
         if (!isSimulationStopped) {
             stopRestartSimulationButton.setText("RESTART SIMULATION");
+
         } else {
             stopRestartSimulationButton.setText("STOP SIMULATION");
+            removeColoredElements();
             simulation.countDown();
         }
 
         isSimulationStopped = !isSimulationStopped;
     }
 
-    public void endSimulation(ActionEvent event) {
+    public void endSimulation() {
         simulation.stopSimulation();
         Stage stage = (Stage) mapGrid.getScene().getWindow();
         stage.close();

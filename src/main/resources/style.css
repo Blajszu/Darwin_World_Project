@@ -36,3 +36,6 @@ GridPane {
     -fx-background-color: #ceb873;
 }
 
+#grassBackground {
+    -fx-background-color: red;
+}
