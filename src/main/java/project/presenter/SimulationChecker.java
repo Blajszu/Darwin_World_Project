@@ -77,9 +77,13 @@ public class SimulationChecker {
         if(
             simulationParameters.mapHeight() > 200 ||
             simulationParameters.mapWidth() > 200 ||
-            simulationParameters.energyNeedToReproduce() <= 2* simulationParameters.energyUsedToReproduce() ||
+            simulationParameters.energyNeedToReproduce() <= simulationParameters.energyUsedToReproduce() ||
             simulationParameters.minimalNumberOfMutation() > simulationParameters.maximumNumberOfMutation() ||
-            simulationParameters.maximumNumberOfMutation() > simulationParameters.numberOfGenes()
+            simulationParameters.maximumNumberOfMutation() > simulationParameters.numberOfGenes() ||
+            simulationParameters.numberOfGrassOnMap() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
+            simulationParameters.startNumberOfAnimals() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
+            simulationParameters.numberOfGrassGrowingEveryDay() > simulationParameters.mapHeight() * simulationParameters.mapWidth()
+
         )
         {
             throw new IllegalArgumentException("Invalid Simulation parameters");

@@ -17,11 +17,11 @@
             <HBox alignment="CENTER" spacing="20">
                 <VBox alignment="CENTER_RIGHT">
                     <HBox alignment="CENTER_RIGHT">
-                        <Label>Height:</Label>
+                        <Label>Height [1, 200]:</Label>
                         <TextField fx:id="height" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
-                        <Label>Width:</Label>
+                        <Label>Width [1, 200]:</Label>
                         <TextField fx:id="width" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
@@ -33,7 +33,7 @@
                         <TextField fx:id="startNumberOfGrass" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
-                        <Label>Energy from grass</Label>
+                        <Label>Energy from grass:</Label>
                         <TextField fx:id="energyFromGrass" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">

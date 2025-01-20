@@ -19,7 +19,7 @@ public class Simulation implements Runnable {
     private final WorldMap worldMap;
     SimulationParameters simulationParameters;
 
-    private int currentDay = 0;
+    private int currentDay = 1;
 
     private int coolDown = 200;
 
