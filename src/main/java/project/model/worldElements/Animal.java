@@ -93,7 +93,7 @@ public class Animal implements WorldElement{
     public String getAnimalGenesString() { return animalGenesString; }
 
     public Vector2d getNextPosition() {
-        return currentPosition.add(MapDirection.values()[getNextOrientation().ordinal()].toUnitVector());
+        return currentPosition.add(currentOrientation.toUnitVector());
     }
 
     public MapDirection getNextOrientation() {
@@ -127,7 +127,7 @@ public class Animal implements WorldElement{
 
     @Override
     public String toString() {
-        return switch (getNextOrientation()) {
+        return switch (currentOrientation) {
             case NORTH -> "N";
             case NORTHEAST -> "NE";
             case EAST -> "E";
@@ -157,12 +157,15 @@ public class Animal implements WorldElement{
         lengthOfLife++;
     }
 
+    public void rotate() {
+        this.rotate(animalGenes.get(currentActiveGene));
+    }
+
     public void move(Vector2d position) {
         if (!this.isAnimalAlive()) {
             throw new AnimalDeadException("Animal can't move, because it is dead");
         }
 
-        this.rotate(animalGenes.get(currentActiveGene));
         currentPosition = position;
         currentEnergy--;
     }

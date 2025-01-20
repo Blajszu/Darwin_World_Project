@@ -13,8 +13,12 @@ public class WorldElementBox {
     private final WorldElement element;
     private static final Map<String, Image> imageCache = new HashMap<>();
 
-    public WorldElementBox(WorldElement element) {
+    private final int size;
+
+    public WorldElementBox(WorldElement element, int size) {
         this.element = element;
+        this.size = size;
+
         fillContent();
     }
 
@@ -26,16 +30,12 @@ public class WorldElementBox {
         return element;
     }
 
-    public void update() {
-        container.getChildren().clear();
-        fillContent();
-    }
-
     private void fillContent() {
         Image image = getOrCreateImage(element.getResourceFileName());
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
+
+        imageView.setFitHeight(size);
+        imageView.setFitWidth(size);
 
         container.getChildren().add(imageView);
         container.setAlignment(Pos.CENTER);

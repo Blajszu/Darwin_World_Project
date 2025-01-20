@@ -66,13 +66,12 @@ public class Simulation implements Runnable {
             int numberOfGenes) throws IncorrectPositionException {
 
         Boundary mapBounds = worldMap.getMapBounds();
-        int mapWith = mapBounds.upperRight().getY() + 1;
-        int mapHeight = mapBounds.upperRight().getX() + 1;
+        int mapWidth = mapBounds.upperRight().getX() + 1;
+        int mapHeight = mapBounds.upperRight().getY() + 1;
 
         for(int i = 0; i < numberOfAnimalsToSpawn; i++) {
-            Vector2d positionToSpawnAnimal = new Vector2d(rand.nextInt(mapWith), rand.nextInt(mapHeight));
+            Vector2d positionToSpawnAnimal = new Vector2d(rand.nextInt(mapWidth), rand.nextInt(mapHeight));
             Animal animal = new Animal(positionToSpawnAnimal, numberOfGenes, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy);
-
             worldMap.place(animal);
         }
     }
@@ -129,6 +128,14 @@ public class Simulation implements Runnable {
         }
     }
 
+    private void rotateAnimals() {
+        Collection<Animal> animals = worldMap.getOrderedAnimals();
+
+        for(Animal animal : animals) {
+            animal.rotate();
+        }
+    }
+
     private void moveAnimals() {
         Collection<Animal> animals = worldMap.getOrderedAnimals();
 
@@ -151,7 +158,7 @@ public class Simulation implements Runnable {
         for(Vector2d position : worldMap.getAllAnimalsPositions()) {
 
             Optional<List<Animal>> animalsAtPosition = worldMap.animalsAt(position);
-            List<Animal> resolvedConflictsAnimals = resolveConflicts(animalsAtPosition.get());
+            List<Animal> resolvedConflictsAnimals = resolveAnimalsConflicts(animalsAtPosition.get());
 
             if (worldMap.isGrassAt(position)) {
                 worldMap.removeGrass(position);
@@ -171,7 +178,7 @@ public class Simulation implements Runnable {
         }
     }
 
-    private List<Animal> resolveConflicts(List<Animal> animals) {
+    public List<Animal> resolveAnimalsConflicts(List<Animal> animals) {
         return animals.stream()
             .sorted(Comparator
                     .comparingInt(Animal::getCurrentEnergy).reversed()
@@ -218,6 +225,10 @@ public class Simulation implements Runnable {
             while (running) {
                 removeDeadAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
+                Thread.sleep(coolDown);
+                countDownLatch.await();
+                rotateAnimals();
+                SimulationChangeEvent(SimulationEventType.ANIMALS_ROTATED);
                 Thread.sleep(coolDown);
                 countDownLatch.await();
                 moveAnimals();
