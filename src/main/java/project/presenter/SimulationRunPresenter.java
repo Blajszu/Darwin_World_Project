@@ -45,6 +45,8 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private XYChart.Series<Number, Number> animalsSeries;
     private XYChart.Series<Number, Number> grassesSeries;
 
+    private int initialAnimalEnergy;
+
     private boolean isSimulationStopped = false;
     private List<String> topGenotypes;
 
@@ -221,6 +223,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     public void setSimulation(Simulation simulation) {
         this.simulation = simulation;
         this.worldMap = simulation.getWorldMap();
+        this.initialAnimalEnergy = simulation.getInitialAnimalsEnergy();
 
         cellSize = Math.min(500 / (worldMap.getMapHeight() + 1), 500 / (worldMap.getMapWidth() + 1));
         mapGrid.setMaxWidth(cellSize * worldMap.getMapWidth());
@@ -236,7 +239,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                 conflictedAnimals.add(animal);
             } else {
                 List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
-                animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize));
+                animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
 
                 conflictedAnimals.clear();
                 conflictedAnimals.add(animal);
@@ -244,12 +247,12 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         }
         if(!conflictedAnimals.isEmpty()) {
             List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
-            animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize));
+            animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
         }
 
         grassBoxes = worldMap.getElements().stream()
                 .filter(worldElement -> worldElement instanceof Grass)
-                .map(element -> new WorldElementBox(element, cellSize))
+                .map(element -> new WorldElementBox(element, cellSize, initialAnimalEnergy))
                 .toList();
 
         clearGrid();

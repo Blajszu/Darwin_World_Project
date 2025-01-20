@@ -14,10 +14,12 @@ public class WorldElementBox {
     private static final Map<String, Image> imageCache = new HashMap<>();
 
     private final int size;
+    private final int initialAnimalEnergy;
 
-    public WorldElementBox(WorldElement element, int size) {
+    public WorldElementBox(WorldElement element, int size, int initialAnimalEnergy) {
         this.element = element;
         this.size = size;
+        this.initialAnimalEnergy = initialAnimalEnergy;
 
         fillContent();
     }
