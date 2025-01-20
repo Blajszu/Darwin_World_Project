@@ -59,11 +59,11 @@
                         <TextField fx:id="energyUsedToReproduce" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
-                        <Label>Minimal number of mutation:</Label>
+                        <Label>Minimal number of mutations:</Label>
                         <TextField fx:id="minimalNumberOfMutation" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
-                        <Label>Maximum number of energy:</Label>
+                        <Label>Maximum number of mutations:</Label>
                         <TextField fx:id="maximumNumberOfMutation" />
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">

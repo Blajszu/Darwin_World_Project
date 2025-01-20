@@ -19,6 +19,7 @@ public class Animal implements WorldElement{
     private final int energyUsedToReproduce;
     private final LinkedList<Animal> animalsKids = new LinkedList<>();
     private int lengthOfLife = 0;
+    private int numberOfEatenPlants = 0;
 
     Random random = new Random();
 
@@ -76,6 +77,14 @@ public class Animal implements WorldElement{
 
     public int getCurrentEnergy() {
         return currentEnergy;
+    }
+
+    public int getActivePartOfGenome() {
+        return currentActiveGene;
+    }
+
+    public int getNumberOfEatenPlants() {
+        return numberOfEatenPlants;
     }
 
     public MapDirection getCurrentOrientation() {
@@ -145,6 +154,7 @@ public class Animal implements WorldElement{
 
     public void eat(int energyFromGrass) {
         currentEnergy += energyFromGrass;
+        numberOfEatenPlants++;
     }
 
     public void rotate(int rotateAngle) {

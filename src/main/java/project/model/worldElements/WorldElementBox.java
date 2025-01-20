@@ -19,6 +19,7 @@ public class WorldElementBox {
 
     private final int size;
     private final int initialAnimalEnergy;
+    private boolean selected;
 
     private final List<String> animalsColors = List.of(
             "#ffffff",
@@ -32,9 +33,14 @@ public class WorldElementBox {
     );
 
     public WorldElementBox(WorldElement element, int size, int initialAnimalEnergy) {
+        this(element, size, initialAnimalEnergy, false);
+    }
+
+    public WorldElementBox(WorldElement element, int size, int initialAnimalEnergy, boolean selected) {
         this.element = element;
         this.size = size;
         this.initialAnimalEnergy = initialAnimalEnergy;
+        this.selected = selected;
 
         fillContent();
     }
@@ -47,15 +53,23 @@ public class WorldElementBox {
         return element;
     }
 
-    private void fillContent() {
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+
+    public void fillContent() {
         Label label = new Label();
         if (element instanceof Animal) {
             label.setId("animalLabel");
             label.setMinWidth(0.8 * size);
             label.setMinHeight(0.8 * size);
 
-            int backgroundIndex = (int) Math.min(Math.floor(((double) ((Animal) element).getCurrentEnergy() / (2 * initialAnimalEnergy)) * 8), 7);
-            label.setStyle("-fx-background-color: " + animalsColors.get(backgroundIndex) + ";");
+            if(!selected) {
+                int backgroundIndex = (int) Math.min(Math.floor(((double) ((Animal) element).getCurrentEnergy() / (2 * initialAnimalEnergy)) * 8), 7);
+                label.setStyle("-fx-background-color: " + animalsColors.get(backgroundIndex) + ";");
+            } else {
+                label.setStyle("-fx-background-color: yellow;");
+            }
 
             label.setAlignment(Pos.CENTER);
             label.setPadding(new Insets(10));
@@ -70,6 +84,7 @@ public class WorldElementBox {
             stackPane.getChildren().addAll(label, imageView);
             stackPane.setAlignment(Pos.CENTER);
 
+            container.getChildren().clear();
             container.getChildren().add(stackPane);
         } else {
             label.setAlignment(Pos.CENTER);
@@ -81,7 +96,6 @@ public class WorldElementBox {
         }
         container.setAlignment(Pos.CENTER);
     }
-
 
     private Image getOrCreateImage(String resourceFileName) {
         return imageCache.computeIfAbsent(resourceFileName, Image::new);

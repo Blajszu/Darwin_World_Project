@@ -33,7 +33,9 @@ Label {
 GridPane {
     -fx-hgap: 1;
     -fx-vgap: 1;
-    -fx-background-color: #ceb873;
+    -fx-background-color: #44d15f;
+    -fx-border-width: 0;
+    -fx-grid-lines-visible: false;
 }
 
 #grassBackground {

@@ -53,7 +53,8 @@
                         majorTickUnit="100"/>
             </VBox>
             <VBox fx:id="animalStats" alignment="CENTER">
-                <Label fx:id="animalStatisticsLabel" textAlignment="CENTER" text="Statystyki zaznaczonego zwierzaka"/>
+                <Label textAlignment="CENTER" text="Statystyki zaznaczonego zwierzaka"/>
+                <Label fx:id="animalStatisticsLabel" text="Brak śledzonego zwierzaka"/>
             </VBox>
         </HBox>
     </center>

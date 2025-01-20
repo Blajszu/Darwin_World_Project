@@ -56,6 +56,10 @@ public class Simulation implements Runnable {
         statistics.updateStatistics(worldMap, currentDay);
     }
 
+    public SimulationStatistics getStatistics() {
+        return statistics;
+    }
+
     public WorldMap getWorldMap() {
         return worldMap;
     }

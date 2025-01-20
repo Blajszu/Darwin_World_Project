@@ -74,6 +74,16 @@ public class SimulationChecker {
         {
             throw new IllegalArgumentException("Invalid Simulation parameters");
         }
+        if(
+            simulationParameters.mapHeight() > 200 ||
+            simulationParameters.mapWidth() > 200 ||
+            simulationParameters.energyNeedToReproduce() <= 2* simulationParameters.energyUsedToReproduce() ||
+            simulationParameters.minimalNumberOfMutation() > simulationParameters.maximumNumberOfMutation() ||
+            simulationParameters.maximumNumberOfMutation() > simulationParameters.numberOfGenes()
+        )
+        {
+            throw new IllegalArgumentException("Invalid Simulation parameters");
+        }
         return simulationParameters;
     }
 }
