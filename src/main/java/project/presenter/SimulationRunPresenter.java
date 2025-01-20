@@ -96,9 +96,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         xAxis.setAutoRanging(false);
         xAxis.setUpperBound(40);
 
-        simulationDelay.valueProperty().addListener((observable, oldValue, newValue) -> {
-            simulation.setCoolDown(newValue.intValue());
-        });
+        simulationDelay.valueProperty().addListener((observable, oldValue, newValue) -> simulation.setCoolDown(newValue.intValue()));
     }
 
     private void clearGrid() {
@@ -188,9 +186,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                     .descendingMap()
                     .entrySet().stream()
                     .findFirst()
-                    .filter(entry -> entry.getKey() > 1)
-                    .map(entry -> entry.getValue().stream().limit(5))
-                    .orElse(Stream.empty())
+                    .filter(entry -> entry.getKey() > 1).stream().flatMap(entry -> entry.getValue().stream().limit(5))
                     .map(Map.Entry::getKey)
                     .toList();
 
