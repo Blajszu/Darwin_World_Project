@@ -23,6 +23,8 @@ import project.model.worldElements.Animal;
 import project.model.worldElements.WorldElementBox;
 import project.model.Vector2d;
 import project.model.worldElements.Grass;
+import project.statistics.AnimalStatistics;
+import project.statistics.AnimalStatisticsRecord;
 import project.statistics.StatisticsRecord;
 
 import java.text.DecimalFormat;
@@ -47,6 +49,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private int initialAnimalEnergy;
     private Animal selectedAnimal;
     private WorldElementBox selectedAnimalBox;
+    private AnimalStatistics selectedAnimalStatistics = null;
 
     private boolean isSimulationStopped = false;
     private List<String> topGenotypes;
@@ -83,7 +86,6 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private Label mostPopularGenotypesLabel;
     @FXML
     private Label animalStatisticsLabel;
-
 
     @FXML
     public void initialize() {
@@ -208,13 +210,24 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         selectedAnimalBox.setSelected(true);
         selectedAnimalBox.fillContent();
 
-//        initializeAnimalStatistics()
+        selectedAnimalStatistics = new AnimalStatistics(selectedAnimal, simulation);
         writeAnimalStatistics();
     }
 
     private void writeAnimalStatistics() {
+        AnimalStatisticsRecord record = selectedAnimalStatistics.getRecord();
+
         animalStatisticsLabel.setText("Genom: %s\nAktywna część genomu: %s\nIlość energii: %s\nLiczba zjedzonych roślin: %s\nLiczba dzieci: %s\nLiczba potomków %s\nIle dni żyje/żył: %s\nKtórego dnia umarł: %s"
-                .formatted(selectedAnimal.getAnimalGenesString(), selectedAnimal.getActivePartOfGenome(), selectedAnimal.getCurrentEnergy(), selectedAnimal.getNumberOfEatenPlants(), selectedAnimal.getAnimalsKids().size(), "xDD", selectedAnimal.getLengthOfLife(), "xDD"));
+                .formatted(
+                        record.animalGene(),
+                        record.activePartOfGenome(),
+                        record.currentEnergy(),
+                        record.numberOfEatenPlants(),
+                        record.numberOfKids(),
+                        record.numberOfDescendants(),
+                        record.lengthOfLife(),
+                        (record.whenDied() == null) ? "Jeszcze żyje" : record.whenDied())
+                );
     }
 
     private void writeStatistics(SimulationEventType eventType, StatisticsRecord statisticsRecord) {
@@ -335,7 +348,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             writeStatistics(eventType, statisticsRecord);
 
             if(selectedAnimal != null) {
-//                updateAnimalStatistics();
+                selectedAnimalStatistics.updateStatistics();
                 writeAnimalStatistics();
             }
 
