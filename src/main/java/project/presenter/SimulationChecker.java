@@ -81,7 +81,8 @@ public class SimulationChecker {
             simulationParameters.minimalNumberOfMutation() > simulationParameters.maximumNumberOfMutation() ||
             simulationParameters.maximumNumberOfMutation() > simulationParameters.numberOfGenes() ||
             simulationParameters.numberOfGrassOnMap() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
-            simulationParameters.startNumberOfAnimals() > simulationParameters.mapHeight() * simulationParameters.mapWidth()
+            simulationParameters.startNumberOfAnimals() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
+            simulationParameters.numberOfGrassGrowingEveryDay() > simulationParameters.mapHeight() * simulationParameters.mapWidth()
 
         )
         {
