@@ -114,10 +114,10 @@ public class Animal implements WorldElement{
 
     public String getResourceFileName() {
         return switch (currentOrientation) {
-            case NORTH -> "up.png";
-            case SOUTH -> "down.png";
-            case EAST -> "right.png";
-            case WEST -> "left.png";
+            case NORTH -> "north.png";
+            case SOUTH -> "south.png";
+            case EAST -> "east.png";
+            case WEST -> "west.png";
             case NORTHEAST -> "northeast.png";
             case SOUTHEAST -> "southeast.png";
             case SOUTHWEST -> "southwest.png";
