@@ -39,3 +39,11 @@ GridPane {
 #grassBackground {
     -fx-background-color: red;
 }
+
+#animalLabel {
+    -fx-background-radius: 50%;
+}
+
+#grassLabel {
+    -fx-background-color: #0b7c50;
+}

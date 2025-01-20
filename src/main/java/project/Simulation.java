@@ -27,11 +27,14 @@ public class Simulation implements Runnable {
 
     private final SimulationStatistics statistics = new SimulationStatistics();
 
+    private final int initialAnimalsEnergy;
+
     private CountDownLatch countDownLatch;
     private boolean running = true;
 
     public Simulation(SimulationParameters simulationParameters) {
         this.simulationParameters = simulationParameters;
+        this.initialAnimalsEnergy = simulationParameters.initialAnimalsEnergy();
 
         this.worldMap = switch(simulationParameters.growthGrassVariant()) {
             case EQUATOR_MAP -> new EquatorMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
@@ -55,6 +58,10 @@ public class Simulation implements Runnable {
 
     public WorldMap getWorldMap() {
         return worldMap;
+    }
+
+    public int getInitialAnimalsEnergy() {
+        return initialAnimalsEnergy;
     }
 
     private void spawnFirstAnimals(
