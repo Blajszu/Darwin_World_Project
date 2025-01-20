@@ -3,15 +3,14 @@ package project.presenter;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
+import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -40,12 +39,14 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private WorldMap worldMap;
     private Boundary currentBounds;
     private List<WorldElementBox> grassBoxes = new ArrayList<>();
-    private final List<WorldElementBox> animalBoxes = new ArrayList<>();
+    private final HashMap<Animal, WorldElementBox> animalBoxes = new HashMap<>();
 
     private XYChart.Series<Number, Number> animalsSeries;
     private XYChart.Series<Number, Number> grassesSeries;
 
     private int initialAnimalEnergy;
+    private Animal selectedAnimal;
+    private WorldElementBox selectedAnimalBox;
 
     private boolean isSimulationStopped = false;
     private List<String> topGenotypes;
@@ -80,6 +81,8 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private Label averageChildrenCountLabel;
     @FXML
     private Label mostPopularGenotypesLabel;
+    @FXML
+    private Label animalStatisticsLabel;
 
 
     @FXML
@@ -145,7 +148,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
         List<WorldElementBox> worldElementBoxes;
 
-        worldElementBoxes = Stream.concat(grassBoxes.stream(), animalBoxes.stream()).toList();
+        worldElementBoxes = Stream.concat(grassBoxes.stream(), animalBoxes.values().stream()).toList();
 
         worldElementBoxes.forEach(worldElementBox -> {
             Vector2d position = worldElementBox.getElement().getPosition();
@@ -153,6 +156,65 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                     position.getX() + 1 - currentBounds.lowerLeft().getX(),
                     currentBounds.upperRight().getY() - position.getY() + 1);
         });
+
+        if(selectedAnimal != null) {
+            WorldElementBox selectAnimalBox = new WorldElementBox(selectedAnimal, cellSize, initialAnimalEnergy, true);
+            this.selectedAnimalBox = selectAnimalBox;
+            Vector2d position = selectAnimalBox.getElement().getPosition();
+            mapGrid.add(selectAnimalBox.getGraphicBox(),
+                    position.getX() + 1 - currentBounds.lowerLeft().getX(),
+                    currentBounds.upperRight().getY() - position.getY() + 1);
+
+            animalBoxes.put(selectedAnimal, selectAnimalBox);
+        }
+
+        for (Node node : mapGrid.getChildren()) {
+            if (node instanceof Region) {
+                node.setOnMouseClicked(event -> handleCellClick(node));
+            }
+        }
+    }
+
+    private void handleCellClick(Node node) {
+        System.out.println(!isSimulationStopped);
+        if(!isSimulationStopped)
+            return;
+
+        if(selectedAnimalBox != null) {
+            selectedAnimalBox.setSelected(false);
+            selectedAnimalBox.fillContent();
+        }
+
+        int rowIndex = worldMap.getMapHeight() - GridPane.getRowIndex(node);
+        int columnIndex = GridPane.getColumnIndex(node) - 1;
+
+        Vector2d position = new Vector2d(columnIndex, rowIndex);
+
+        Optional<List<Animal>> animalsAtPosition = worldMap.animalsAt(position);
+        if (animalsAtPosition.isEmpty())
+            return;
+
+
+        Animal newSelectedAnimal = simulation.resolveAnimalsConflicts(animalsAtPosition.get()).getFirst();
+        if(selectedAnimal == newSelectedAnimal) {
+            selectedAnimalBox.setSelected(true);
+            selectedAnimalBox.fillContent();
+            return;
+        }
+
+        selectedAnimal = newSelectedAnimal;
+        selectedAnimalBox = animalBoxes.get(selectedAnimal);
+
+        selectedAnimalBox.setSelected(true);
+        selectedAnimalBox.fillContent();
+
+//        initializeAnimalStatistics()
+        writeAnimalStatistics();
+    }
+
+    private void writeAnimalStatistics() {
+        animalStatisticsLabel.setText("Genom: %s\nAktywna część genomu: %s\nIlość energii: %s\nLiczba zjedzonych roślin: %s\nLiczba dzieci: %s\nLiczba potomków %s\nIle dni żyje/żył: %s\nKtórego dnia umarł: %s"
+                .formatted(selectedAnimal.getAnimalGenesString(), selectedAnimal.getActivePartOfGenome(), selectedAnimal.getCurrentEnergy(), selectedAnimal.getNumberOfEatenPlants(), selectedAnimal.getAnimalsKids().size(), "xDD", selectedAnimal.getLengthOfLife(), "xDD"));
     }
 
     private void writeStatistics(SimulationEventType eventType, StatisticsRecord statisticsRecord) {
@@ -171,7 +233,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         averageLifeLengthLabel.setText("Średnia długość życia: %s".formatted(df.format(statisticsRecord.averageLifeLength())));
         averageChildrenCountLabel.setText("Średnia liczba dzieci: %s".formatted(df.format(statisticsRecord.averageChildrenCount())));
 
-        if(Collections.max(statisticsRecord.genotypesCount().values()) == 1){
+        if(statisticsRecord.genotypesCount().isEmpty() || Collections.max(statisticsRecord.genotypesCount().values()) == 1){
             mostPopularGenotypesLabel.setText("Najpopularniejsze Genotypy\n" + "Brak najpopularniejszego genotypu");
         }
         else {
@@ -230,12 +292,17 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         ArrayList<Animal> conflictedAnimals = new ArrayList<>();
         animalBoxes.clear();
 
-        for (Animal animal : worldMap.getOrderedAnimals()) {
+        ArrayList<Animal> animalsOnGrid = new ArrayList<>(worldMap.getOrderedAnimals());
+
+        if(selectedAnimal != null)
+            animalsOnGrid.remove(selectedAnimal);
+
+        for (Animal animal : animalsOnGrid) {
             if (conflictedAnimals.isEmpty() || (conflictedAnimals.getFirst().getPosition().equals(animal.getPosition()))) {
                 conflictedAnimals.add(animal);
             } else {
                 List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
-                animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
+                animalBoxes.put(resolvedConflicts.getFirst(), new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
 
                 conflictedAnimals.clear();
                 conflictedAnimals.add(animal);
@@ -243,7 +310,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         }
         if(!conflictedAnimals.isEmpty()) {
             List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
-            animalBoxes.add(new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
+            animalBoxes.put(resolvedConflicts.getFirst(), new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
         }
 
         grassBoxes = worldMap.getElements().stream()
@@ -266,6 +333,12 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             drawMap();
             moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
             writeStatistics(eventType, statisticsRecord);
+
+            if(selectedAnimal != null) {
+//                updateAnimalStatistics();
+                writeAnimalStatistics();
+            }
+
             if (!isSimulationStopped) {
                 simulation.countDown();
             } else {
@@ -286,7 +359,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
         for (Vector2d position : topGenotypesAnimalsPositions) {
             Label label = new Label();
-            label.setStyle("-fx-background-color: #7742eb");
+            label.setStyle("-fx-background-color: red");
             label.setMinHeight(cellSize);
             label.setMinWidth(cellSize);
             animalsTopGenotypesLabels.add(label);
