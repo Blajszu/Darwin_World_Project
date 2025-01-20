@@ -22,47 +22,45 @@ import java.util.List;
 
 public class SimulationStartPresenter {
     @FXML
-    public CheckBox collectStatistics;
+    private CheckBox collectStatistics;
     @FXML
-    public TextField numberOfGenes;
+    private TextField numberOfGenes;
     @FXML
-    public ComboBox<MutationVariant> mutationVariant;
+    private ComboBox<MutationVariant> mutationVariant;
     @FXML
-    public TextField maximumNumberOfMutation;
+    private TextField maximumNumberOfMutation;
     @FXML
-    public TextField minimalNumberOfMutation;
+    private TextField minimalNumberOfMutation;
     @FXML
-    public TextField energyUsedToReproduce;
+    private TextField energyUsedToReproduce;
     @FXML
-    public TextField energyNeedToReproduce;
+    private TextField energyNeedToReproduce;
     @FXML
-    public TextField initialAnimalsEnergy;
+    private TextField initialAnimalsEnergy;
     @FXML
-    public TextField startNumberOfAnimals;
+    private TextField startNumberOfAnimals;
     @FXML
-    public TextField numberOfGrassGrowingEveryDay;
+    private TextField numberOfGrassGrowingEveryDay;
     @FXML
-    public TextField energyFromGrass;
+    private TextField energyFromGrass;
     @FXML
-    public TextField startNumberOfGrass;
+    private TextField startNumberOfGrass;
     @FXML
-    public ComboBox<GrowthGrassVariant> growthGrassVariant;
+    private ComboBox<GrowthGrassVariant> growthGrassVariant;
     @FXML
-    public TextField width;
+    private TextField width;
     @FXML
-    public TextField height;
+    private TextField height;
     @FXML
-    public Button startSimulation;
+    private Button startSimulation;
     @FXML
-    public Label errors;
+    private Label errors;
     @FXML
-    public ComboBox<String> chooseParameters;
+    private ComboBox<String> chooseParameters;
     @FXML
-    public Button saveParameters;
+    private Button saveParameters;
     @FXML
-    public TextField fileName;
-
-    private final SimulationMapDisplay simulationMapDisplay = new SimulationMapDisplay();
+    private TextField fileName;
 
     @FXML
     public void initialize() {
@@ -128,7 +126,6 @@ public class SimulationStartPresenter {
             Simulation simulation = new Simulation(simulationParameters);
 
             simulation.addObserver(simulationRunPresenter);
-//            simulation.addObserver(simulationMapDisplay);
             WorldMap worldMap = simulation.getWorldMap();
             simulationRunPresenter.setSimulation(simulation);
 

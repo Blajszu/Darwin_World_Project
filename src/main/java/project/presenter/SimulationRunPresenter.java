@@ -85,7 +85,21 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     @FXML
     private Label mostPopularGenotypesLabel;
     @FXML
-    private Label animalStatisticsLabel;
+    private Label animalStatisticGenomLabel;
+    @FXML
+    private Label animalStatisticActiveGenLabel;
+    @FXML
+    private Label animalStatisticEnergyLabel;
+    @FXML
+    private Label animalStatisticEatenGrassesLabel;
+    @FXML
+    private Label animalStatisticChildrenLabel;
+    @FXML
+    private Label animalStatisticDescendantsLabel;
+    @FXML
+    private Label animalStatisticLengthOfLifeLabel;
+    @FXML
+    private Label animalStatisticDeathLabel;
 
     @FXML
     public void initialize() {
@@ -159,7 +173,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                     currentBounds.upperRight().getY() - position.getY() + 1);
         });
 
-        if(selectedAnimal != null) {
+        if(selectedAnimal != null && selectedAnimal.isAnimalAlive()) {
             WorldElementBox selectAnimalBox = new WorldElementBox(selectedAnimal, cellSize, initialAnimalEnergy, true);
             this.selectedAnimalBox = selectAnimalBox;
             Vector2d position = selectAnimalBox.getElement().getPosition();
@@ -178,7 +192,6 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     }
 
     private void handleCellClick(Node node) {
-        System.out.println(!isSimulationStopped);
         if(!isSimulationStopped)
             return;
 
@@ -217,17 +230,14 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private void writeAnimalStatistics() {
         AnimalStatisticsRecord record = selectedAnimalStatistics.getRecord();
 
-        animalStatisticsLabel.setText("Genom: %s\nAktywna część genomu: %s\nIlość energii: %s\nLiczba zjedzonych roślin: %s\nLiczba dzieci: %s\nLiczba potomków %s\nIle dni żyje/żył: %s\nKtórego dnia umarł: %s"
-                .formatted(
-                        record.animalGene(),
-                        record.activePartOfGenome(),
-                        record.currentEnergy(),
-                        record.numberOfEatenPlants(),
-                        record.numberOfKids(),
-                        record.numberOfDescendants(),
-                        record.lengthOfLife(),
-                        (record.whenDied() == null) ? "Jeszcze żyje" : record.whenDied())
-                );
+        animalStatisticGenomLabel.setText("Genom: " + record.animalGene());
+        animalStatisticActiveGenLabel.setText("Aktywna część genomu: " + record.activePartOfGenome());
+        animalStatisticEnergyLabel.setText("Ilość energii: " + record.currentEnergy());
+        animalStatisticEatenGrassesLabel.setText("Liczba zjedzonych roślin: " + record.numberOfEatenPlants());
+        animalStatisticChildrenLabel.setText("Liczba dzieci: " + record.numberOfKids());
+        animalStatisticDescendantsLabel.setText("Liczba potomków " + record.numberOfDescendants());
+        animalStatisticLengthOfLifeLabel.setText("Ile dni żyje/żył: " + record.lengthOfLife());
+        animalStatisticDeathLabel.setText("Którego dnia umarł: " + ((record.whenDied() == null) ? "Jeszcze żyje" : record.whenDied().toString()));
     }
 
     private void writeStatistics(SimulationEventType eventType, StatisticsRecord statisticsRecord) {
@@ -372,7 +382,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
         for (Vector2d position : topGenotypesAnimalsPositions) {
             Label label = new Label();
-            label.setStyle("-fx-background-color: red");
+            label.setStyle("-fx-background-color: #d968dc");
             label.setMinHeight(cellSize);
             label.setMinWidth(cellSize);
             animalsTopGenotypesLabels.add(label);

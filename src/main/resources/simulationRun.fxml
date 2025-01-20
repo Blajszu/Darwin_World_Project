@@ -9,6 +9,9 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.StackPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             minHeight="550.0" minWidth="850.0" stylesheets="style.css"
@@ -54,7 +57,42 @@
             </VBox>
             <VBox fx:id="animalStats" alignment="CENTER">
                 <Label textAlignment="CENTER" text="Statystyki zaznaczonego zwierzaka"/>
-                <Label fx:id="animalStatisticsLabel" text="Brak śledzonego zwierzaka"/>
+                <Label fx:id="animalStatisticGenomLabel" text="Brak śledzonego zwierzaka"/>
+                <Label fx:id="animalStatisticActiveGenLabel"/>
+                <Label fx:id="animalStatisticEnergyLabel"/>
+                <Label fx:id="animalStatisticEatenGrassesLabel"/>
+                <Label fx:id="animalStatisticChildrenLabel"/>
+                <Label fx:id="animalStatisticDescendantsLabel"/>
+                <Label fx:id="animalStatisticLengthOfLifeLabel"/>
+                <Label fx:id="animalStatisticDeathLabel"/>
+
+                <VBox alignment="CENTER">
+                    <Label fx:id="legenda" text="LEGENDA"/>
+                    <HBox styleClass="legend">
+                        <ImageView fitHeight="30" fitWidth="30">
+                            <Image url="x.png"/>
+                        </ImageView>
+                        <Label text="Preferowane pozycje trawy"/>
+                    </HBox>
+                    <HBox minWidth="30" minHeight="30" styleClass="legend">
+                        <StackPane minWidth="30" minHeight="30" >
+                            <Label fx:id="animalLabelLegend" minWidth="35" minHeight="20" />
+                        </StackPane>
+                        <Label text="Śledzony zwierzak"/>
+                    </HBox>
+                    <HBox minWidth="30" minHeight="30" styleClass="legend">
+                        <StackPane minWidth="30" minHeight="30" >
+                            <Label fx:id="animalMaxEnergyLabel" minWidth="35" minHeight="20" />
+                        </StackPane>
+                        <Label text="Im ciemniejszy zwierzak, tym więcej ma energii"/>
+                    </HBox>
+                    <HBox minWidth="30" minHeight="30" styleClass="legend">
+                        <StackPane minWidth="30" minHeight="30" >
+                            <Label fx:id="popularGenotype" minWidth="35" minHeight="20" />
+                        </StackPane>
+                        <Label text="Najpopularniejsze genotypy"/>
+                    </HBox>
+                </VBox>
             </VBox>
         </HBox>
     </center>

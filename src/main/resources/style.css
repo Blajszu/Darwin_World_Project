@@ -49,3 +49,19 @@ GridPane {
 #grassLabel {
     -fx-background-color: #0b7c50;
 }
+
+#animalLabelLegend {
+    -fx-background-radius: 50%;
+    -fx-background-color: yellow;
+}
+#animalMaxEnergyLabel {
+    -fx-background-radius: 50%;
+    -fx-background-color: #062195;
+}
+#popularGenotype {
+    -fx-background-color: #d968dc;
+}
+
+.legend {
+    -fx-padding: 10px;
+}
