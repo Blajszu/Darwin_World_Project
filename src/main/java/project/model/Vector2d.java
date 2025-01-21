@@ -1,26 +1,9 @@
 package project.model;
 
-import java.util.Objects;
-
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class Vector2d {
-    private final int x;
-    private final int y;
-
-    public Vector2d(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+public record Vector2d(int x, int y) {
 
     @Override
     public String toString() {
@@ -66,8 +49,4 @@ public class Vector2d {
         return x == that.x && y == that.y;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
 }
