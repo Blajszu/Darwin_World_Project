@@ -15,22 +15,18 @@ import java.util.concurrent.CountDownLatch;
 public class Simulation implements Runnable {
 
     private final ArrayList<SimulationChangeListener> listeners = new ArrayList<>();
-
     private final WorldMap worldMap;
-    SimulationParameters simulationParameters;
-
-    private int currentDay = 1;
-
-    private int coolDown = 200;
-
-    private final Random rand = new Random();
-
+    private final SimulationParameters simulationParameters;
     private final SimulationStatistics statistics = new SimulationStatistics();
 
+    private int currentDay = 1;
+    private int coolDown = 200;
     private final int initialAnimalsEnergy;
 
     private CountDownLatch countDownLatch;
     private boolean running = true;
+
+    private final Random rand = new Random();
 
     public Simulation(SimulationParameters simulationParameters) {
         this.simulationParameters = simulationParameters;
@@ -68,6 +64,37 @@ public class Simulation implements Runnable {
         return initialAnimalsEnergy;
     }
 
+    public List<Animal> resolveAnimalsConflicts(List<Animal> animals) {
+        return animals.stream()
+                .sorted(Comparator
+                        .comparingInt(Animal::getCurrentEnergy).reversed()
+                        .thenComparingInt(Animal::getLengthOfLife).reversed()
+                        .thenComparingInt(animal -> animal.getAnimalsKids().size()).reversed()
+                )
+                .toList();
+    }
+
+    public void addObserver(SimulationChangeListener observer) {
+        listeners.add(observer);
+    }
+
+    public void removeObserver(SimulationChangeListener observer) {
+        listeners.remove(observer);
+    }
+
+    public void countDown() {
+        countDownLatch.countDown();
+    }
+
+    public void setCoolDown(int coolDown) {
+        this.coolDown = coolDown;
+    }
+
+    public void stopSimulation() {
+        running = false;
+        countDownLatch.countDown();
+    }
+
     private void spawnFirstAnimals(
             int numberOfAnimalsToSpawn,
             int initialAnimalsEnergy,
@@ -77,8 +104,8 @@ public class Simulation implements Runnable {
             int numberOfGenes) throws IncorrectPositionException {
 
         Boundary mapBounds = worldMap.getMapBounds();
-        int mapWidth = mapBounds.upperRight().getX() + 1;
-        int mapHeight = mapBounds.upperRight().getY() + 1;
+        int mapWidth = mapBounds.upperRight().x() + 1;
+        int mapHeight = mapBounds.upperRight().y() + 1;
 
         for(int i = 0; i < numberOfAnimalsToSpawn; i++) {
             Vector2d positionToSpawnAnimal = new Vector2d(rand.nextInt(mapWidth), rand.nextInt(mapHeight));
@@ -189,24 +216,6 @@ public class Simulation implements Runnable {
         }
     }
 
-    public List<Animal> resolveAnimalsConflicts(List<Animal> animals) {
-        return animals.stream()
-            .sorted(Comparator
-                    .comparingInt(Animal::getCurrentEnergy).reversed()
-                    .thenComparingInt(Animal::getLengthOfLife).reversed()
-                    .thenComparingInt(animal -> animal.getAnimalsKids().size()).reversed()
-            )
-            .toList();
-    }
-
-    public void addObserver(SimulationChangeListener observer) {
-        listeners.add(observer);
-    }
-
-    public void removeObserver(SimulationChangeListener observer) {
-        listeners.remove(observer);
-    }
-
     private void SimulationChangeEvent(SimulationEventType eventType) {
         countDownLatch = new CountDownLatch(1);
         StatisticsRecord statisticsRecord = statistics.getStatisticsRecord();
@@ -214,19 +223,6 @@ public class Simulation implements Runnable {
         for(SimulationChangeListener observer : listeners) {
             observer.handleChangeEvent(worldMap, eventType, statisticsRecord);
         }
-    }
-
-    public void countDown() {
-        countDownLatch.countDown();
-    }
-
-    public void setCoolDown(int coolDown) {
-        this.coolDown = coolDown;
-    }
-
-    public void stopSimulation() {
-        running = false;
-        countDownLatch.countDown();
     }
 
     @Override

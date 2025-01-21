@@ -1,26 +1,9 @@
 package project.model;
 
-import java.util.Objects;
-
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
-public class Vector2d {
-    private final int x;
-    private final int y;
-
-    public Vector2d(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
+public record Vector2d(int x, int y) {
 
     @Override
     public String toString() {
@@ -59,15 +42,10 @@ public class Vector2d {
     public boolean equals(Object other) {
         if (this == other)
             return true;
-        if (!(other instanceof Vector2d))
+        if (!(other instanceof Vector2d(int x1, int y1)))
             return false;
 
-        Vector2d that = (Vector2d) other;
-        return x == that.x && y == that.y;
+        return x == x1 && y == y1;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
-    }
 }

@@ -55,7 +55,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     @Override
     public Collection<Animal> getOrderedAnimals() {
         Comparator<Animal> animalComparator = Comparator.comparing(animal ->
-                "%s %s".formatted(animal.getPosition().getX(), animal.getPosition().getY())
+                "%s %s".formatted(animal.getPosition().x(), animal.getPosition().y())
         );
 
         return animalsOnMap.values().stream()
@@ -110,6 +110,11 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
+    public Optional<List<Animal>> animalsAt(Vector2d position) {
+        return Optional.ofNullable(animalsOnMap.get(position));
+    }
+
+    @Override
     public void place(WorldElement element) throws IncorrectPositionException {
         Vector2d position = element.getPosition();
 
@@ -143,22 +148,17 @@ public abstract class AbstractWorldMap implements WorldMap {
             return;
         }
 
-        if(mapBoundary.lowerLeft().getY() > nextPosition.getY() || mapBoundary.upperRight().getY() < nextPosition.getY()) {
+        if(mapBoundary.lowerLeft().y() > nextPosition.y() || mapBoundary.upperRight().y() < nextPosition.y()) {
             animal.rotate(4);
-            nextPosition = new Vector2d(nextPosition.getX(), animal.getPosition().getY());
+            nextPosition = new Vector2d(nextPosition.x(), animal.getPosition().y());
         }
 
-        if(mapBoundary.lowerLeft().getX() > nextPosition.getX() || mapBoundary.upperRight().getX() < nextPosition.getX()) {
-            nextPosition = new Vector2d((nextPosition.getX() + width) % width, nextPosition.getY());
+        if(mapBoundary.lowerLeft().x() > nextPosition.x() || mapBoundary.upperRight().x() < nextPosition.x()) {
+            nextPosition = new Vector2d((nextPosition.x() + width) % width, nextPosition.y());
             removeAnimal(animal);
             animalsOnMap.computeIfAbsent(nextPosition, k -> new LinkedList<>()).add(animal);
             animal.move(nextPosition);
         }
-    }
-
-    @Override
-    public Optional<List<Animal>> animalsAt(Vector2d position) {
-        return Optional.ofNullable(animalsOnMap.get(position));
     }
 
     @Override

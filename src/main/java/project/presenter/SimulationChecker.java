@@ -22,7 +22,7 @@ public class SimulationChecker {
             String numberOfGenes,
             boolean collectStatistics
             )
-    {
+{
         if (mapHeight.isEmpty() ||
             mapWidth.isEmpty() ||
             numberOfGrassOnMap.isEmpty() ||
@@ -35,10 +35,7 @@ public class SimulationChecker {
             minimalNumberOfMutation.isEmpty() ||
             maximumNumberOfMutation.isEmpty() ||
             numberOfGenes.isEmpty()
-        )
-        {
-            throw new IllegalArgumentException("Missing Simulation parameters");
-        }
+        ) { throw new IllegalArgumentException("Missing Simulation parameters"); }
 
         SimulationParameters simulationParameters = new SimulationParameters(
                 Integer.parseInt(mapHeight),
@@ -57,6 +54,7 @@ public class SimulationChecker {
                 Integer.parseInt(numberOfGenes),
                 collectStatistics
                 );
+
         if(
             simulationParameters.mapHeight() <= 0 ||
             simulationParameters.mapWidth() <= 0 ||
@@ -70,10 +68,8 @@ public class SimulationChecker {
             simulationParameters.minimalNumberOfMutation() < 0 ||
             simulationParameters.maximumNumberOfMutation() < 0 ||
             simulationParameters.numberOfGenes() <= 0
-        )
-        {
-            throw new IllegalArgumentException("Invalid Simulation parameters");
-        }
+        ) { throw new IllegalArgumentException("Invalid Simulation parameters"); }
+
         if(
             simulationParameters.mapHeight() > 200 ||
             simulationParameters.mapWidth() > 200 ||
@@ -83,11 +79,8 @@ public class SimulationChecker {
             simulationParameters.numberOfGrassOnMap() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
             simulationParameters.startNumberOfAnimals() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
             simulationParameters.numberOfGrassGrowingEveryDay() > simulationParameters.mapHeight() * simulationParameters.mapWidth()
+        ) { throw new IllegalArgumentException("Invalid Simulation parameters"); }
 
-        )
-        {
-            throw new IllegalArgumentException("Invalid Simulation parameters");
-        }
         return simulationParameters;
     }
 }
