@@ -21,13 +21,13 @@ public class MapVisualizer {
         lowerLeft = bounds.lowerLeft();
         upperRight = bounds.upperRight();
 
-        int width = upperRight.getX() - lowerLeft.getX() + 1;
-        int height = upperRight.getY() - lowerLeft.getY() + 1;
+        int width = upperRight.x() - lowerLeft.x() + 1;
+        int height = upperRight.y() - lowerLeft.y() + 1;
 
         grid = new String[height][width];
 
-        for (int y = lowerLeft.getY(); y <= upperRight.getY(); y++) {
-            for (int x = lowerLeft.getX(); x <= upperRight.getX(); x++) {
+        for (int y = lowerLeft.y(); y <= upperRight.y(); y++) {
+            for (int x = lowerLeft.x(); x <= upperRight.x(); x++) {
                 grid[y][x] = EMPTY_CELL;
             }
         }
@@ -36,17 +36,17 @@ public class MapVisualizer {
     public String draw() {
         updateMap();
         StringBuilder builder = new StringBuilder();
-        for (int i = upperRight.getY() + 1; i >= lowerLeft.getY() - 1; i--) {
-            if (i == upperRight.getY() + 1) {
+        for (int i = upperRight.y() + 1; i >= lowerLeft.y() - 1; i--) {
+            if (i == upperRight.y() + 1) {
                 builder.append(drawHeader(lowerLeft, upperRight));
             }
             builder.append(String.format("%3d: ", i));
-            for (int j = lowerLeft.getX(); j <= upperRight.getX() + 1; j++) {
-                if (i < lowerLeft.getY() || i > upperRight.getY()) {
-                    builder.append(drawFrame(j <= upperRight.getX()));
+            for (int j = lowerLeft.x(); j <= upperRight.x() + 1; j++) {
+                if (i < lowerLeft.y() || i > upperRight.y()) {
+                    builder.append(drawFrame(j <= upperRight.x()));
                 } else {
                     builder.append(CELL_SEGMENT);
-                    if (j <= upperRight.getX()) {
+                    if (j <= upperRight.x()) {
                         builder.append(grid[i][j]);
                     }
                 }
@@ -67,7 +67,7 @@ public class MapVisualizer {
     private String drawHeader(Vector2d lowerLeft, Vector2d upperRight) {
         StringBuilder builder = new StringBuilder();
         builder.append(" y\\x ");
-        for (int j = lowerLeft.getX(); j < upperRight.getX() + 1; j++) {
+        for (int j = lowerLeft.x(); j < upperRight.x() + 1; j++) {
             builder.append(String.format("%2d", j));
         }
         builder.append(System.lineSeparator());
@@ -75,8 +75,8 @@ public class MapVisualizer {
     }
 
     private void updateMap() {
-        for (int y = lowerLeft.getY(); y <= upperRight.getY(); y++) {
-            for (int x = lowerLeft.getX(); x <= upperRight.getX(); x++) {
+        for (int y = lowerLeft.y(); y <= upperRight.y(); y++) {
+            for (int x = lowerLeft.x(); x <= upperRight.x(); x++) {
                 grid[y][x] = EMPTY_CELL;
             }
         }
@@ -84,8 +84,8 @@ public class MapVisualizer {
         for (WorldElement element : map.getElements()) {
             Vector2d position = element.getPosition();
 
-            if(grid[position.getY()][position.getX()].equals(EMPTY_CELL)) {
-                grid[position.getY()][position.getX()] = element.toString();
+            if(grid[position.y()][position.x()].equals(EMPTY_CELL)) {
+                grid[position.y()][position.x()] = element.toString();
             }
         }
     }

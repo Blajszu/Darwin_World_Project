@@ -15,17 +15,6 @@ public class SimulationPresets {
 
     private final static HashMap<String, SimulationParameters> fileNameWithFileContent = new HashMap<>();
 
-    private static void validateFileParameters(File file) throws IOException {
-        List<String> lines = Files.readAllLines(file.toPath());
-        String[] params = lines.getFirst().split(",");
-        if (params.length != 15) {
-            return;
-        }
-
-        SimulationParameters parameters = SimulationChecker.checkParameters(params[0], params[1], GrowthGrassVariant.valueOf(params[2]), params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], MutationVariant.valueOf(params[12]), params[13], Boolean.parseBoolean(params[14]));
-        fileNameWithFileContent.put(file.getName(), parameters);
-    }
-
     public static ArrayList<String> getCorrectFilesNames() throws IOException {
 
         File folder = new File("src/main/java/project/presenter/presetParameters");
@@ -58,7 +47,7 @@ public class SimulationPresets {
         if (!folder.exists()) {
             if(!folder.mkdirs()){
                 throw new IOException("Błąd tworzenia folderu");
-            };
+            }
         }
 
         File file = new File(folder, fileName);
@@ -85,5 +74,16 @@ public class SimulationPresets {
         } catch (IOException e) {
             throw new IOException("Błąd zapisu do pliku");
         }
+    }
+
+    private static void validateFileParameters(File file) throws IOException {
+        List<String> lines = Files.readAllLines(file.toPath());
+        String[] params = lines.getFirst().split(",");
+        if (params.length != 15) {
+            return;
+        }
+
+        SimulationParameters parameters = SimulationChecker.checkParameters(params[0], params[1], GrowthGrassVariant.valueOf(params[2]), params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], MutationVariant.valueOf(params[12]), params[13], Boolean.parseBoolean(params[14]));
+        fileNameWithFileContent.put(file.getName(), parameters);
     }
 }

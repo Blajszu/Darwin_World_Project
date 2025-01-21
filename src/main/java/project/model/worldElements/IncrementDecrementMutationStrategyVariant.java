@@ -13,6 +13,7 @@ public class IncrementDecrementMutationStrategyVariant implements MutationStrate
         this.minNumberOfMutations = minNumberOfMutations;
         this.maxNumberOfMutations = maxNumberOfMutations;
     }
+
     @Override
     public void mutateGenes(ArrayList<Integer> genes) {
         int numberOfMutations = random.nextInt(minNumberOfMutations, maxNumberOfMutations+1);

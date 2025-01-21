@@ -1,7 +1,5 @@
 package project.presenter;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -12,7 +10,6 @@ import project.GrowthGrassVariant;
 import project.MutationVariant;
 import project.Simulation;
 import project.SimulationEngine;
-import project.listener.SimulationMapDisplay;
 import project.listener.SimulationSaveStatistics;
 import project.model.maps.WorldMap;
 
@@ -52,8 +49,6 @@ public class SimulationStartPresenter {
     @FXML
     private TextField height;
     @FXML
-    private Button startSimulation;
-    @FXML
     private Label errors;
     @FXML
     private ComboBox<String> chooseParameters;
@@ -79,16 +74,11 @@ public class SimulationStartPresenter {
                 numberOfGenes
         );
 
-        numericInputs.forEach(input -> {
-            input.textProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    if (!newValue.matches("\\d*")) {
-                        input.setText(newValue.replaceAll("\\D", ""));
-                    }
-                }
-            });
-        });
+        numericInputs.forEach(input -> input.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                input.setText(newValue.replaceAll("\\D", ""));
+            }
+        }));
 
         mutationVariant.getItems().addAll(MutationVariant.values());
         growthGrassVariant.getItems().addAll(GrowthGrassVariant.values());
@@ -99,9 +89,7 @@ public class SimulationStartPresenter {
             errors.setText(e.getMessage());
         }
 
-        fileName.textProperty().addListener((observable, oldValue, newValue) -> {
-            saveParameters.setDisable(newValue.isEmpty());
-        });
+        fileName.textProperty().addListener((observable, oldValue, newValue) -> saveParameters.setDisable(newValue.isEmpty()));
     }
 
     public void onSimulationStartClicked() {
@@ -147,7 +135,12 @@ public class SimulationStartPresenter {
     }
 
     public void onChooseParameters() {
-        SimulationParameters simulationParameters = SimulationPresets.loadParameters(chooseParameters.getValue());
+
+        String chosenParameters = chooseParameters.getValue();
+        if(chosenParameters == null)
+            return;
+
+        SimulationParameters simulationParameters = SimulationPresets.loadParameters(chosenParameters);
 
         height.setText(String.valueOf(simulationParameters.mapHeight()));
         width.setText(String.valueOf(simulationParameters.mapWidth()));

@@ -55,6 +55,11 @@ public class SimulationSaveStatistics implements SimulationChangeListener, AutoC
         }
     }
 
+    @Override
+    public void close() {
+        flushBuffer();
+    }
+
     private void flushBuffer() {
         if (buffer.isEmpty()) return;
         try {
@@ -68,10 +73,5 @@ public class SimulationSaveStatistics implements SimulationChangeListener, AutoC
         } catch (IOException e) {
             System.err.println("Error writing to statistics file: " + e.getMessage());
         }
-    }
-
-    @Override
-    public void close() {
-        flushBuffer();
     }
 }
