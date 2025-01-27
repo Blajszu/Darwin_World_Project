@@ -16,7 +16,7 @@ public class IncrementDecrementMutationStrategyVariant implements MutationStrate
 
     @Override
     public void mutateGenes(ArrayList<Integer> genes) {
-        int numberOfMutations = random.nextInt(minNumberOfMutations, maxNumberOfMutations+1);
+        int numberOfMutations = random.nextInt(minNumberOfMutations, maxNumberOfMutations + 1);
         ArrayList<Integer> indexes = new ArrayList<>();
 
         for (int i = 0; i < genes.size(); i++) {

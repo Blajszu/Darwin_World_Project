@@ -1,12 +1,15 @@
 package project;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import project.model.Vector2d;
 import project.model.worldElements.Animal;
 import project.model.worldElements.RandomMutationStrategyVariant;
 import project.presenter.SimulationChecker;
 import project.presenter.SimulationParameters;
+
 import java.util.List;
 
 class SimulationTest {
@@ -66,14 +69,14 @@ class SimulationTest {
         boolean collectStatistics = true;
 
         //when
-        SimulationParameters simulationParameters1 = new SimulationParameters(Integer.parseInt(parameter0), Integer.parseInt(parameter0), growthGrassVariant, Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter1),Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter5),Integer.parseInt(parameter2),Integer.parseInt(parameter5), mutationVariant,Integer.parseInt(parameter5),collectStatistics);
+        SimulationParameters simulationParameters1 = new SimulationParameters(Integer.parseInt(parameter0), Integer.parseInt(parameter0), growthGrassVariant, Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter1), Integer.parseInt(parameter5), Integer.parseInt(parameter2), Integer.parseInt(parameter5), mutationVariant, Integer.parseInt(parameter5), collectStatistics);
 
         //then
-        assertEquals(simulationParameters1,SimulationChecker.checkParameters(parameter0,parameter0,growthGrassVariant,parameter1,parameter1,parameter1,parameter1,parameter1,parameter1,parameter5,parameter2,parameter5,mutationVariant,parameter5,collectStatistics));
-        assertThrows(IllegalArgumentException.class,() -> SimulationChecker.checkParameters(parameter0,parameter0,growthGrassVariant,parameter1,parameter1,parameter1,parameter4,parameter1,parameter0,parameter1,parameter2,parameter5,mutationVariant,parameter5,collectStatistics));
-        assertThrows(IllegalArgumentException.class,() -> SimulationChecker.checkParameters(parameter0,parameter0,growthGrassVariant,parameter1,parameter1,parameter1,parameter1,parameter1,parameter0,parameter1,parameter2,parameter3,mutationVariant,parameter5,collectStatistics));
-        assertThrows(IllegalArgumentException.class,() -> SimulationChecker.checkParameters(parameter0,parameter0,growthGrassVariant,parameter1,parameter1,parameter1,parameter1,parameter1,parameter0,parameter1,parameter1,parameter2,mutationVariant,parameter1,collectStatistics));
-        assertThrows(IllegalArgumentException.class,() -> SimulationChecker.checkParameters(parameter2,parameter0,growthGrassVariant,parameter1,parameter1,parameter1,parameter1,parameter1,parameter0,parameter1,parameter2,parameter1,mutationVariant,parameter1,collectStatistics));
+        assertEquals(simulationParameters1, SimulationChecker.checkParameters(parameter0, parameter0, growthGrassVariant, parameter1, parameter1, parameter1, parameter1, parameter1, parameter1, parameter5, parameter2, parameter5, mutationVariant, parameter5, collectStatistics));
+        assertThrows(IllegalArgumentException.class, () -> SimulationChecker.checkParameters(parameter0, parameter0, growthGrassVariant, parameter1, parameter1, parameter1, parameter4, parameter1, parameter0, parameter1, parameter2, parameter5, mutationVariant, parameter5, collectStatistics));
+        assertThrows(IllegalArgumentException.class, () -> SimulationChecker.checkParameters(parameter0, parameter0, growthGrassVariant, parameter1, parameter1, parameter1, parameter1, parameter1, parameter0, parameter1, parameter2, parameter3, mutationVariant, parameter5, collectStatistics));
+        assertThrows(IllegalArgumentException.class, () -> SimulationChecker.checkParameters(parameter0, parameter0, growthGrassVariant, parameter1, parameter1, parameter1, parameter1, parameter1, parameter0, parameter1, parameter1, parameter2, mutationVariant, parameter1, collectStatistics));
+        assertThrows(IllegalArgumentException.class, () -> SimulationChecker.checkParameters(parameter2, parameter0, growthGrassVariant, parameter1, parameter1, parameter1, parameter1, parameter1, parameter0, parameter1, parameter2, parameter1, mutationVariant, parameter1, collectStatistics));
     }
 
     private SimulationParameters createDefaultParameters() {

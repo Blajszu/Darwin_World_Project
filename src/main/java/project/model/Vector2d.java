@@ -42,7 +42,7 @@ public record Vector2d(int x, int y) {
     public boolean equals(Object other) {
         if (this == other)
             return true;
-        if (!(other instanceof Vector2d(int x1, int y1)))
+        if (!(other instanceof Vector2d(int x1,int y1)))
             return false;
 
         return x == x1 && y == y1;

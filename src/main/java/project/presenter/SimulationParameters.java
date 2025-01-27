@@ -1,4 +1,4 @@
-package project.presenter;
+package project.presenter; // czy to jest prezenter?
 
 import project.GrowthGrassVariant;
 import project.MutationVariant;

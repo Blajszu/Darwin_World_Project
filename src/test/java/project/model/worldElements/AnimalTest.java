@@ -180,6 +180,7 @@ class AnimalTest {
         // Then
         assertEquals(90, animal.getCurrentEnergy());
     }
+
     @Test
     void testRandomMutationStrategyChangesGeneCount() {
         // Given
@@ -191,8 +192,8 @@ class AnimalTest {
         mutationStrategy.mutateGenes(genes);
         int changedGenes = 0;
         for (int i = 0; i < genes.size(); i++) {
-            if(!genes.get(i).equals(originalGenes.get(i))){
-                changedGenes+=1;
+            if (!genes.get(i).equals(originalGenes.get(i))) {
+                changedGenes += 1;
             }
         }
 
@@ -214,8 +215,8 @@ class AnimalTest {
         // Then
         int changedGenes = 0;
         for (int i = 0; i < genes.size(); i++) {
-            if(!genes.get(i).equals(newGenes.get(i))){
-                changedGenes+=1;
+            if (!genes.get(i).equals(newGenes.get(i))) {
+                changedGenes += 1;
             }
         }
         assertTrue(changedGenes >= 3 && changedGenes <= 5);
@@ -241,7 +242,7 @@ class AnimalTest {
                 changedGenesCount++;
             }
         }
-        assertEquals(changedGenesCount,3);
+        assertEquals(changedGenesCount, 3);
         assertEquals(8, genes.size());
     }
 
@@ -270,16 +271,16 @@ class AnimalTest {
         // When
         Animal babyAnimal = parent1.reproduce(parent2);
 
-        ArrayList<Integer> expectedGenes1 = new ArrayList<>(List.of(7,6,5,3,4,5,6,7));
-        ArrayList<Integer> expectedGenes2 = new ArrayList<>(List.of(0,1,2,3,4,2,1,0));
+        ArrayList<Integer> expectedGenes1 = new ArrayList<>(List.of(7, 6, 5, 3, 4, 5, 6, 7));
+        ArrayList<Integer> expectedGenes2 = new ArrayList<>(List.of(0, 1, 2, 3, 4, 2, 1, 0));
 
         assertTrue(babyAnimal.getAnimalGenes().equals(expectedGenes1) || babyAnimal.getAnimalGenes().equals(expectedGenes2));
     }
 
     @Test
-    void testIfNextOrientationIsCorrect(){
+    void testIfNextOrientationIsCorrect() {
         // Given
-        ArrayList<Integer> genes1 = new ArrayList<>(List.of(1,1));
+        ArrayList<Integer> genes1 = new ArrayList<>(List.of(1, 1));
         MutationStrategy mutationStrategy = new RandomMutationStrategyVariant(0, 0);
 
         Animal animal1 = new Animal(new Vector2d(0, 0), genes1, 100, 30, 10, mutationStrategy);
@@ -291,7 +292,7 @@ class AnimalTest {
     @Test
     void testIfNextPositionIsCorrect() {
         // Given
-        ArrayList<Integer> genes1 = new ArrayList<>(List.of(1,1));
+        ArrayList<Integer> genes1 = new ArrayList<>(List.of(1, 1));
         MutationStrategy mutationStrategy = new RandomMutationStrategyVariant(0, 0);
 
         Animal animal1 = new Animal(new Vector2d(0, 0), genes1, 100, 30, 10, mutationStrategy);

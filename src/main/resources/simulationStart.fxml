@@ -18,53 +18,53 @@
                 <VBox alignment="CENTER_RIGHT">
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Height [1, 200]:</Label>
-                        <TextField fx:id="height" />
+                        <TextField fx:id="height"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Width [1, 200]:</Label>
-                        <TextField fx:id="width" />
+                        <TextField fx:id="width"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Growth grass variant:</Label>
-                        <ComboBox fx:id="growthGrassVariant" prefWidth="150" />
+                        <ComboBox fx:id="growthGrassVariant" prefWidth="150"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Start number of grass:</Label>
-                        <TextField fx:id="startNumberOfGrass" />
+                        <TextField fx:id="startNumberOfGrass"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Energy from grass:</Label>
-                        <TextField fx:id="energyFromGrass" />
+                        <TextField fx:id="energyFromGrass"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Number of grass growing everyday:</Label>
-                        <TextField fx:id="numberOfGrassGrowingEveryDay" />
+                        <TextField fx:id="numberOfGrassGrowingEveryDay"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Start number of animals:</Label>
-                        <TextField fx:id="startNumberOfAnimals" />
+                        <TextField fx:id="startNumberOfAnimals"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Initial animal's energy:</Label>
-                        <TextField fx:id="initialAnimalsEnergy" />
+                        <TextField fx:id="initialAnimalsEnergy"/>
                     </HBox>
                 </VBox>
                 <VBox alignment="CENTER">
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Energy need to reproduce:</Label>
-                        <TextField fx:id="energyNeedToReproduce" />
+                        <TextField fx:id="energyNeedToReproduce"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Energy used to reproduce:</Label>
-                        <TextField fx:id="energyUsedToReproduce" />
+                        <TextField fx:id="energyUsedToReproduce"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Minimal number of mutations:</Label>
-                        <TextField fx:id="minimalNumberOfMutation" />
+                        <TextField fx:id="minimalNumberOfMutation"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Maximum number of mutations:</Label>
-                        <TextField fx:id="maximumNumberOfMutation" />
+                        <TextField fx:id="maximumNumberOfMutation"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Mutation variant:</Label>
@@ -72,24 +72,25 @@
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Number of genes:</Label>
-                        <TextField fx:id="numberOfGenes" />
+                        <TextField fx:id="numberOfGenes"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
                         <Label>Collect statistics:</Label>
                         <CheckBox fx:id="collectStatistics"/>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
-                        <TextField fx:id="fileName" promptText="Nazwa pliku" />
+                        <TextField fx:id="fileName" promptText="Nazwa pliku"/>
                         <Label>.csv</Label>
                     </HBox>
                     <HBox alignment="CENTER_RIGHT">
-                        <Button fx:id="saveParameters" text="SAVE PARAMETERS" onAction="#saveInputParameters" disable="true"/>
+                        <Button fx:id="saveParameters" text="SAVE PARAMETERS" onAction="#saveInputParameters"
+                                disable="true"/>
                     </HBox>
                 </VBox>
             </HBox>
             <VBox alignment="CENTER" fx:id="startSimulationContainer">
                 <Label fx:id="errors"/>
-                <ComboBox fx:id="chooseParameters" prefWidth="150" onAction="#onChooseParameters" />
+                <ComboBox fx:id="chooseParameters" prefWidth="150" onAction="#onChooseParameters"/>
                 <Button fx:id="startSimulation" text="START SIMULATION" onAction="#onSimulationStartClicked"/>
             </VBox>
         </VBox>

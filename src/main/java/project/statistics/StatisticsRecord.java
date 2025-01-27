@@ -11,4 +11,5 @@ public record StatisticsRecord(
         double averageEnergy,
         double averageLifeLength,
         double averageChildrenCount
-) {}
+) {
+}

@@ -1,4 +1,4 @@
-package project.model.worldElements;
+package project.model.worldElements; // to jest element świata?
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -64,7 +64,7 @@ public class WorldElementBox {
             label.setMinWidth(0.8 * size);
             label.setMinHeight(0.8 * size);
 
-            if(!selected) {
+            if (!selected) {
                 int backgroundIndex = (int) Math.min(Math.floor(((double) ((Animal) element).getCurrentEnergy() / (2 * initialAnimalEnergy)) * 8), 7);
                 label.setStyle("-fx-background-color: " + animalsColors.get(backgroundIndex) + ";");
             } else {

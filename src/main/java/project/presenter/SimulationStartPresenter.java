@@ -117,19 +117,17 @@ public class SimulationStartPresenter {
             WorldMap worldMap = simulation.getWorldMap();
             simulationRunPresenter.setSimulation(simulation);
 
-            if(collectStatistics.isSelected()) {
+            if (collectStatistics.isSelected()) {
                 try (SimulationSaveStatistics stats = new SimulationSaveStatistics(worldMap)) {
                     simulation.addObserver(stats);
                     SimulationEngine engine = new SimulationEngine(List.of(simulation));
                     engine.runAsync();
                 }
-            }
-            else {
+            } else {
                 SimulationEngine engine = new SimulationEngine(List.of(simulation));
                 engine.runAsync();
             }
-        }
-        catch (IllegalArgumentException | IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             errors.setText(e.getMessage());
         }
     }
@@ -137,7 +135,7 @@ public class SimulationStartPresenter {
     public void onChooseParameters() {
 
         String chosenParameters = chooseParameters.getValue();
-        if(chosenParameters == null)
+        if (chosenParameters == null)
             return;
 
         SimulationParameters simulationParameters = SimulationPresets.loadParameters(chosenParameters);
@@ -167,29 +165,29 @@ public class SimulationStartPresenter {
             fileName.setText("");
             chooseParameters.getItems().clear();
             chooseParameters.getItems().addAll(SimulationPresets.getCorrectFilesNames());
-        } catch(IllegalArgumentException | IOException e) {
+        } catch (IllegalArgumentException | IOException e) {
             errors.setText(e.getMessage());
         }
 
     }
 
-    private SimulationParameters getParameters(){
+    private SimulationParameters getParameters() {
         return SimulationChecker.checkParameters(
-            height.getText(),
-            width.getText(),
-            growthGrassVariant.getValue(),
-            startNumberOfGrass.getText(),
-            energyFromGrass.getText(),
-            numberOfGrassGrowingEveryDay.getText(),
-            startNumberOfAnimals.getText(),
-            initialAnimalsEnergy.getText(),
-            energyNeedToReproduce.getText(),
-            energyUsedToReproduce.getText(),
-            minimalNumberOfMutation.getText(),
-            maximumNumberOfMutation.getText(),
-            mutationVariant.getValue(),
-            numberOfGenes.getText(),
-            collectStatistics.isSelected()
+                height.getText(),
+                width.getText(),
+                growthGrassVariant.getValue(),
+                startNumberOfGrass.getText(),
+                energyFromGrass.getText(),
+                numberOfGrassGrowingEveryDay.getText(),
+                startNumberOfAnimals.getText(),
+                initialAnimalsEnergy.getText(),
+                energyNeedToReproduce.getText(),
+                energyUsedToReproduce.getText(),
+                minimalNumberOfMutation.getText(),
+                maximumNumberOfMutation.getText(),
+                mutationVariant.getValue(),
+                numberOfGenes.getText(),
+                collectStatistics.isSelected()
         );
     }
 }

@@ -202,7 +202,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                     currentBounds.upperRight().y() - position.y() + 1);
         });
 
-        if(selectedAnimal != null && selectedAnimal.isAnimalAlive()) {
+        if (selectedAnimal != null && selectedAnimal.isAnimalAlive()) {
             WorldElementBox selectAnimalBox = new WorldElementBox(selectedAnimal, cellSize, initialAnimalEnergy, true);
             this.selectedAnimalBox = selectAnimalBox;
             Vector2d position = selectAnimalBox.getElement().getPosition();
@@ -221,10 +221,10 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     }
 
     private void handleCellClick(Node node) {
-        if(!isSimulationStopped)
+        if (!isSimulationStopped)
             return;
 
-        if(selectedAnimalBox != null) {
+        if (selectedAnimalBox != null) {
             selectedAnimalBox.setSelected(false);
             selectedAnimalBox.fillContent();
         }
@@ -239,7 +239,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             return;
 
         Animal newSelectedAnimal = simulation.resolveAnimalsConflicts(animalsAtPosition.get()).getFirst();
-        if(selectedAnimal == newSelectedAnimal) {
+        if (selectedAnimal == newSelectedAnimal) {
             selectedAnimalBox.setSelected(true);
             selectedAnimalBox.fillContent();
             return;
@@ -285,10 +285,9 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         averageLifeLengthLabel.setText("Średnia długość życia: %s".formatted(df.format(statisticsRecord.averageLifeLength())));
         averageChildrenCountLabel.setText("Średnia liczba dzieci: %s".formatted(df.format(statisticsRecord.averageChildrenCount())));
 
-        if(statisticsRecord.genotypesCount().isEmpty() || Collections.max(statisticsRecord.genotypesCount().values()) == 1){
+        if (statisticsRecord.genotypesCount().isEmpty() || Collections.max(statisticsRecord.genotypesCount().values()) == 1) {
             mostPopularGenotypesLabel.setText("Najpopularniejsze Genotypy\n" + "Brak najpopularniejszego genotypu");
-        }
-        else {
+        } else {
 
             topGenotypes = statisticsRecord.genotypesCount().entrySet()
                     .stream()
@@ -336,7 +335,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
         ArrayList<Animal> animalsOnGrid = new ArrayList<>(worldMap.getOrderedAnimals());
 
-        if(selectedAnimal != null)
+        if (selectedAnimal != null)
             animalsOnGrid.remove(selectedAnimal);
 
         for (Animal animal : animalsOnGrid) {
@@ -350,7 +349,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                 conflictedAnimals.add(animal);
             }
         }
-        if(!conflictedAnimals.isEmpty()) {
+        if (!conflictedAnimals.isEmpty()) {
             List<Animal> resolvedConflicts = simulation.resolveAnimalsConflicts(conflictedAnimals);
             animalBoxes.put(resolvedConflicts.getFirst(), new WorldElementBox(resolvedConflicts.getFirst(), cellSize, initialAnimalEnergy));
         }
@@ -375,13 +374,13 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         Image image = new Image("x.png");
 
 
-        for (Vector2d position : grassPositionsToColor ) {
+        for (Vector2d position : grassPositionsToColor) {
             ImageView imageView = new ImageView(image);
             imageView.setFitHeight(cellSize);
             imageView.setFitWidth(cellSize);
             grassPreferredPositionsImageView.add(imageView);
 
-            mapGrid.add(imageView, position.x()+1, worldMap.getMapHeight() - position.y());
+            mapGrid.add(imageView, position.x() + 1, worldMap.getMapHeight() - position.y());
             imageView.toBack();
         }
     }
@@ -394,7 +393,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     }
 
     private void colorMostPopularGenotype() {
-        if(topGenotypes == null)
+        if (topGenotypes == null)
             return;
 
         HashSet<Vector2d> topGenotypesAnimalsPositions = worldMap.getOrderedAnimals().stream()
@@ -409,7 +408,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             label.setMinWidth(cellSize);
             animalsTopGenotypesLabels.add(label);
 
-            mapGrid.add(label, position.x()+1, worldMap.getMapHeight() - position.y());
+            mapGrid.add(label, position.x() + 1, worldMap.getMapHeight() - position.y());
             label.toBack();
         }
     }
@@ -421,7 +420,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
             moveLabel.setText("%s%n Day: %s".formatted(eventType, statisticsRecord.day()));
             writeStatistics(eventType, statisticsRecord);
 
-            if(selectedAnimal != null) {
+            if (selectedAnimal != null) {
                 selectedAnimalStatistics.updateStatistics();
                 writeAnimalStatistics();
             }

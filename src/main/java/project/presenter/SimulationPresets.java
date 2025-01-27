@@ -18,7 +18,7 @@ public class SimulationPresets {
     public static ArrayList<String> getCorrectFilesNames() throws IOException {
 
         File folder = new File("src/main/java/project/presenter/presetParameters");
-        if(!folder.exists()) {
+        if (!folder.exists()) {
             throw new IOException("Błąd odczytu z folderu");
         }
         File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".csv"));
@@ -45,7 +45,7 @@ public class SimulationPresets {
     public static void saveParameters(SimulationParameters simulationParameters, String fileName) throws IOException {
         File folder = new File("src/main/java/project/presenter/presetParameters");
         if (!folder.exists()) {
-            if(!folder.mkdirs()){
+            if (!folder.mkdirs()) {
                 throw new IOException("Błąd tworzenia folderu");
             }
         }

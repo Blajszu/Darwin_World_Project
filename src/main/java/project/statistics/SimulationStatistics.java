@@ -36,10 +36,10 @@ public class SimulationStatistics {
 
         genotypesCount.clear();
 
-        for(WorldElement element : map.getElements()) {
+        for (WorldElement element : map.getElements()) {
             occupiedPositions.add(element.getPosition());
 
-            if(element instanceof Animal animal) {
+            if (element instanceof Animal animal) {
                 allChildrenCount += animal.getAnimalsKids().size();
                 allEnergyCount += animal.getCurrentEnergy();
 

@@ -3,7 +3,7 @@ package project.model.maps;
 import project.model.Vector2d;
 import project.model.worldElements.WorldElement;
 
-public class MapVisualizer {
+public class MapVisualizer {  // czy to jest potrzebne?
     private static final String EMPTY_CELL = " ";
     private static final String FRAME_SEGMENT = "-";
     private static final String CELL_SEGMENT = "|";
@@ -84,7 +84,7 @@ public class MapVisualizer {
         for (WorldElement element : map.getElements()) {
             Vector2d position = element.getPosition();
 
-            if(grid[position.y()][position.x()].equals(EMPTY_CELL)) {
+            if (grid[position.y()][position.x()].equals(EMPTY_CELL)) {
                 grid[position.y()][position.x()] = element.toString();
             }
         }

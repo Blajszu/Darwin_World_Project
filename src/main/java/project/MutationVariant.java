@@ -1,4 +1,4 @@
-package project;
+package project; // czy to się nadaje do głównego pakietu?
 
 public enum MutationVariant {
     RANDOM("Random"),

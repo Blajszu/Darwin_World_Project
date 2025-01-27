@@ -27,14 +27,14 @@ public abstract class AbstractWorldMap implements WorldMap {
     private final MapVisualizer visualizer;
 
     public AbstractWorldMap(int height, int width) {
-        if(height <= 0 || width <= 0) {
+        if (height <= 0 || width <= 0) {
             throw new IllegalArgumentException("Height and width must be greater than 0");
         }
 
         this.height = height;
         this.width = width;
 
-        mapBoundary = new Boundary(new Vector2d(0,0), new Vector2d(width - 1, height - 1));
+        mapBoundary = new Boundary(new Vector2d(0, 0), new Vector2d(width - 1, height - 1));
         this.visualizer = new MapVisualizer(this);
     }
 
@@ -115,24 +115,23 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void place(WorldElement element) throws IncorrectPositionException {
+    public void place(WorldElement element) throws IncorrectPositionException { // czy ten nagłówek ma sens?
         Vector2d position = element.getPosition();
 
-        if(!isPositionCorrect(position)) {
+        if (!isPositionCorrect(position)) {
             throw new IncorrectPositionException(position);
         }
 
-        if(element instanceof Animal) {
+        if (element instanceof Animal) {
 
-            LinkedList<Animal> list = animalsOnMap.computeIfAbsent(position, k -> new LinkedList<>());
+            LinkedList<Animal> list = animalsOnMap.computeIfAbsent(position, k -> new LinkedList<>()); // lista o nazwie list?
 
-            if(list.contains(element)) {
+            if (list.contains(element)) {
                 throw new IllegalArgumentException("The animal is already present on the map.");
             }
 
-            animalsOnMap.computeIfAbsent(position, k -> new LinkedList<>()).add((Animal) element);
-        }
-        else {
+            animalsOnMap.computeIfAbsent(position, k -> new LinkedList<>()).add((Animal) element); // k?
+        } else {
             placeGrass((Grass) element);
         }
     }
@@ -141,19 +140,19 @@ public abstract class AbstractWorldMap implements WorldMap {
     public void move(Animal animal) {
         Vector2d nextPosition = animal.getNextPosition();
 
-        if(isPositionCorrect(nextPosition)) {
+        if (isPositionCorrect(nextPosition)) {
             removeAnimal(animal);
             animalsOnMap.computeIfAbsent(nextPosition, k -> new LinkedList<>()).add(animal);
             animal.move();
             return;
         }
 
-        if(mapBoundary.lowerLeft().y() > nextPosition.y() || mapBoundary.upperRight().y() < nextPosition.y()) {
+        if (mapBoundary.lowerLeft().y() > nextPosition.y() || mapBoundary.upperRight().y() < nextPosition.y()) {
             animal.rotate(4);
             nextPosition = new Vector2d(nextPosition.x(), animal.getPosition().y());
         }
 
-        if(mapBoundary.lowerLeft().x() > nextPosition.x() || mapBoundary.upperRight().x() < nextPosition.x()) {
+        if (mapBoundary.lowerLeft().x() > nextPosition.x() || mapBoundary.upperRight().x() < nextPosition.x()) {
             nextPosition = new Vector2d((nextPosition.x() + width) % width, nextPosition.y());
             removeAnimal(animal);
             animalsOnMap.computeIfAbsent(nextPosition, k -> new LinkedList<>()).add(animal);

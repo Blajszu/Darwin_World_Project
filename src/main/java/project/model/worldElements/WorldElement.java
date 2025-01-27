@@ -8,5 +8,5 @@ public interface WorldElement {
 
     String getResourceName();
 
-    String getResourceFileName();
+    String getResourceFileName(); // czym się różnią te dwie metody?
 }

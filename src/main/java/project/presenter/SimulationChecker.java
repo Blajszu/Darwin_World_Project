@@ -3,12 +3,12 @@ package project.presenter;
 import project.GrowthGrassVariant;
 import project.MutationVariant;
 
-public class SimulationChecker {
+public class SimulationChecker { // czy ta klasa coś wnosi? czemu to nie jest w SimulationParameters?
 
     public static SimulationParameters checkParameters(
             String mapHeight,
             String mapWidth,
-            GrowthGrassVariant growthGrassVariant,
+            GrowthGrassVariant growthGrassVariant, // czemu wszystko oprócz 3 parametrów jest stringiem?
             String numberOfGrassOnMap,
             String energyFromGrass,
             String numberOfGrassGrowingEveryDay,
@@ -21,21 +21,22 @@ public class SimulationChecker {
             MutationVariant mutationVariant,
             String numberOfGenes,
             boolean collectStatistics
-            )
-{
+    ) {
         if (mapHeight.isEmpty() ||
-            mapWidth.isEmpty() ||
-            numberOfGrassOnMap.isEmpty() ||
-            energyFromGrass.isEmpty() ||
-            numberOfGrassGrowingEveryDay.isEmpty() ||
-            startNumberOfAnimals.isEmpty() ||
-            initialAnimalsEnergy.isEmpty() ||
-            energyNeedToReproduce.isEmpty() ||
-            energyUsedToReproduce.isEmpty() ||
-            minimalNumberOfMutation.isEmpty() ||
-            maximumNumberOfMutation.isEmpty() ||
-            numberOfGenes.isEmpty()
-        ) { throw new IllegalArgumentException("Missing Simulation parameters"); }
+                mapWidth.isEmpty() ||
+                numberOfGrassOnMap.isEmpty() ||
+                energyFromGrass.isEmpty() ||
+                numberOfGrassGrowingEveryDay.isEmpty() ||
+                startNumberOfAnimals.isEmpty() ||
+                initialAnimalsEnergy.isEmpty() ||
+                energyNeedToReproduce.isEmpty() ||
+                energyUsedToReproduce.isEmpty() ||
+                minimalNumberOfMutation.isEmpty() ||
+                maximumNumberOfMutation.isEmpty() ||
+                numberOfGenes.isEmpty()
+        ) {
+            throw new IllegalArgumentException("Missing Simulation parameters");
+        }
 
         SimulationParameters simulationParameters = new SimulationParameters(
                 Integer.parseInt(mapHeight),
@@ -53,33 +54,37 @@ public class SimulationChecker {
                 mutationVariant,
                 Integer.parseInt(numberOfGenes),
                 collectStatistics
-                );
+        );
 
-        if(
-            simulationParameters.mapHeight() <= 0 ||
-            simulationParameters.mapWidth() <= 0 ||
-            simulationParameters.numberOfGrassOnMap() < 0 ||
-            simulationParameters.energyFromGrass() <= 0 ||
-            simulationParameters.numberOfGrassGrowingEveryDay() <= 0 ||
-            simulationParameters.startNumberOfAnimals() < 0 ||
-            simulationParameters.initialAnimalsEnergy() <= 0 ||
-            simulationParameters.energyNeedToReproduce() <= 0 ||
-            simulationParameters.energyUsedToReproduce() <= 0 ||
-            simulationParameters.minimalNumberOfMutation() < 0 ||
-            simulationParameters.maximumNumberOfMutation() < 0 ||
-            simulationParameters.numberOfGenes() <= 0
-        ) { throw new IllegalArgumentException("Invalid Simulation parameters"); }
+        if (
+                simulationParameters.mapHeight() <= 0 ||    // nie wygodniej by to było pogrupować po parametrze?
+                        simulationParameters.mapWidth() <= 0 ||
+                        simulationParameters.numberOfGrassOnMap() < 0 ||
+                        simulationParameters.energyFromGrass() <= 0 ||
+                        simulationParameters.numberOfGrassGrowingEveryDay() <= 0 ||
+                        simulationParameters.startNumberOfAnimals() < 0 ||
+                        simulationParameters.initialAnimalsEnergy() <= 0 ||
+                        simulationParameters.energyNeedToReproduce() <= 0 ||
+                        simulationParameters.energyUsedToReproduce() <= 0 ||
+                        simulationParameters.minimalNumberOfMutation() < 0 ||
+                        simulationParameters.maximumNumberOfMutation() < 0 ||
+                        simulationParameters.numberOfGenes() <= 0
+        ) {
+            throw new IllegalArgumentException("Invalid Simulation parameters");
+        }
 
-        if(
-            simulationParameters.mapHeight() > 200 ||
-            simulationParameters.mapWidth() > 200 ||
-            simulationParameters.energyNeedToReproduce() <= simulationParameters.energyUsedToReproduce() ||
-            simulationParameters.minimalNumberOfMutation() > simulationParameters.maximumNumberOfMutation() ||
-            simulationParameters.maximumNumberOfMutation() > simulationParameters.numberOfGenes() ||
-            simulationParameters.numberOfGrassOnMap() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
-            simulationParameters.startNumberOfAnimals() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
-            simulationParameters.numberOfGrassGrowingEveryDay() > simulationParameters.mapHeight() * simulationParameters.mapWidth()
-        ) { throw new IllegalArgumentException("Invalid Simulation parameters"); }
+        if (
+                simulationParameters.mapHeight() > 200 ||
+                        simulationParameters.mapWidth() > 200 ||
+                        simulationParameters.energyNeedToReproduce() <= simulationParameters.energyUsedToReproduce() ||
+                        simulationParameters.minimalNumberOfMutation() > simulationParameters.maximumNumberOfMutation() ||
+                        simulationParameters.maximumNumberOfMutation() > simulationParameters.numberOfGenes() ||
+                        simulationParameters.numberOfGrassOnMap() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
+                        simulationParameters.startNumberOfAnimals() > simulationParameters.mapHeight() * simulationParameters.mapWidth() ||
+                        simulationParameters.numberOfGrassGrowingEveryDay() > simulationParameters.mapHeight() * simulationParameters.mapWidth()
+        ) {
+            throw new IllegalArgumentException("Invalid Simulation parameters");
+        }
 
         return simulationParameters;
     }

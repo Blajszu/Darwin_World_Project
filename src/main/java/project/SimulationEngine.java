@@ -1,7 +1,8 @@
-package project;
+package project; // pakiet powinien mieć formę odwrotnej nazwy domenowej
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class SimulationEngine {
 
     private final List<Simulation> simulations;
@@ -13,7 +14,7 @@ public class SimulationEngine {
     }
 
     public void runAsync() {
-        simulationThreads.clear();
+        simulationThreads.clear(); // czy to dobry pomysł?
 
         simulations.forEach(simulation -> simulationThreads.add(new Thread(simulation)));
 

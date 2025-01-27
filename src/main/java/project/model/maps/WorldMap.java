@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface WorldMap {
+public interface WorldMap { // czy to jest potrzebne?
 
     void place(WorldElement element) throws IncorrectPositionException;
 

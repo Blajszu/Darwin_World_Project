@@ -126,9 +126,9 @@ class MovingJungleMapTest {
         // Given
         Vector2d initialPosition = new Vector2d(5, 0); // Pozycja na dolnej krawędzi
         ArrayList<Integer> genes = new ArrayList<>(List.of(0)); // Kierunek SOUTH
-        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0,0));
+        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0, 0));
 
-        while(animal.getCurrentOrientation() != MapDirection.SOUTH) {
+        while (animal.getCurrentOrientation() != MapDirection.SOUTH) {
             animal.rotate(1);
         }
 
@@ -150,9 +150,9 @@ class MovingJungleMapTest {
         // Given
         Vector2d initialPosition = new Vector2d(5, 9); // Pozycja na górnej krawędzi
         ArrayList<Integer> genes = new ArrayList<>(List.of(0)); // Kierunek NORTH
-        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0,0));
+        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0, 0));
 
-        while(animal.getCurrentOrientation() != MapDirection.NORTH) {
+        while (animal.getCurrentOrientation() != MapDirection.NORTH) {
             animal.rotate(1);
         }
 
@@ -174,9 +174,9 @@ class MovingJungleMapTest {
         // Given
         Vector2d initialPosition = new Vector2d(0, 5); // Pozycja na lewej krawędzi
         ArrayList<Integer> genes = new ArrayList<>(List.of(0)); // Kierunek WEST
-        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0,0));
+        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0, 0));
 
-        while(animal.getCurrentOrientation() != MapDirection.WEST) {
+        while (animal.getCurrentOrientation() != MapDirection.WEST) {
             animal.rotate(1);
         }
 
@@ -198,9 +198,9 @@ class MovingJungleMapTest {
         // Given
         Vector2d initialPosition = new Vector2d(9, 5); // Pozycja na prawej krawędzi
         ArrayList<Integer> genes = new ArrayList<>(List.of(0)); // Kierunek EAST
-        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0,0));
+        Animal animal = new Animal(initialPosition, genes, 10, 100, 20, new RandomMutationStrategyVariant(0, 0));
 
-        while(animal.getCurrentOrientation() != MapDirection.EAST) {
+        while (animal.getCurrentOrientation() != MapDirection.EAST) {
             animal.rotate(1);
         }
 
