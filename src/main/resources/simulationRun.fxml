@@ -71,7 +71,7 @@
                     <Label fx:id="legenda" text="LEGENDA"/>
                     <HBox styleClass="legend">
                         <ImageView fitHeight="30" fitWidth="30">
-                            <Image url="x.png"/>
+                            <Image url="images/x.png"/>
                         </ImageView>
                         <Label text="Preferowane pozycje trawy"/>
                     </HBox>

@@ -22,7 +22,7 @@ public class RandomMutationStrategyVariant implements MutationStrategy {
         for (int i = 0; i < genes.size(); i++) {
             indexes.add(i);
         }
-        Collections.shuffle(indexes); // wygląda znajomo
+        Collections.shuffle(indexes);
 
         for (int i = 0; i < numberOfMutations; i++) {
 
@@ -34,8 +34,7 @@ public class RandomMutationStrategyVariant implements MutationStrategy {
                 newGeneValue = (newGeneValue + 1) % 8;
             }
 
-            genes.remove(geneIndex);
-            genes.add(geneIndex, newGeneValue); // lista nie ma metody set?
+            genes.set(geneIndex, newGeneValue);
         }
     }
 }

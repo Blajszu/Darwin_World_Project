@@ -5,7 +5,6 @@ import project.listener.SimulationEventType;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
-import project.presenter.SimulationParameters;
 import project.statistics.SimulationStatistics;
 import project.statistics.StatisticsRecord;
 
@@ -18,7 +17,6 @@ public class Simulation implements Runnable {
     private final WorldMap worldMap;
     private final SimulationParameters simulationParameters;
     private final SimulationStatistics statistics = new SimulationStatistics();
-
     private int currentDay = 1;
     private int coolDown = 200;
     private final int initialAnimalsEnergy;
@@ -37,6 +35,7 @@ public class Simulation implements Runnable {
             case MOVING_JUNGLE_MAP ->
                     new MovingJungleMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
         };
+        worldMap.spawnGrass(simulationParameters.numberOfGrassOnMap());
 
         MutationStrategy mutationStrategy = switch (simulationParameters.mutationVariant()) {
             case RANDOM ->
@@ -47,7 +46,6 @@ public class Simulation implements Runnable {
 
         try {
             spawnFirstAnimals(simulationParameters.startNumberOfAnimals(), simulationParameters.initialAnimalsEnergy(), simulationParameters.energyNeedToReproduce(), simulationParameters.energyUsedToReproduce(), mutationStrategy, simulationParameters.numberOfGenes());
-            spawnGrass(simulationParameters.numberOfGrassOnMap());
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while creating Simulation: %s%n", e.getMessage());
         }
@@ -117,58 +115,6 @@ public class Simulation implements Runnable {
         }
     }
 
-    private void spawnGrass(int numberOfGrassToSpawn) throws IncorrectPositionException { // czy to zadanie dla symulacji?
-        int grassLeft = numberOfGrassToSpawn;
-        int numberOfGrassToSpawnOnPreferredPositions = (int) Math.round(numberOfGrassToSpawn * 0.8);
-        int numberOfGrassToSpawnOnNotPreferredPositions = numberOfGrassToSpawn - numberOfGrassToSpawnOnPreferredPositions;
-
-        while (numberOfGrassToSpawnOnPreferredPositions > 0) {
-            List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
-
-            if (preferredPositions.isEmpty()) {
-                break;
-            }
-
-            Vector2d positionToSpawnGrass = preferredPositions.get(rand.nextInt(preferredPositions.size()));
-
-            worldMap.place(new Grass(positionToSpawnGrass));
-            numberOfGrassToSpawnOnPreferredPositions--;
-            grassLeft--;
-        }
-
-        while (numberOfGrassToSpawnOnNotPreferredPositions > 0) {
-            List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
-
-            if (notPreferredPositions.isEmpty()) {
-                break;
-            }
-
-            Vector2d positionToSpawnGrass = notPreferredPositions.get(rand.nextInt(notPreferredPositions.size()));
-
-            worldMap.place(new Grass(positionToSpawnGrass));
-            numberOfGrassToSpawnOnNotPreferredPositions--;
-            grassLeft--;
-        }
-
-        while (grassLeft > 0) {
-            List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
-            List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
-
-            if (preferredPositions.isEmpty() && notPreferredPositions.isEmpty()) {
-                break;
-            }
-
-            List<Vector2d> availablePositions = new ArrayList<>();
-            availablePositions.addAll(preferredPositions);
-            availablePositions.addAll(notPreferredPositions);
-
-            Vector2d positionToSpawnGrass = availablePositions.get(rand.nextInt(availablePositions.size()));
-
-            worldMap.place(new Grass(positionToSpawnGrass));
-            grassLeft--;
-        }
-    }
-
     private void rotateAnimals() {
         Collection<Animal> animals = worldMap.getOrderedAnimals();
 
@@ -214,7 +160,7 @@ public class Simulation implements Runnable {
             Animal parent2 = resolvedConflictsAnimals.get(1);
 
             if (parent1.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce() && parent2.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce()) {
-                worldMap.place(parent1.reproduce(parent2));
+                worldMap.place(Animal.reproduce(parent1,parent2));
             }
         }
     }
@@ -230,13 +176,12 @@ public class Simulation implements Runnable {
 
     @Override
     public void run() {
-
         try {
             while (running) {
                 removeDeadAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_REMOVED);
                 Thread.sleep(coolDown);
-                countDownLatch.await(); // po co to?
+                countDownLatch.await();
                 rotateAnimals();
                 SimulationChangeEvent(SimulationEventType.ANIMALS_ROTATED);
                 Thread.sleep(coolDown);
@@ -249,7 +194,7 @@ public class Simulation implements Runnable {
                 SimulationChangeEvent(SimulationEventType.FOOD_CONSUMED);
                 Thread.sleep(coolDown);
                 countDownLatch.await();
-                spawnGrass(simulationParameters.numberOfGrassGrowingEveryDay());
+                worldMap.spawnGrass(simulationParameters.numberOfGrassGrowingEveryDay());
                 SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
                 Thread.sleep(coolDown);
                 countDownLatch.await();
@@ -262,7 +207,7 @@ public class Simulation implements Runnable {
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while running Simulation: %s%n", e.getMessage());
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // jaki jest sens wysyłać interrupt sobie samemu?
+            Thread.currentThread().interrupt();
         }
     }
 }

@@ -1,6 +1,5 @@
 package project.model.maps;
 
-import project.listener.SimulationChangeListener;
 import project.model.Vector2d;
 import project.model.worldElements.Animal;
 import project.model.worldElements.Grass;
@@ -22,9 +21,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     protected final Map<Vector2d, LinkedList<Animal>> animalsOnMap = new HashMap<>();
     protected final Map<Vector2d, Grass> grassOnMap = new HashMap<>();
 
-    private final List<SimulationChangeListener> observers = new ArrayList<>();
     private final UUID uuid = UUID.randomUUID();
-    private final MapVisualizer visualizer;
 
     public AbstractWorldMap(int height, int width) {
         if (height <= 0 || width <= 0) {
@@ -35,7 +32,6 @@ public abstract class AbstractWorldMap implements WorldMap {
         this.width = width;
 
         mapBoundary = new Boundary(new Vector2d(0, 0), new Vector2d(width - 1, height - 1));
-        this.visualizer = new MapVisualizer(this);
     }
 
     public UUID getId() {
@@ -115,7 +111,7 @@ public abstract class AbstractWorldMap implements WorldMap {
     }
 
     @Override
-    public void place(WorldElement element) throws IncorrectPositionException { // czy ten nagłówek ma sens?
+    public void place(WorldElement element) throws IncorrectPositionException {
         Vector2d position = element.getPosition();
 
         if (!isPositionCorrect(position)) {
@@ -124,13 +120,13 @@ public abstract class AbstractWorldMap implements WorldMap {
 
         if (element instanceof Animal) {
 
-            LinkedList<Animal> list = animalsOnMap.computeIfAbsent(position, k -> new LinkedList<>()); // lista o nazwie list?
+            LinkedList<Animal> animalsAtPosition = animalsOnMap.computeIfAbsent(position, currentPosition -> new LinkedList<>());
 
-            if (list.contains(element)) {
+            if (animalsAtPosition.contains(element)) {
                 throw new IllegalArgumentException("The animal is already present on the map.");
             }
 
-            animalsOnMap.computeIfAbsent(position, k -> new LinkedList<>()).add((Animal) element); // k?
+            animalsOnMap.computeIfAbsent(position, currentPosition -> new LinkedList<>()).add((Animal) element);
         } else {
             placeGrass((Grass) element);
         }
@@ -183,7 +179,56 @@ public abstract class AbstractWorldMap implements WorldMap {
     abstract protected void placeGrass(Grass grass);
 
     @Override
-    public String toString() {
-        return visualizer.draw();
+    public void spawnGrass(int numberOfGrassToSpawn) {
+        int grassLeft = numberOfGrassToSpawn;
+        int numberOfGrassToSpawnOnPreferredPositions = (int) Math.round(numberOfGrassToSpawn * 0.8);
+        int numberOfGrassToSpawnOnNotPreferredPositions = numberOfGrassToSpawn - numberOfGrassToSpawnOnPreferredPositions;
+        Random random = new Random();
+
+        while (numberOfGrassToSpawnOnPreferredPositions > 0) {
+            List<Vector2d> preferredPositions = this.getFreeGrassPreferredPositions();
+
+            if (preferredPositions.isEmpty()) {
+                break;
+            }
+
+            Vector2d positionToSpawnGrass = preferredPositions.get(random.nextInt(preferredPositions.size()));
+
+            this.placeGrass(new Grass(positionToSpawnGrass));
+            numberOfGrassToSpawnOnPreferredPositions--;
+            grassLeft--;
+        }
+
+        while (numberOfGrassToSpawnOnNotPreferredPositions > 0) {
+            List<Vector2d> notPreferredPositions = this.getFreeGrassNotPreferredPositions();
+
+            if (notPreferredPositions.isEmpty()) {
+                break;
+            }
+
+            Vector2d positionToSpawnGrass = notPreferredPositions.get(random.nextInt(notPreferredPositions.size()));
+
+            this.placeGrass(new Grass(positionToSpawnGrass));
+            numberOfGrassToSpawnOnNotPreferredPositions--;
+            grassLeft--;
+        }
+
+        while (grassLeft > 0) {
+            List<Vector2d> preferredPositions = this.getFreeGrassPreferredPositions();
+            List<Vector2d> notPreferredPositions = this.getFreeGrassNotPreferredPositions();
+
+            if (preferredPositions.isEmpty() && notPreferredPositions.isEmpty()) {
+                break;
+            }
+
+            List<Vector2d> availablePositions = new ArrayList<>();
+            availablePositions.addAll(preferredPositions);
+            availablePositions.addAll(notPreferredPositions);
+
+            Vector2d positionToSpawnGrass = availablePositions.get(random.nextInt(availablePositions.size()));
+
+            this.placeGrass(new Grass(positionToSpawnGrass));
+            grassLeft--;
+        }
     }
 }

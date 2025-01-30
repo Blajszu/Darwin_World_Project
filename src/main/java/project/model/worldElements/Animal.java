@@ -5,73 +5,41 @@ import project.model.Vector2d;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 public class Animal implements WorldElement {
     private MapDirection currentOrientation;
     private Vector2d currentPosition;
     private int currentEnergy;
-    private final ArrayList<Integer> animalGenes = new ArrayList<>(); // nie przydałaby się na to klasa?
-    private String animalGenesString;
-    private int currentActiveGene;
-    private final MutationStrategy mutationStrategy;
+    private AnimalGenes animalGenes;
     private final int energyOfWellFedAnimal;
+    private final MutationStrategy mutationStrategy;
     private final int energyUsedToReproduce;
     private final LinkedList<Animal> animalsKids = new LinkedList<>();
     private int lengthOfLife = 0;
     private int numberOfEatenPlants = 0;
 
-    Random random = new Random(); // modyfikator dostępu?
-
     public Animal(Vector2d position, ArrayList<Integer> genes, int initialEnergy, int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
         this(position, initialEnergy, energyOfWellFedAnimal, energyUsedToReproduce, mutationStrategy);
-
-        for (int gene : genes) {
-            if (gene < 0 || gene >= 8) {
-                throw new IllegalArgumentException("Invalid gene value: " + gene);
-            }
-        }
-
-        animalGenes.addAll(genes);
-        currentActiveGene = random.nextInt(0, animalGenes.size());
-
-        animalGenesString = animalGenes.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(""));
+        animalGenes = new AnimalGenes(genes, mutationStrategy);
     }
 
     public Animal(Vector2d position, int numberOfGenes, int initialEnergy, int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
         this(position, initialEnergy, energyOfWellFedAnimal, energyUsedToReproduce, mutationStrategy);
-
-        if (numberOfGenes <= 0) {
-            throw new IllegalArgumentException("Number of genes must be greater than zero");
-        }
-
-        for (int i = 0; i < numberOfGenes; i++) {
-            animalGenes.add(random.nextInt(0, 8));
-        }
-
-        currentActiveGene = random.nextInt(0, animalGenes.size());
-
-        animalGenesString = animalGenes.stream()
-                .map(Object::toString)
-                .collect(Collectors.joining(""));
+        animalGenes = new AnimalGenes(numberOfGenes, mutationStrategy);
     }
 
     private Animal(Vector2d position, int initialEnergy, int energyOfWellFedAnimal, int energyUsedToReproduce, MutationStrategy mutationStrategy) {
-
+        this.mutationStrategy = mutationStrategy;
         if (initialEnergy <= 0 || energyOfWellFedAnimal <= 0 || energyUsedToReproduce <= 0) {
             throw new IllegalArgumentException("InitialEnergy, energyOfWellFedAnimal, energyUsedToReproduce must all be greater than zero");
         }
-
-        Random random = new Random(); // nowy obiekt co wywołanie?
 
         currentPosition = position;
         currentEnergy = initialEnergy;
         this.energyOfWellFedAnimal = energyOfWellFedAnimal;
         this.energyUsedToReproduce = energyUsedToReproduce;
-        this.mutationStrategy = mutationStrategy;
 
+        Random random = new Random();
         currentOrientation = MapDirection.values()[random.nextInt(0, 8)];
     }
 
@@ -80,7 +48,7 @@ public class Animal implements WorldElement {
     }
 
     public int getActivePartOfGenome() {
-        return currentActiveGene;
+        return animalGenes.getIndexOfActiveGene();
     }
 
     public int getNumberOfEatenPlants() {
@@ -95,12 +63,16 @@ public class Animal implements WorldElement {
         return currentPosition;
     }
 
-    public ArrayList<Integer> getAnimalGenes() {
-        return new ArrayList<>(animalGenes);
+    public ArrayList<Integer> getAnimalGenesList() {
+        return new ArrayList<>(animalGenes.getAnimalGenes());
+    }
+
+    AnimalGenes getAnimalGenes() {
+        return animalGenes;
     }
 
     public String getAnimalGenesString() {
-        return animalGenesString;
+        return animalGenes.getAnimalGenesString();
     }
 
     public Vector2d getNextPosition() {
@@ -108,7 +80,7 @@ public class Animal implements WorldElement {
     }
 
     public MapDirection getNextOrientation() {
-        return MapDirection.values()[(currentOrientation.ordinal() + animalGenes.get(currentActiveGene)) % 8];
+        return MapDirection.values()[(currentOrientation.ordinal() + animalGenes.getCurrentActiveGeneValue()) % 8];
     }
 
     public int getLengthOfLife() {
@@ -119,20 +91,16 @@ public class Animal implements WorldElement {
         return new LinkedList<>(animalsKids);
     }
 
-    public String getResourceName() {
-        return "Z %s".formatted(currentPosition.toString());
-    }
-
     public String getResourceFileName() {
         return switch (currentOrientation) {
-            case NORTH -> "north.png";
-            case SOUTH -> "south.png";
-            case EAST -> "east.png";
-            case WEST -> "west.png";
-            case NORTHEAST -> "northeast.png";
-            case SOUTHEAST -> "southeast.png";
-            case SOUTHWEST -> "southwest.png";
-            case NORTHWEST -> "northwest.png";
+            case NORTH -> "images/north.png";
+            case SOUTH -> "images/south.png";
+            case EAST -> "images/east.png";
+            case WEST -> "images/west.png";
+            case NORTHEAST -> "images/northeast.png";
+            case SOUTHEAST -> "images/southeast.png";
+            case SOUTHWEST -> "images/southwest.png";
+            case NORTHWEST -> "images/northwest.png";
         };
     }
 
@@ -165,15 +133,15 @@ public class Animal implements WorldElement {
         }
 
         currentOrientation = currentOrientation.rotate(rotateAngle);
-        currentActiveGene = (currentActiveGene + 1) % animalGenes.size();
+        animalGenes.nextActiveGeneIndex();
         lengthOfLife++;
     }
 
     public void rotate() {
-        this.rotate(animalGenes.get(currentActiveGene));
+        this.rotate(animalGenes.getCurrentActiveGeneValue());
     }
 
-    public void move(Vector2d position) { // czy to powinno być publiczne?
+    public void move(Vector2d position) {
         if (!this.isAnimalAlive()) {
             throw new AnimalDeadException("Animal can't move, because it is dead");
         }
@@ -186,40 +154,24 @@ public class Animal implements WorldElement {
         move(getNextPosition());
     }
 
-    public Animal reproduce(Animal secondParent) { // czy metoda statyczna nie byłaby lepsza?
 
-        if (this.currentEnergy < energyOfWellFedAnimal || secondParent.getCurrentEnergy() < energyOfWellFedAnimal) {
+    public static Animal reproduce(Animal firstParent, Animal secondParent) {
+
+        if (firstParent.currentEnergy < firstParent.energyOfWellFedAnimal || secondParent.getCurrentEnergy() < firstParent.energyOfWellFedAnimal) {
             throw new IllegalArgumentException("At least one animal has not enough energy to reproduce");
         }
-        if (!this.currentPosition.equals(secondParent.currentPosition)) {
+        if (!firstParent.currentPosition.equals(secondParent.currentPosition)) {
             throw new IllegalArgumentException("Animals cannot reproduce because they have different positions");
         }
-        int numberOfGenesFromStrongerAnimal = (this.getCurrentEnergy() > secondParent.getCurrentEnergy())
-                ? (int) Math.round((double) this.getCurrentEnergy() / (this.getCurrentEnergy() + secondParent.getCurrentEnergy()) * animalGenes.size())
-                : (int) Math.round((double) secondParent.getCurrentEnergy() / (this.getCurrentEnergy() + secondParent.getCurrentEnergy()) * animalGenes.size());
-        int numberOfGenesFromWeakerAnimal = animalGenes.size() - numberOfGenesFromStrongerAnimal;
 
-        ArrayList<Integer> strongerGenes = (this.currentEnergy > secondParent.getCurrentEnergy()) ? this.animalGenes : secondParent.animalGenes;
-        ArrayList<Integer> weakerGenes = (this.currentEnergy <= secondParent.getCurrentEnergy()) ? this.animalGenes : secondParent.animalGenes;
+        firstParent.currentEnergy = firstParent.currentEnergy - firstParent.energyUsedToReproduce;
+        secondParent.currentEnergy -= firstParent.energyUsedToReproduce;
 
-        ArrayList<Integer> genesFromBothParents = new ArrayList<>();
+        ArrayList<Integer> genesFromBothParents = AnimalGenes.kidsGenes(firstParent, secondParent);
 
-        boolean strongerParentSide = random.nextBoolean();
-
-        if (strongerParentSide) {
-            genesFromBothParents.addAll(strongerGenes.subList(0, numberOfGenesFromStrongerAnimal));
-            genesFromBothParents.addAll(weakerGenes.subList(numberOfGenesFromStrongerAnimal, this.animalGenes.size()));
-        } else {
-            genesFromBothParents.addAll(weakerGenes.subList(0, numberOfGenesFromWeakerAnimal));
-            genesFromBothParents.addAll(strongerGenes.subList(numberOfGenesFromWeakerAnimal, this.animalGenes.size()));
-        }
-        mutationStrategy.mutateGenes(genesFromBothParents);
-
-        this.currentEnergy = currentEnergy - energyUsedToReproduce;
-        secondParent.currentEnergy -= energyUsedToReproduce;
-
-        Animal babyAnimal = new Animal(this.currentPosition, genesFromBothParents, energyUsedToReproduce * 2, energyOfWellFedAnimal, energyUsedToReproduce, mutationStrategy);
-        animalsKids.add(babyAnimal);  // liczymy tylko do dzieci jednego rodzica?
+        Animal babyAnimal = new Animal(firstParent.currentPosition, genesFromBothParents, firstParent.energyUsedToReproduce * 2, firstParent.energyOfWellFedAnimal, firstParent.energyUsedToReproduce, firstParent.mutationStrategy);
+        firstParent.animalsKids.add(babyAnimal);
+        secondParent.animalsKids.add(babyAnimal);
 
         return babyAnimal;
     }

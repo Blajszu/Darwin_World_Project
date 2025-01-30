@@ -6,10 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
-import project.GrowthGrassVariant;
-import project.MutationVariant;
-import project.Simulation;
-import project.SimulationEngine;
+import project.*;
 import project.listener.SimulationSaveStatistics;
 import project.model.maps.WorldMap;
 
@@ -120,12 +117,14 @@ public class SimulationStartPresenter {
             if (collectStatistics.isSelected()) {
                 try (SimulationSaveStatistics stats = new SimulationSaveStatistics(worldMap)) {
                     simulation.addObserver(stats);
-                    SimulationEngine engine = new SimulationEngine(List.of(simulation));
-                    engine.runAsync();
+                    try (SimulationEngine engine = new SimulationEngine(simulation)) {
+                        engine.runAsync();
+                    }
                 }
             } else {
-                SimulationEngine engine = new SimulationEngine(List.of(simulation));
-                engine.runAsync();
+                try (SimulationEngine engine = new SimulationEngine(simulation)) {
+                    engine.runAsync();
+                }
             }
         } catch (IllegalArgumentException | IOException e) {
             errors.setText(e.getMessage());
@@ -172,7 +171,7 @@ public class SimulationStartPresenter {
     }
 
     private SimulationParameters getParameters() {
-        return SimulationChecker.checkParameters(
+        return new SimulationParameters(
                 height.getText(),
                 width.getText(),
                 growthGrassVariant.getValue(),

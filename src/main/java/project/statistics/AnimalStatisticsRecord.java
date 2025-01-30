@@ -8,6 +8,5 @@ public record AnimalStatisticsRecord(
         int numberOfKids,
         int numberOfDescendants,
         int lengthOfLife,
-        Integer whenDied // czemu wszędzie int, a tu Integer?
-) {
-}
+        Integer whenDied
+) {}

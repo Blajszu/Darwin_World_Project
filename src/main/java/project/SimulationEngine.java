@@ -1,23 +1,22 @@
-package project; // pakiet powinien mieć formę odwrotnej nazwy domenowej
+package project;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class SimulationEngine {
+public class SimulationEngine implements AutoCloseable {
+    private final Simulation simulation;
+    private final ExecutorService executor;
 
-    private final List<Simulation> simulations;
-    private final List<Thread> simulationThreads = new ArrayList<>();
-
-    public SimulationEngine(List<Simulation> simulations) {
-
-        this.simulations = simulations;
+    public SimulationEngine(Simulation simulation) {
+        this.simulation = simulation;
+        this.executor = Executors.newSingleThreadExecutor();
     }
 
     public void runAsync() {
-        simulationThreads.clear(); // czy to dobry pomysł?
-
-        simulations.forEach(simulation -> simulationThreads.add(new Thread(simulation)));
-
-        simulationThreads.forEach(Thread::start);
+        executor.submit(simulation);
+    }
+    @Override
+    public void close() {
+        executor.shutdown();
     }
 }

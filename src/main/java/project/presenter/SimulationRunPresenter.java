@@ -20,7 +20,6 @@ import project.listener.SimulationEventType;
 import project.model.maps.Boundary;
 import project.model.maps.WorldMap;
 import project.model.worldElements.Animal;
-import project.model.worldElements.WorldElementBox;
 import project.model.Vector2d;
 import project.model.worldElements.Grass;
 import project.statistics.AnimalStatistics;
@@ -150,7 +149,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private void clearGrid() {
         if (mapGrid.getChildren().isEmpty()) return;
 
-        mapGrid.getChildren().retainAll(mapGrid.getChildren().getFirst()); // hack to retain visible grid lines
+        mapGrid.getChildren().retainAll(mapGrid.getChildren().getFirst());
         mapGrid.getColumnConstraints().clear();
         mapGrid.getRowConstraints().clear();
     }
@@ -371,7 +370,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private void colorPreferredGrassPositions() {
 
         List<Vector2d> grassPositionsToColor = worldMap.getFreeGrassPreferredPositions();
-        Image image = new Image("x.png");
+        Image image = new Image("images/x.png");
 
 
         for (Vector2d position : grassPositionsToColor) {

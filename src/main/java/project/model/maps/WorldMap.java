@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface WorldMap { // czy to jest potrzebne?
+public interface WorldMap {
 
     void place(WorldElement element) throws IncorrectPositionException;
 
@@ -44,4 +44,6 @@ public interface WorldMap { // czy to jest potrzebne?
     int getMapHeight();
 
     int getMapWidth();
+
+    void spawnGrass(int numberOfGrass);
 }

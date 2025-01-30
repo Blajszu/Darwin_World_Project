@@ -1,4 +1,4 @@
-package project.model.worldElements; // to jest element świata?
+package project.presenter;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,6 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import project.model.worldElements.Animal;
+import project.model.worldElements.WorldElement;
 
 import java.util.HashMap;
 import java.util.List;

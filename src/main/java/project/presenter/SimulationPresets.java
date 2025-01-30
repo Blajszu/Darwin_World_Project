@@ -1,7 +1,6 @@
 package project.presenter;
 
-import project.GrowthGrassVariant;
-import project.MutationVariant;
+import project.SimulationParameters;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -17,7 +16,7 @@ public class SimulationPresets {
 
     public static ArrayList<String> getCorrectFilesNames() throws IOException {
 
-        File folder = new File("src/main/java/project/presenter/presetParameters");
+        File folder = new File("src/main/resources/presetParameters");
         if (!folder.exists()) {
             throw new IOException("Błąd odczytu z folderu");
         }
@@ -83,7 +82,7 @@ public class SimulationPresets {
             return;
         }
 
-        SimulationParameters parameters = SimulationChecker.checkParameters(params[0], params[1], GrowthGrassVariant.valueOf(params[2]), params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], MutationVariant.valueOf(params[12]), params[13], Boolean.parseBoolean(params[14]));
+        SimulationParameters parameters = new SimulationParameters(params[0], params[1], GrowthGrassVariant.valueOf(params[2]), params[3], params[4], params[5], params[6], params[7], params[8], params[9], params[10], params[11], MutationVariant.valueOf(params[12]), params[13], Boolean.parseBoolean(params[14]));
         fileNameWithFileContent.put(file.getName(), parameters);
     }
 }
