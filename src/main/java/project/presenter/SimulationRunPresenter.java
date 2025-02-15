@@ -13,7 +13,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.layout.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 import project.Simulation;
 import project.listener.SimulationChangeListener;
 import project.listener.SimulationEventType;
@@ -141,10 +140,8 @@ public class SimulationRunPresenter implements SimulationChangeListener {
         isSimulationStopped = !isSimulationStopped;
     }
 
-    public void endSimulation() {
-        simulation.stopSimulation();
-        Stage stage = (Stage) mapGrid.getScene().getWindow();
-        stage.close();
+    public void setSimulationState(boolean state) {
+        isSimulationStopped = state;
     }
 
     private void clearGrid() {
@@ -373,7 +370,6 @@ public class SimulationRunPresenter implements SimulationChangeListener {
 
         List<Vector2d> grassPositionsToColor = worldMap.getFreeGrassPreferredPositions();
         Image image = new Image("x.png");
-
 
         for (Vector2d position : grassPositionsToColor ) {
             ImageView imageView = new ImageView(image);

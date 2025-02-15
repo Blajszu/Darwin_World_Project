@@ -13,7 +13,6 @@ import project.SimulationEngine;
 import project.listener.SimulationSaveStatistics;
 import project.model.maps.WorldMap;
 
-
 import java.io.IOException;
 import java.util.List;
 
@@ -116,6 +115,11 @@ public class SimulationStartPresenter {
             simulation.addObserver(simulationRunPresenter);
             WorldMap worldMap = simulation.getWorldMap();
             simulationRunPresenter.setSimulation(simulation);
+
+            simulationStage.setOnCloseRequest(event -> {
+                simulationRunPresenter.setSimulationState(false);
+                simulation.stopSimulation();
+            });
 
             if(collectStatistics.isSelected()) {
                 try (SimulationSaveStatistics stats = new SimulationSaveStatistics(worldMap)) {
