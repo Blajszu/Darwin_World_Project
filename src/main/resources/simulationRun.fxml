@@ -44,9 +44,7 @@
                     </yAxis>
                 </LineChart>
                 <HBox alignment="CENTER">
-                    <Button fx:id="stopRestartSimulationButton" text="STOP SIMULATION"
-                            onAction="#stopRestartSimulation"/>
-                    <Button fx:id="endSimulationButton" text="END SIMULATION" onAction="#endSimulation"/>
+                    <Button fx:id="stopRestartSimulationButton" text="STOP SIMULATION" onAction="#stopRestartSimulation"/>
                 </HBox>
             </VBox>
             <VBox fx:id="map" alignment="CENTER" minWidth="300">
