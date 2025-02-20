@@ -21,8 +21,8 @@ public class AnimalStatistics {
     }
 
     public void updateStatistics() {
-        if(whenDied == null)
-            this.whenDied = (animal.isAnimalAlive() ? null : simulation.getStatistics().getStatisticsRecord().day()+1);
+        if (whenDied == null)
+            this.whenDied = (animal.isAnimalAlive() ? null : simulation.getStatistics().getStatisticsRecord().day() + 1);
 
         record = new AnimalStatisticsRecord(
                 animal.getAnimalGenesString(),

@@ -1,4 +1,4 @@
-package project;
+package project.presenter;
 
 public enum GrowthGrassVariant {
     EQUATOR_MAP("Equator map"),

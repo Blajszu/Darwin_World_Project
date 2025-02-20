@@ -14,10 +14,10 @@ public class MovingJungleMap extends AbstractWorldMap {
         super(height, width);
 
         ArrayList<Vector2d> positions;
-        for(int i = 0; i < height; i++) {
+        for (int i = 0; i < height; i++) {
             positions = new ArrayList<>();
 
-            for(int j = 0; j < width; j++) {
+            for (int j = 0; j < width; j++) {
                 positions.add(new Vector2d(j, i));
             }
 
@@ -29,13 +29,13 @@ public class MovingJungleMap extends AbstractWorldMap {
     protected void placeGrass(Grass grass) {
         Vector2d position = grass.getPosition();
 
-        if(grassOnMap.containsKey(position)) {
+        if (grassOnMap.containsKey(position)) {
             throw new PositionOccupiedException(grass);
         }
         grassOnMap.put(position, grass);
 
-        for(Vector2d freePosition : getFreePositionsAroundPosition(position)) {
-            if(!freeGrassPreferredPositions.contains(freePosition)) {
+        for (Vector2d freePosition : getFreePositionsAroundPosition(position)) {
+            if (!freeGrassPreferredPositions.contains(freePosition)) {
                 freeGrassPreferredPositions.add(freePosition);
                 freeGrassNotPreferredPositions.remove(freePosition);
             }
@@ -47,31 +47,30 @@ public class MovingJungleMap extends AbstractWorldMap {
 
     @Override
     public void removeGrass(Vector2d position) {
-        if(!grassOnMap.containsKey(position)){
+        if (!grassOnMap.containsKey(position)) {
             throw new NoSuchElementException("Cannot remove grass: no grass found at this location.");
         }
         grassOnMap.remove(position);
 
-        for(Vector2d freePosition : getFreePositionsAroundPosition(position)) {
-            if(!checkIfPositionIsPreferred(freePosition)) {
+        for (Vector2d freePosition : getFreePositionsAroundPosition(position)) {
+            if (!checkIfPositionIsPreferred(freePosition)) {
                 freeGrassPreferredPositions.remove(freePosition);
                 freeGrassNotPreferredPositions.add(freePosition);
             }
         }
 
-        if(checkIfPositionIsPreferred(position)) {
+        if (checkIfPositionIsPreferred(position)) {
             freeGrassPreferredPositions.add(position);
-        }
-        else {
+        } else {
             freeGrassNotPreferredPositions.add(position);
         }
     }
 
     private List<Vector2d> getFreePositionsAroundPosition(Vector2d position) {
         List<Vector2d> freePositions = new ArrayList<>();
-        for(MapDirection direction : MapDirection.values()) {
+        for (MapDirection direction : MapDirection.values()) {
             Vector2d positionToCheck = position.add(direction.toUnitVector());
-            if(!grassOnMap.containsKey(positionToCheck) && isPositionCorrect(positionToCheck)) {
+            if (!grassOnMap.containsKey(positionToCheck) && isPositionCorrect(positionToCheck)) {
                 freePositions.add(positionToCheck);
             }
         }
@@ -79,9 +78,9 @@ public class MovingJungleMap extends AbstractWorldMap {
     }
 
     private boolean checkIfPositionIsPreferred(Vector2d position) {
-        for(MapDirection direction : MapDirection.values()) {
+        for (MapDirection direction : MapDirection.values()) {
             Vector2d positionToCheck = position.add(direction.toUnitVector());
-            if(grassOnMap.containsKey(positionToCheck)) {
+            if (grassOnMap.containsKey(positionToCheck)) {
                 return true;
             }
         }

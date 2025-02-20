@@ -1,4 +1,4 @@
-package project;
+package project.presenter;
 
 public enum MutationVariant {
     RANDOM("Random"),

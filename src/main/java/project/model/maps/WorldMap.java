@@ -44,4 +44,6 @@ public interface WorldMap {
     int getMapHeight();
 
     int getMapWidth();
+
+    void spawnGrass(int numberOfGrass);
 }

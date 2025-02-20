@@ -19,25 +19,25 @@
     <center>
         <HBox alignment="CENTER">
             <VBox alignment="CENTER">
-                <Label text="Statystyki Symulacji" textAlignment="CENTER" />
+                <Label text="Statystyki Symulacji" textAlignment="CENTER"/>
                 <HBox>
                     <VBox>
-                        <Label fx:id="animalsCountLabel" textAlignment="CENTER" />
-                        <Label fx:id="grassCountLabel" textAlignment="CENTER" />
-                        <Label fx:id="emptyFieldsCountLabel" textAlignment="CENTER" />
+                        <Label fx:id="animalsCountLabel" textAlignment="CENTER"/>
+                        <Label fx:id="grassCountLabel" textAlignment="CENTER"/>
+                        <Label fx:id="emptyFieldsCountLabel" textAlignment="CENTER"/>
                     </VBox>
                     <VBox>
-                        <Label fx:id="averageEnergyLabel" textAlignment="CENTER" />
-                        <Label fx:id="averageLifeLengthLabel" textAlignment="CENTER" />
-                        <Label fx:id="averageChildrenCountLabel" textAlignment="CENTER" />
+                        <Label fx:id="averageEnergyLabel" textAlignment="CENTER"/>
+                        <Label fx:id="averageLifeLengthLabel" textAlignment="CENTER"/>
+                        <Label fx:id="averageChildrenCountLabel" textAlignment="CENTER"/>
                     </VBox>
                     <VBox>
-                        <Label fx:id="mostPopularGenotypesLabel" textAlignment="CENTER" />
+                        <Label fx:id="mostPopularGenotypesLabel" textAlignment="CENTER"/>
                     </VBox>
                 </HBox>
                 <LineChart fx:id="simulationChart">
                     <xAxis>
-                        <NumberAxis fx:id="xAxis" label="Dzień" />
+                        <NumberAxis fx:id="xAxis" label="Dzień"/>
                     </xAxis>
                     <yAxis>
                         <NumberAxis fx:id="yAxis"/>
@@ -48,7 +48,7 @@
                 </HBox>
             </VBox>
             <VBox fx:id="map" alignment="CENTER" minWidth="300">
-                <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true" />
+                <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true"/>
                 <Label fx:id="moveLabel" textAlignment="CENTER"/>
                 <Slider fx:id="simulationDelay" min="20" max="400" value="200"
                         showTickMarks="true" showTickLabels="true"
@@ -69,25 +69,25 @@
                     <Label fx:id="legenda" text="LEGENDA"/>
                     <HBox styleClass="legend">
                         <ImageView fitHeight="30" fitWidth="30">
-                            <Image url="x.png"/>
+                            <Image url="images/x.png"/>
                         </ImageView>
                         <Label text="Preferowane pozycje trawy"/>
                     </HBox>
                     <HBox minWidth="30" minHeight="30" styleClass="legend">
-                        <StackPane minWidth="30" minHeight="30" >
-                            <Label fx:id="animalLabelLegend" minWidth="35" minHeight="20" />
+                        <StackPane minWidth="30" minHeight="30">
+                            <Label fx:id="animalLabelLegend" minWidth="35" minHeight="20"/>
                         </StackPane>
                         <Label text="Śledzony zwierzak"/>
                     </HBox>
                     <HBox minWidth="30" minHeight="30" styleClass="legend">
-                        <StackPane minWidth="30" minHeight="30" >
-                            <Label fx:id="animalMaxEnergyLabel" minWidth="35" minHeight="20" />
+                        <StackPane minWidth="30" minHeight="30">
+                            <Label fx:id="animalMaxEnergyLabel" minWidth="35" minHeight="20"/>
                         </StackPane>
                         <Label text="Im ciemniejszy zwierzak, tym więcej ma energii"/>
                     </HBox>
                     <HBox minWidth="30" minHeight="30" styleClass="legend">
-                        <StackPane minWidth="30" minHeight="30" >
-                            <Label fx:id="popularGenotype" minWidth="35" minHeight="20" />
+                        <StackPane minWidth="30" minHeight="30">
+                            <Label fx:id="popularGenotype" minWidth="35" minHeight="20"/>
                         </StackPane>
                         <Label text="Najpopularniejsze genotypy"/>
                     </HBox>

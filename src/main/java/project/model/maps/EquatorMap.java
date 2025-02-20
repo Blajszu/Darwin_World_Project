@@ -13,24 +13,23 @@ public class EquatorMap extends AbstractWorldMap {
     public EquatorMap(int height, int width) {
         super(height, width);
 
-        int equatorHeight = (int) Math.round(height*0.2);
-        int equatorStartHeight = height/2 - equatorHeight/2;
+        int equatorHeight = (int) Math.round(height * 0.2);
+        int equatorStartHeight = height / 2 - equatorHeight / 2;
         int equatorEndHeight = equatorStartHeight + equatorHeight - 1;
         equatorBoundary = new Boundary(new Vector2d(0, equatorStartHeight), new Vector2d(width - 1, equatorEndHeight));
 
         ArrayList<Vector2d> positions;
 
-        for(int i = 0; i < height; i++) {
+        for (int i = 0; i < height; i++) {
             positions = new ArrayList<>();
 
-            for(int j = 0; j < width; j++) {
+            for (int j = 0; j < width; j++) {
                 positions.add(new Vector2d(j, i));
             }
 
-            if(isPositionPreferredByGrass(positions.getFirst())){
+            if (isPositionPreferredByGrass(positions.getFirst())) {
                 freeGrassPreferredPositions.addAll(positions);
-            }
-            else {
+            } else {
                 freeGrassNotPreferredPositions.addAll(positions);
             }
         }
@@ -42,16 +41,15 @@ public class EquatorMap extends AbstractWorldMap {
 
     @Override
     public void removeGrass(Vector2d position) {
-        if(!grassOnMap.containsKey(position)){
+        if (!grassOnMap.containsKey(position)) {
             throw new NoSuchElementException("Cannot remove grass: no grass found at this location.");
         }
 
         grassOnMap.remove(position);
 
-        if(isPositionPreferredByGrass(position)) {
+        if (isPositionPreferredByGrass(position)) {
             freeGrassPreferredPositions.add(position);
-        }
-        else {
+        } else {
             freeGrassNotPreferredPositions.add(position);
         }
     }
@@ -60,15 +58,14 @@ public class EquatorMap extends AbstractWorldMap {
     protected void placeGrass(Grass grass) {
         Vector2d position = grass.getPosition();
 
-        if(grassOnMap.containsKey(position)) {
+        if (grassOnMap.containsKey(position)) {
             throw new PositionOccupiedException(grass);
         }
         grassOnMap.put(position, grass);
 
-        if(isPositionPreferredByGrass(position)) {
+        if (isPositionPreferredByGrass(position)) {
             freeGrassPreferredPositions.remove(position);
-        }
-        else {
+        } else {
             freeGrassNotPreferredPositions.remove(position);
         }
     }

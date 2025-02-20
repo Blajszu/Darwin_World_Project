@@ -1,4 +1,4 @@
-package project.model.worldElements;
+package project.presenter;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -7,6 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import project.model.worldElements.Animal;
+import project.model.worldElements.WorldElement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +66,7 @@ public class WorldElementBox {
             label.setMinWidth(0.8 * size);
             label.setMinHeight(0.8 * size);
 
-            if(!selected) {
+            if (!selected) {
                 int backgroundIndex = (int) Math.min(Math.floor(((double) ((Animal) element).getCurrentEnergy() / (2 * initialAnimalEnergy)) * 8), 7);
                 label.setStyle("-fx-background-color: " + animalsColors.get(backgroundIndex) + ";");
             } else {

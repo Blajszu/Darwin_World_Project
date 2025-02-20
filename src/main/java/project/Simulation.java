@@ -5,7 +5,6 @@ import project.listener.SimulationEventType;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
-import project.presenter.SimulationParameters;
 import project.statistics.SimulationStatistics;
 import project.statistics.StatisticsRecord;
 
@@ -18,7 +17,6 @@ public class Simulation implements Runnable {
     private final WorldMap worldMap;
     private final SimulationParameters simulationParameters;
     private final SimulationStatistics statistics = new SimulationStatistics();
-
     private int currentDay = 1;
     private int coolDown = 200;
     private final int initialAnimalsEnergy;
@@ -32,19 +30,22 @@ public class Simulation implements Runnable {
         this.simulationParameters = simulationParameters;
         this.initialAnimalsEnergy = simulationParameters.initialAnimalsEnergy();
 
-        this.worldMap = switch(simulationParameters.growthGrassVariant()) {
+        this.worldMap = switch (simulationParameters.growthGrassVariant()) {
             case EQUATOR_MAP -> new EquatorMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
-            case MOVING_JUNGLE_MAP -> new MovingJungleMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
+            case MOVING_JUNGLE_MAP ->
+                    new MovingJungleMap(simulationParameters.mapHeight(), simulationParameters.mapWidth());
         };
+        worldMap.spawnGrass(simulationParameters.numberOfGrassOnMap());
 
         MutationStrategy mutationStrategy = switch (simulationParameters.mutationVariant()) {
-            case RANDOM -> new RandomMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
-            case INCREMENT_DECREMENT -> new IncrementDecrementMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
+            case RANDOM ->
+                    new RandomMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
+            case INCREMENT_DECREMENT ->
+                    new IncrementDecrementMutationStrategyVariant(simulationParameters.minimalNumberOfMutation(), simulationParameters.maximumNumberOfMutation());
         };
 
         try {
             spawnFirstAnimals(simulationParameters.startNumberOfAnimals(), simulationParameters.initialAnimalsEnergy(), simulationParameters.energyNeedToReproduce(), simulationParameters.energyUsedToReproduce(), mutationStrategy, simulationParameters.numberOfGenes());
-            spawnGrass(simulationParameters.numberOfGrassOnMap());
         } catch (IncorrectPositionException e) {
             System.err.printf("Error while creating Simulation: %s%n", e.getMessage());
         }
@@ -107,69 +108,17 @@ public class Simulation implements Runnable {
         int mapWidth = mapBounds.upperRight().x() + 1;
         int mapHeight = mapBounds.upperRight().y() + 1;
 
-        for(int i = 0; i < numberOfAnimalsToSpawn; i++) {
+        for (int i = 0; i < numberOfAnimalsToSpawn; i++) {
             Vector2d positionToSpawnAnimal = new Vector2d(rand.nextInt(mapWidth), rand.nextInt(mapHeight));
             Animal animal = new Animal(positionToSpawnAnimal, numberOfGenes, initialAnimalsEnergy, energyNeedToReproduce, energyUsedToReproduce, mutationStrategy);
             worldMap.place(animal);
         }
     }
 
-    private void spawnGrass(int numberOfGrassToSpawn) throws IncorrectPositionException {
-        int grassLeft = numberOfGrassToSpawn;
-        int numberOfGrassToSpawnOnPreferredPositions = (int) Math.round(numberOfGrassToSpawn * 0.8);
-        int numberOfGrassToSpawnOnNotPreferredPositions = numberOfGrassToSpawn - numberOfGrassToSpawnOnPreferredPositions;
-
-        while(numberOfGrassToSpawnOnPreferredPositions > 0) {
-            List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
-
-            if(preferredPositions.isEmpty()) {
-                break;
-            }
-
-            Vector2d positionToSpawnGrass = preferredPositions.get(rand.nextInt(preferredPositions.size()));
-
-            worldMap.place(new Grass(positionToSpawnGrass));
-            numberOfGrassToSpawnOnPreferredPositions--;
-            grassLeft--;
-        }
-
-        while(numberOfGrassToSpawnOnNotPreferredPositions > 0) {
-            List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
-
-            if(notPreferredPositions.isEmpty()) {
-                break;
-            }
-
-            Vector2d positionToSpawnGrass = notPreferredPositions.get(rand.nextInt(notPreferredPositions.size()));
-
-            worldMap.place(new Grass(positionToSpawnGrass));
-            numberOfGrassToSpawnOnNotPreferredPositions--;
-            grassLeft--;
-        }
-
-        while(grassLeft > 0) {
-            List<Vector2d> preferredPositions = worldMap.getFreeGrassPreferredPositions();
-            List<Vector2d> notPreferredPositions = worldMap.getFreeGrassNotPreferredPositions();
-
-            if(preferredPositions.isEmpty() && notPreferredPositions.isEmpty()) {
-                break;
-            }
-
-            List<Vector2d> availablePositions = new ArrayList<>();
-            availablePositions.addAll(preferredPositions);
-            availablePositions.addAll(notPreferredPositions);
-
-            Vector2d positionToSpawnGrass = availablePositions.get(rand.nextInt(availablePositions.size()));
-
-            worldMap.place(new Grass(positionToSpawnGrass));
-            grassLeft--;
-        }
-    }
-
     private void rotateAnimals() {
         Collection<Animal> animals = worldMap.getOrderedAnimals();
 
-        for(Animal animal : animals) {
+        for (Animal animal : animals) {
             animal.rotate();
         }
     }
@@ -177,7 +126,7 @@ public class Simulation implements Runnable {
     private void moveAnimals() {
         Collection<Animal> animals = worldMap.getOrderedAnimals();
 
-        for(Animal animal : animals) {
+        for (Animal animal : animals) {
             worldMap.move(animal);
         }
     }
@@ -185,7 +134,7 @@ public class Simulation implements Runnable {
     private void removeDeadAnimals() {
         Collection<Animal> allAnimalsOnMap = worldMap.getOrderedAnimals();
         for (Animal animal : allAnimalsOnMap) {
-            if(!animal.isAnimalAlive()){
+            if (!animal.isAnimalAlive()) {
                 statistics.registerDeadAnimal(animal);
                 worldMap.removeAnimal(animal);
             }
@@ -193,7 +142,7 @@ public class Simulation implements Runnable {
     }
 
     private void consumePlantsAndReproduce() throws IncorrectPositionException {
-        for(Vector2d position : worldMap.getAllAnimalsPositions()) {
+        for (Vector2d position : worldMap.getAllAnimalsPositions()) {
 
             Optional<List<Animal>> animalsAtPosition = worldMap.animalsAt(position);
             List<Animal> resolvedConflictsAnimals = resolveAnimalsConflicts(animalsAtPosition.get());
@@ -203,15 +152,15 @@ public class Simulation implements Runnable {
                 resolvedConflictsAnimals.getFirst().eat(simulationParameters.energyFromGrass());
             }
 
-            if(resolvedConflictsAnimals.size() < 2) {
+            if (resolvedConflictsAnimals.size() < 2) {
                 continue;
             }
 
             Animal parent1 = resolvedConflictsAnimals.get(0);
             Animal parent2 = resolvedConflictsAnimals.get(1);
 
-            if(parent1.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce() && parent2.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce()) {
-                worldMap.place(parent1.reproduce(parent2));
+            if (parent1.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce() && parent2.getCurrentEnergy() >= simulationParameters.energyNeedToReproduce()) {
+                worldMap.place(Animal.reproduce(parent1,parent2));
             }
         }
     }
@@ -220,7 +169,7 @@ public class Simulation implements Runnable {
         countDownLatch = new CountDownLatch(1);
         StatisticsRecord statisticsRecord = statistics.getStatisticsRecord();
 
-        for(SimulationChangeListener observer : listeners) {
+        for (SimulationChangeListener observer : listeners) {
             observer.handleChangeEvent(worldMap, eventType, statisticsRecord);
         }
     }
@@ -245,7 +194,7 @@ public class Simulation implements Runnable {
                 SimulationChangeEvent(SimulationEventType.FOOD_CONSUMED);
                 Thread.sleep(coolDown);
                 countDownLatch.await();
-                spawnGrass(simulationParameters.numberOfGrassGrowingEveryDay());
+                worldMap.spawnGrass(simulationParameters.numberOfGrassGrowingEveryDay());
                 SimulationChangeEvent(SimulationEventType.GRASS_SPAWNED);
                 Thread.sleep(coolDown);
                 countDownLatch.await();

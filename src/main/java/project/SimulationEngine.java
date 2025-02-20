@@ -1,22 +1,22 @@
 package project;
 
-import java.util.ArrayList;
-import java.util.List;
-public class SimulationEngine {
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-    private final List<Simulation> simulations;
-    private final List<Thread> simulationThreads = new ArrayList<>();
+public class SimulationEngine implements AutoCloseable {
+    private final Simulation simulation;
+    private final ExecutorService executor;
 
-    public SimulationEngine(List<Simulation> simulations) {
-
-        this.simulations = simulations;
+    public SimulationEngine(Simulation simulation) {
+        this.simulation = simulation;
+        this.executor = Executors.newSingleThreadExecutor();
     }
 
     public void runAsync() {
-        simulationThreads.clear();
-
-        simulations.forEach(simulation -> simulationThreads.add(new Thread(simulation)));
-
-        simulationThreads.forEach(Thread::start);
+        executor.submit(simulation);
+    }
+    @Override
+    public void close() {
+        executor.shutdown();
     }
 }
