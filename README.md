@@ -105,9 +105,10 @@ Users can enable **automatic logging** of simulation data to CSV files. Logged i
 > ✅ **Compatibility:** Tested on **Windows** and **Linux**, should also work on **MacOS**.  
 
 ### ▶️ Running the Application  
-1️⃣ Download the latest version from the project repository.  
+
+1️⃣ Download the latest version from the [Releases](https://github.com/Blajszu/Darwin_World_Project/releases) section of the project repository.  
 2️⃣ Open a terminal and navigate to the folder where the `.jar` file is located.  
-3️⃣ Run the following command:  
+3️⃣ Run the following command:
 
 ```shell
 java -jar Darwin_World-v1.0.jar
