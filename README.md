@@ -5,8 +5,8 @@ A Java-based desktop application that simulates an ecosystem inspired by Charles
 This project was developed as part of an Object-Oriented Programming course at AGH University of Krakow by:  
 - **Oskar Blajsz** [[Blajszu]](https://github.com/Blajszu)
 - **Jagoda Kurosad** [[jagodakurosad]](https://github.com/jagodakurosad)
-
-![Simulation Preview]()  
+ 
+![Simulation Preview](https://github.com/user-attachments/assets/4715a59b-7019-4004-92d4-fef927d29561)
 
 Detailed project guidelines (in Polish) are available [here](./project_description/). The implemented version follows the **F1 variant**.  
 
@@ -14,7 +14,7 @@ Detailed project guidelines (in Polish) are available [here](./project_descripti
 
 ## 🌍 Overview  
 
-The simulation represents a world populated by herbivores that roam in search of food to maintain their energy levels and find partners to reproduce. Over time, natural selection and genetic inheritance shape the species, influencing their behaviors and survival strategies.  
+The simulation represents a world populated by herbivores that roam in search of food to maintain their energy levels and find partners to reproduce. Over time, natural selection and genetic inheritance shape the species, influencing their behaviors and survival strategies. 
 
 The world consists of a **grid-based map** with two primary terrain types:  
 - **Steppes** – where plants grow sparsely.  
@@ -41,7 +41,7 @@ This process continuously reshapes the population, providing insights into evolu
 ### 🔧 Customization  
 The application offers **extensive configurability**. Users can tweak various settings or use pre-configured scenarios.  
 
-![Configuration Panel]()  
+![Configuration Panel](https://github.com/user-attachments/assets/371c464c-d537-475d-8850-c185776e244e)
 
 Parameters available for modification:  
 - **Map size** (height & width)  
@@ -68,16 +68,25 @@ Parameters available for modification:
 The app includes **predefined simulation setups** for quick experimentation. Users can also **save and load** custom configurations as CSV files.  
 
 > [!NOTE]
-> Saved presets are stored in the... TODO  
+> Saved presets are stored in the **presetParameters** folder next to the application executable.  
+> The folder will be automatically created when you first save or load presets.
 
-![Preset Example]()  
+<div align="center">
+  
+  ![Preset Example](https://github.com/user-attachments/assets/a92bfc32-d60d-40a7-a195-5507de79280a)
+  
+</div>
 
 ---
 
 ### 🎨 Real-Time Visualization  
 The simulation provides **live graphical feedback**, allowing users to track the population's evolution.  
 
-![Simulation Running]()  
+<div align="center">
+
+  ![Simulation Running](https://github.com/user-attachments/assets/0749f426-b0a2-4980-ba89-1d3e3fb55bb0)
+
+</div>
 
 ---
 
@@ -92,7 +101,8 @@ Users can enable **automatic logging** of simulation data to CSV files. Logged i
 ✔️ Average number of offspring per animal.  
 
 > [!NOTE]
-> Logs are saved in the... TODO
+> Logs are saved in the **simulationStatistics** folder next to the application executable.  
+> The folder will be automatically created when you first run the program.
 
 ---
 
@@ -102,17 +112,12 @@ Users can enable **automatic logging** of simulation data to CSV files. Logged i
 - **Java 21** must be installed on your system.  
 - Download the latest Java version from the official Java website if needed.  
 
-> ✅ **Compatibility:** Tested on **Windows** and **Linux**, should also work on **MacOS**.  
+> ✅ **Compatibility:** Tested on **Windows**.  
 
 ### ▶️ Running the Application  
 
 1️⃣ Download the latest version from the [Releases](https://github.com/Blajszu/Darwin_World_Project/releases) section of the project repository.  
-2️⃣ Open a terminal and navigate to the folder where the `.jar` file is located.  
-3️⃣ Run the following command:
-
-```shell
-java -jar Darwin_World-v1.0.jar
-```
-Alternatively, **double-click** the `.jar` file to launch the application.  
+2️⃣ Open a terminal and navigate to the folder where the `.exe` file is located.  
+3️⃣ **Double-click** the `.exe` file to launch the application. 
 
 ---
