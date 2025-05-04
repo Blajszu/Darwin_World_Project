@@ -1,7 +1,7 @@
 package project.presenter;
 
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -60,43 +60,66 @@ public class WorldElementBox {
     }
 
     public void fillContent() {
-        Label label = new Label();
-        if (element instanceof Animal) {
-            label.setId("animalLabel");
-            label.setMinWidth(0.8 * size);
-            label.setMinHeight(0.8 * size);
+            Node elementBox = createElementBox(element);
+            container.getChildren().clear();
+            container.getChildren().add(elementBox);
+    }
 
-            if (!selected) {
-                int backgroundIndex = (int) Math.min(Math.floor(((double) ((Animal) element).getCurrentEnergy() / (2 * initialAnimalEnergy)) * 8), 7);
-                label.setStyle("-fx-background-color: " + animalsColors.get(backgroundIndex) + ";");
-            } else {
-                label.setStyle("-fx-background-color: yellow;");
-            }
+    private Node createElementBox(WorldElement element) {
 
-            label.setAlignment(Pos.CENTER);
-            label.setPadding(new Insets(10));
+        Image image;
 
-            Image image = getOrCreateImage(element.getResourceFileName());
-            ImageView imageView = new ImageView(image);
+        if(selected) {
+            image = getOrCreateImage(element.getResourceFileName().replace(".png", "_selected.png"));
+        } else {
+            image = getOrCreateImage(element.getResourceFileName());
+        }
 
+        ImageView imageView = new ImageView(image);
+
+        if(element instanceof Animal) {
+            imageView.setFitHeight(size * 0.8);
+            imageView.setFitWidth(size * 0.8);
+        } else {
             imageView.setFitHeight(size);
             imageView.setFitWidth(size);
-
-            StackPane stackPane = new StackPane();
-            stackPane.getChildren().addAll(label, imageView);
-            stackPane.setAlignment(Pos.CENTER);
-
-            container.getChildren().clear();
-            container.getChildren().add(stackPane);
-        } else {
-            label.setAlignment(Pos.CENTER);
-            label.setId("grassLabel");
-            label.setMinWidth(size);
-            label.setMinHeight(size);
-
-            container.getChildren().add(label);
         }
-        container.setAlignment(Pos.CENTER);
+
+        StackPane stackPane = new StackPane();
+        stackPane.setMinWidth(size);
+        stackPane.setMinHeight(size);
+        stackPane.setAlignment(Pos.CENTER);
+        stackPane.getChildren().add(imageView);
+
+        if (element instanceof Animal) {
+            VBox animalLabel = createAnimalEnergyBar();
+            stackPane.getChildren().add(animalLabel);
+        }
+
+        return stackPane;
+    }
+
+    private VBox createAnimalEnergyBar() {
+        Label label = new Label();
+
+        int energy = ((Animal) element).getCurrentEnergy();
+        double width = Math.min(size, ((double)energy / (2 * (double)initialAnimalEnergy)) * size);
+
+        label.setMinWidth(width);
+        label.setMaxWidth(width);
+
+        label.setMinHeight(0.1 * size);
+        label.setMaxHeight(0.1 * size);
+        label.setStyle("-fx-background-color: #F99090;");
+
+        VBox animalVBox = new VBox();
+        animalVBox.setMinWidth(size);
+        animalVBox.setMinHeight(size);
+        animalVBox.getChildren().add(label);
+
+        animalVBox.setAlignment(Pos.BOTTOM_LEFT);
+
+        return animalVBox;
     }
 
     private Image getOrCreateImage(String resourceFileName) {

@@ -35,7 +35,7 @@ GridPane {
     -fx-vgap: 1;
     -fx-background-color: #44d15f;
     -fx-border-width: 0;
-    -fx-grid-lines-visible: false;
+    -fx-grid-lines-visible: true;;
 }
 
 #grassBackground {
@@ -44,10 +44,6 @@ GridPane {
 
 #animalLabel {
     -fx-background-radius: 50%;
-}
-
-#grassLabel {
-    -fx-background-color: #0b7c50;
 }
 
 #animalLabelLegend {

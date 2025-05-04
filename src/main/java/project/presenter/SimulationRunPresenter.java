@@ -52,7 +52,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private boolean isSimulationStopped = false;
     private List<String> topGenotypes;
 
-    private final ArrayList<Label> animalsTopGenotypesLabels = new ArrayList<>();
+    private final ArrayList<ImageView> animalsTopGenotypesLabels = new ArrayList<>();
     private final ArrayList<ImageView> grassPreferredPositionsImageView = new ArrayList<>();
 
     @FXML
@@ -367,7 +367,7 @@ public class SimulationRunPresenter implements SimulationChangeListener {
     private void colorPreferredGrassPositions() {
 
         List<Vector2d> grassPositionsToColor = worldMap.getFreeGrassPreferredPositions();
-        Image image = new Image("images/x.png");
+        Image image = new Image("images/greenstar.png");
 
         for (Vector2d position : grassPositionsToColor ) {
             ImageView imageView = new ImageView(image);
@@ -396,15 +396,16 @@ public class SimulationRunPresenter implements SimulationChangeListener {
                 .map(Animal::getPosition)
                 .collect(Collectors.toCollection(HashSet::new));
 
-        for (Vector2d position : topGenotypesAnimalsPositions) {
-            Label label = new Label();
-            label.setStyle("-fx-background-color: #d968dc");
-            label.setMinHeight(cellSize);
-            label.setMinWidth(cellSize);
-            animalsTopGenotypesLabels.add(label);
+        Image image = new Image("images/yellowstar.png");
 
-            mapGrid.add(label, position.x() + 1, worldMap.getMapHeight() - position.y());
-            label.toBack();
+        for (Vector2d position : topGenotypesAnimalsPositions) {
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(cellSize);
+            imageView.setFitHeight(cellSize);
+            animalsTopGenotypesLabels.add(imageView);
+
+            mapGrid.add(imageView, position.x() + 1, worldMap.getMapHeight() - position.y());
+            imageView.toBack();
         }
     }
 

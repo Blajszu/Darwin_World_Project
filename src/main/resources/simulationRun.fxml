@@ -48,7 +48,7 @@
                 </HBox>
             </VBox>
             <VBox fx:id="map" alignment="CENTER" minWidth="300">
-                <GridPane fx:id="mapGrid" alignment="CENTER" gridLinesVisible="true"/>
+                <GridPane fx:id="mapGrid" alignment="CENTER"/>
                 <Label fx:id="moveLabel" textAlignment="CENTER"/>
                 <Slider fx:id="simulationDelay" min="20" max="400" value="200"
                         showTickMarks="true" showTickLabels="true"
@@ -69,26 +69,14 @@
                     <Label fx:id="legenda" text="LEGENDA"/>
                     <HBox styleClass="legend">
                         <ImageView fitHeight="30" fitWidth="30">
-                            <Image url="images/x.png"/>
+                            <Image url="images/greenstar_legend.png"/>
                         </ImageView>
                         <Label text="Preferowane pozycje trawy"/>
                     </HBox>
                     <HBox minWidth="30" minHeight="30" styleClass="legend">
-                        <StackPane minWidth="30" minHeight="30">
-                            <Label fx:id="animalLabelLegend" minWidth="35" minHeight="20"/>
-                        </StackPane>
-                        <Label text="Śledzony zwierzak"/>
-                    </HBox>
-                    <HBox minWidth="30" minHeight="30" styleClass="legend">
-                        <StackPane minWidth="30" minHeight="30">
-                            <Label fx:id="animalMaxEnergyLabel" minWidth="35" minHeight="20"/>
-                        </StackPane>
-                        <Label text="Im ciemniejszy zwierzak, tym więcej ma energii"/>
-                    </HBox>
-                    <HBox minWidth="30" minHeight="30" styleClass="legend">
-                        <StackPane minWidth="30" minHeight="30">
-                            <Label fx:id="popularGenotype" minWidth="35" minHeight="20"/>
-                        </StackPane>
+                        <ImageView fitHeight="30" fitWidth="30">
+                            <Image url="images/yellowstar_legend.png"/>
+                        </ImageView>
                         <Label text="Najpopularniejsze genotypy"/>
                     </HBox>
                 </VBox>

@@ -102,8 +102,11 @@ public class SimulationStartPresenter {
             var scene = new Scene(viewRoot);
             simulationStage.setScene(scene);
             simulationStage.setTitle("Simulation app");
-            simulationStage.minWidthProperty().bind(viewRoot.minWidthProperty());
-            simulationStage.minHeightProperty().bind(viewRoot.minHeightProperty());
+            simulationStage.setMinHeight(700);
+            simulationStage.setMinWidth(1300);
+
+            simulationStage.setHeight(700);
+            simulationStage.setWidth(1300);
 
             simulationStage.show();
 
