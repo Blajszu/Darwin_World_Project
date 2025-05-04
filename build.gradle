@@ -2,10 +2,17 @@ plugins {
     id 'java'
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'edu.sc.seis.launch4j' version '3.0.4'
 }
 
-group = 'org.example'
+group = 'project'
 version = '1.0-SNAPSHOT'
+
+ext {
+    javafxVersion = '21.0.5'
+    javafxModules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics']
+}
 
 repositories {
     mavenCentral()
@@ -16,8 +23,8 @@ application {
 }
 
 javafx {
-    version = "17"
-    modules = ['javafx.base', 'javafx.controls', 'javafx.fxml', 'javafx.graphics', 'javafx.media', 'javafx.swing', 'javafx.web']
+    version = javafxVersion
+    modules = javafxModules
 }
 
 java {
@@ -33,4 +40,34 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+shadowJar {
+    archiveBaseName.set('Darwin World')
+    archiveVersion.set('1.0')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'project.WorldGUI'
+    }
+    mergeServiceFiles()
+    from(sourceSets.main.resources) {
+        into ''
+    }
+}
+
+launch4j {
+    mainClassName = 'project.WorldGUI'
+    outfile = 'DarwinWorld.exe'
+    icon = "${projectDir}/src/main/resources/images/app.ico"
+    jreMinVersion = '21'
+    headerType = 'gui'
+    
+    jarTask = project.tasks.shadowJar
+}
+
+tasks.register('buildAll') {
+    dependsOn shadowJar
+    dependsOn createExe
+    group = 'build'
+    description = 'Builds both shadowJar and exe'
 }
