@@ -2,6 +2,7 @@ package project;
 
 import project.listener.SimulationChangeListener;
 import project.listener.SimulationEventType;
+import project.listener.SimulationSaveStatistics;
 import project.model.Vector2d;
 import project.model.maps.*;
 import project.model.worldElements.*;
@@ -94,6 +95,12 @@ public class Simulation implements Runnable {
     public void stopSimulation() {
         running = false;
         countDownLatch.countDown();
+
+        for (SimulationChangeListener observer : listeners) {
+            if (observer instanceof SimulationSaveStatistics) {
+                ((SimulationSaveStatistics) observer).close();
+            }
+        }
     }
 
     private void spawnFirstAnimals(

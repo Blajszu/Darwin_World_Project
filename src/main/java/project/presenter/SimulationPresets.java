@@ -13,12 +13,21 @@ import java.util.List;
 public class SimulationPresets {
 
     private final static HashMap<String, SimulationParameters> fileNameWithFileContent = new HashMap<>();
+    private static final String PRESETS_DIR = "presetParameters";
+
+    static {
+        File presetsDir = new File(PRESETS_DIR);
+        if (!presetsDir.exists()) {
+            if(!presetsDir.mkdirs()) {
+                throw new RuntimeException("Błąd tworzenia folderu " + PRESETS_DIR);
+            }
+        }
+    }
 
     public static ArrayList<String> getCorrectFilesNames() throws IOException {
-
-        File folder = new File("src/main/resources/presetParameters");
+        File folder = new File(PRESETS_DIR);
         if (!folder.exists()) {
-            throw new IOException("Błąd odczytu z folderu");
+            throw new IOException("Błąd odczytu z folderu " + PRESETS_DIR);
         }
         File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".csv"));
 
@@ -42,14 +51,14 @@ public class SimulationPresets {
     }
 
     public static void saveParameters(SimulationParameters simulationParameters, String fileName) throws IOException {
-        File folder = new File("src/main/java/project/presenter/presetParameters");
+        File folder = new File(PRESETS_DIR);
         if (!folder.exists()) {
             if (!folder.mkdirs()) {
-                throw new IOException("Błąd tworzenia folderu");
+                throw new IOException("Błąd tworzenia folderu " + PRESETS_DIR);
             }
         }
 
-        File file = new File(folder, fileName);
+        File file = new File(folder, fileName + ".csv");
         String data = "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s".formatted(
                 simulationParameters.mapHeight(),
                 simulationParameters.mapWidth(),
@@ -71,7 +80,7 @@ public class SimulationPresets {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(data);
         } catch (IOException e) {
-            throw new IOException("Błąd zapisu do pliku");
+            throw new IOException("Błąd zapisu do pliku " + file.getAbsolutePath());
         }
     }
 

@@ -3,9 +3,10 @@ package project.listener;
 import project.model.maps.WorldMap;
 import project.statistics.StatisticsRecord;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,14 +15,16 @@ import java.util.Optional;
 
 public class SimulationSaveStatistics implements SimulationChangeListener, AutoCloseable {
     private static final String HEADER = "day,animals_count,grass_count,average_energy,average_lifetime,average_kids_number,most_popular_genotype";
+    private static final String STATS_DIR = "simulationStatistics";
+
     private final List<String> buffer = new ArrayList<>();
     private final Path filePath;
 
     public SimulationSaveStatistics(WorldMap worldMap) throws IOException {
-        Path directoryPath = Path.of("simulation_statistics");
-        filePath = directoryPath.resolve("%s.csv".formatted(worldMap.getId()));
-
+        Path directoryPath = Paths.get(STATS_DIR);
         Files.createDirectories(directoryPath);
+
+        filePath = directoryPath.resolve(String.format("%s.csv", worldMap.getId()));
 
         if (!Files.exists(filePath)) {
             Files.write(filePath, List.of(HEADER), StandardOpenOption.CREATE);
@@ -38,14 +41,14 @@ public class SimulationSaveStatistics implements SimulationChangeListener, AutoC
                 .stream()
                 .max(Map.Entry.comparingByValue());
 
-        String csvLine = String.format("%d,%d,%d,%.2f,%.2f,%s,%s",
+        String csvLine = String.format("%d,%d,%d,%.2f,%.2f,%.2f,%s",
                 statisticsRecord.day(),
                 statisticsRecord.animalsCount(),
                 statisticsRecord.plantsCount(),
                 statisticsRecord.averageEnergy(),
                 statisticsRecord.averageLifeLength(),
                 statisticsRecord.averageChildrenCount(),
-                (maxGenotype.isPresent()) ? maxGenotype.get().getKey() : ""
+                maxGenotype.map(Map.Entry::getKey).orElse("")
         );
 
         buffer.add(csvLine);
